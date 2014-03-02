@@ -5,12 +5,6 @@ project(icCanvas)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/modules")
 
 find_package(Cairo)
-pkg_check_modules(CAIRO cairo)
-
-if(!PKGCONFIG_FOUND)
-    message(FATAL_ERROR "I have no pkgconfig.")
-endif()
-
 
 if(!CAIRO_FOUND)
     message(FATAL_ERROR "Need Cairo to compile.")
@@ -19,8 +13,6 @@ endif()
 if(CMAKE_COMPILER_IS_GNUCXX)
     add_definitions(-std=c++11)
 endif()
-
-add_definitions(${CAIRO_CFLAGS})
 
 file(GLOB CORELIB ../src/*.c ../src/*.cpp)
 include_directories(../include)

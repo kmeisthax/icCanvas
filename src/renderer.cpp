@@ -4,7 +4,7 @@ void icCanvasManager::Renderer::coordToTilespace(int32_t x, int32_t y, int32_t* 
     
 };
 
-void icCanvasManager::Renderer::enterSurface(int32_t x, int32_t y, int32_t zoom, cairo_surface_t* xrsurf) {
+void icCanvasManager::Renderer::enterImageSurface(int32_t x, int32_t y, int32_t zoom, cairo_surface_t* xrsurf) {
     this->x = x;
     this->y = y;
     this->zoom = zoom;
