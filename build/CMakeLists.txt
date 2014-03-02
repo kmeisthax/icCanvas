@@ -3,9 +3,14 @@ cmake_minimum_required(VERSION 2.8)
 project(icCanvas)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/modules")
-find_package(PkgConfig)
 
+find_package(Cairo)
 pkg_check_modules(CAIRO cairo)
+
+if(!PKGCONFIG_FOUND)
+    message(FATAL_ERROR "I have no pkgconfig.")
+endif()
+
 
 if(!CAIRO_FOUND)
     message(FATAL_ERROR "Need Cairo to compile.")
