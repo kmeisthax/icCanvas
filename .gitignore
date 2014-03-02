@@ -1,1 +1,8 @@
 .DS_Store
+build/CMakeFiles
+build/CMakeCache.txt
+build/Makefile
+build/cmake_install.cmake
+
+build/*.dylib
+build/*.so
