@@ -10,11 +10,14 @@ namespace icCanvasManager {
     /* Class which implements icCanvas drawing methods.
      */
     class Renderer {
-        int32_t x, y, zoom, w, h;
-        cairo_surface_t* xrsurf;
+        int32_t x, y, zoom;             //Canvas parameters
+        int32_t tw, th;                 //Surface parameters
+        float xscale, yscale;           //Derived caluations
+        int32_t xmin, xmax, ymin, ymax;
+        cairo_surface_t* xrsurf;        //Cairo surface to draw on
         
         /* Convert stroke coordinates to tile space. */
-        void coordToTilespace(int32_t x, int32_t y, int32_t* out_tx, int32_t* out_ty);
+        void coordToTilespace(const int32_t x, const int32_t y, int32_t* out_tx, int32_t* out_ty);
     public:
         /* Specify the current drawing surface, location, and zoom level.
          * 
@@ -24,7 +27,7 @@ namespace icCanvasManager {
          * 
          * The cairo surface must be an Image Surface.
          */
-        void enterImageSurface(int32_t x, int32_t y, int32_t zoom, cairo_surface_t* xrsurf);
+        void enterImageSurface(const int32_t x, const int32_t y, const int32_t zoom, cairo_surface_t* xrsurf);
         
         /* Given a brushstroke, draw it onto the surface at the specified
          * position and zoom level.
