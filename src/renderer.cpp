@@ -5,12 +5,30 @@ void icCanvasManager::Renderer::coordToTilespace(const int32_t x, const int32_t 
     if (out_ty) *out_ty = (int)((float)(y - this->ymin) * this->yscale);
 };
 
+void icCanvasManager::Renderer::applyBrush(const icCanvasManager::BrushStroke::__ControlPoint &cp) {
+    //Hardcoded brush size and color
+    uint32_t brush_size = 65535;
+    cairo_set_source_rgba(this->xrctxt, 0,0,0,1.0);
+
+    int tx, ty;
+    this->coordToTilespace(cp.x, cp.y, &tx, &ty);
+
+    if (0 < tx || tx >= this->tw) return;
+    if (0 < ty || ty >= this->ty) return;
+
+    cairo_arc(this->xrctxt, tx, ty, brush_size * this->xscale, 0, 2*M_PI);
+    cairo_fill(this->xrctxt);
+};
+
 void icCanvasManager::Renderer::enterImageSurface(const int32_t x, const int32_t y, const int32_t zoom, cairo_surface_t* xrsurf) {
     this->x = x;
     this->y = y;
     this->zoom = std::max(zoom, 31);
     this->xrsurf = xrsurf;
     
+    cairo_destroy(this->xrctxt);
+    this->xrctxt = cairo_create(this->xrsurf);
+
     this->tw = cairo_image_surface_get_width(this->xrsurf);
     this->th = cairo_image_surface_get_height(this->xrsurf);
 
@@ -23,4 +41,8 @@ void icCanvasManager::Renderer::enterImageSurface(const int32_t x, const int32_t
 
     this->xmax = x + (size >> 1);
     this->ymax = y + (size >> 1);
+};
+
+void icCanvasManager::Renderer::drawStroke(icCanvasManager::BrushStroke& br) {
+    this->applyBrush(br.__Spline[0]);
 };

@@ -6,6 +6,8 @@
 #include <cstdint>
 
 namespace icCanvasManager {
+    class Renderer;
+
     class BrushStroke {
         struct __ControlPoint {
             int x, y;
@@ -41,6 +43,8 @@ namespace icCanvasManager {
             int32_t tocp_delta_x, int32_t tocp_delta_y, int32_t to_delta_x,
             int32_t to_delta_y);
         void pen_back();
+
+        friend Renderer;
     };
 };
 
