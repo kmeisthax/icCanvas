@@ -8,6 +8,12 @@ Free Software digital painting system
 2. Support an intuitive drawing workflow.
 3. Support a wide variety of platforms.
 
+##Building
+
+1. Install cmake
+2. Run the script of your choice to create the build system
+3. Compile icCanvas with the build system
+
 ##Architecture
 
 To support ports to a wide variety of platforms and still have decent UX, we
@@ -24,7 +30,7 @@ port; GObject API for a GTK port; etc)
         src/        - Frontend source
     ext/xxx/        - Git submodule for external library xxx
     build/          - CMake buildsystem
-        modules/    - CMake modules for finding needed external libraries, or
+    modules/        - CMake modules for finding needed external libraries, or
                       (in the future) compiling them ourselves
 
 ###Sobmodules
