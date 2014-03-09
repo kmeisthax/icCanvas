@@ -2,17 +2,15 @@
 
 Free Software digital painting system
 
-##Goals
-
-1. Support infinite-canvas, infinite-resolution rendering.
-2. Support an intuitive drawing workflow.
-3. Support a wide variety of platforms.
-
 ##Building
 
 1. Install cmake
 2. Run the script of your choice to create the build system
 3. Compile icCanvas with the build system
+
+##Supported Platforms
+
+Planned: OSX (AppKit), Linux (GTK, Qt)
 
 ##Architecture
 
@@ -29,9 +27,11 @@ port; GObject API for a GTK port; etc)
         include/    - Frontend includes
         src/        - Frontend source
     ext/xxx/        - Git submodule for external library xxx
-    build/          - CMake buildsystem
+    build/          - CMake buildsystem files.
+                      Contains files built by cmake or it's child buildsystem.
     modules/        - CMake modules for finding needed external libraries, or
                       (in the future) compiling them ourselves
+    xxx-configure.* - Scripts for building on platform xxx
 
 ###Sobmodules
 Note: This project contains submodules. Currently we do not require them but
@@ -46,6 +46,12 @@ external libraries, no matter how tempting. It will only cause you pain. Only
 use the submodule repos to update the superproject's reference commit to the
 next stable version.
 
+##Features
+
+1. Infinite-canvas, infinite-resolution rendering.
+2. Intuitive drawing workflow.
+3. Wide variety of platform support.
+
 ###Infinite resolution canvas
 The goal of icCanvas is to provide a painting-friendly drawing workflow while
 still maintaining some advantages of a vector format. As such, instead of
@@ -59,3 +65,11 @@ being 1 mm on that canvas. Ideally, setting a default "scale" of 65536 samples
 to 1 mm will give us a drawing 65 meters big with more zoom than anyone needs,
 but this scale will be user-definable and only used to define what 100% zoom
 means.
+
+###Intuitive drawing workflow
+The primary means of drawing will be through brush strokes already fmailiar to
+users of raster editing programs. Vector shapes may be supported in the future
+but the primary use case is "raster-like" drawing.
+
+We also plan to support pen input devices including those with support for
+pressure and angle sensors.
