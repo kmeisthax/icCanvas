@@ -3,6 +3,7 @@
 
 #include "../icCanvasManager.hpp"
 
+#include <vector>
 #include <cstdint>
 
 namespace icCanvasManager {
@@ -21,7 +22,8 @@ namespace icCanvasManager {
         };
         
         typedef TMVBeizer<__ControlPoint, 3> __Spline;
-        __ControlPoint __LastCP;
+        __ControlPoint _last_cp;
+        __Spline _curve;
     public:
         const static int PRESSURE_MAX = 65536;
         const static int TILT_ANGLE_QUARTER = 32400;
@@ -44,7 +46,7 @@ namespace icCanvasManager {
             int32_t to_delta_y);
         void pen_back();
 
-        friend Renderer;
+        friend class Renderer;
     };
 };
 

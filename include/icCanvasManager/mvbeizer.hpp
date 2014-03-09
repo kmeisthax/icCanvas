@@ -19,26 +19,29 @@ namespace icCanvasManager {
      *  T& operation- (T&);     //pairwise subtraction between like types
      *  T& operation* (float&); //scalar multiplication against floats
      */
-    template <typename _interpolated, int order>
+    template <typename __Interpolated, int _order>
     class TMVBeizer {
         //Beizer storage
-        typedef _interpolated _polynomial[order+1];
-        std::vector<_polynomial> _storage;
-        _interpolated _lerp(_interpolated pt1, float pos1, _interpolated pt2, float pos2, float pos) {
-            return pt1 + (pt2 - pt1) * (pos - pos1) / (pos2 - pos1);
+        struct __Polynomial {
+            __Interpolated _pt[_order+1];
+        };
+        std::vector<__Polynomial> _storage;
+
+        __Interpolated _lerp(__Interpolated pt1, float pos1, __Interpolated pt2, float pos2, float pos) {
+            return pt1 + (pt2 - pt1) * (pos - pos1) * (1 / (pos2 - pos1));
         }
     public:
-        _interpolated evaluate_for_point(float t) {
+        __Interpolated evaluate_for_point(float t) {
             int polynomID = (int)t;
             
-            _polynomial thePoly = this->_storage.get(polynomID);
-            for (int i = order; i > 0; i--) {
+            __Polynomial thePoly = this->_storage.at(polynomID);
+            for (int i = _order; i > 0; i--) {
                 for (int j = 0; j < i; j++) {
-                    thePoly[j] = _lerp(thePoly[j], polynomID, thePoly[j+1], polynomID+1, t);
+                    thePoly._pt[j] = _lerp(thePoly._pt[j], polynomID, thePoly._pt[j+1], polynomID+1, t);
                 }
             }
             
-            return thePoly[0];
+            return thePoly._pt[0];
         }
         
         void extend_to() {

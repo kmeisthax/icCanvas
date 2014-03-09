@@ -14,9 +14,9 @@ void icCanvasManager::Renderer::applyBrush(const icCanvasManager::BrushStroke::_
     this->coordToTilespace(cp.x, cp.y, &tx, &ty);
 
     if (0 < tx || tx >= this->tw) return;
-    if (0 < ty || ty >= this->ty) return;
+    if (0 < ty || ty >= this->th) return;
 
-    cairo_arc(this->xrctxt, tx, ty, brush_size * this->xscale, 0, 2*M_PI);
+    cairo_arc(this->xrctxt, tx, ty, brush_size * this->xscale, 0, 2*3.14159);
     cairo_fill(this->xrctxt);
 };
 
@@ -44,5 +44,5 @@ void icCanvasManager::Renderer::enterImageSurface(const int32_t x, const int32_t
 };
 
 void icCanvasManager::Renderer::drawStroke(icCanvasManager::BrushStroke& br) {
-    this->applyBrush(br.__Spline[0]);
+    this->applyBrush(br._curve.evaluate_for_point(0));
 };
