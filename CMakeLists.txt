@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.8)
 
 project(icCanvas)
 
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/modules")
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PARENT_PROJECT_DIR}/modules")
 
 find_package(Cairo)
 
@@ -14,8 +14,8 @@ if(CMAKE_COMPILER_IS_GNUCXX)
     add_definitions(-std=c++11)
 endif()
 
-file(GLOB CORELIB ../src/*.c ../src/*.cpp)
-include_directories(../include)
+file(GLOB CORELIB ${PARENT_PROJECT_DIR}/src/*.c ${PARENT_PROJECT_DIR}/src/*.cpp)
+include_directories(${PARENT_PROJECT_DIR}/include)
 include_directories(${CAIRO_INCLUDE_DIRS})
 
 add_library(icCanvasManager SHARED ${CORELIB})
