@@ -2,6 +2,6 @@
 
 @interface ICAKAppDelegate : NSObject <NSApplicationDelegate>
 
-
+@property (retain) NSWindow *window;
 
 @end
