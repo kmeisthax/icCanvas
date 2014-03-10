@@ -15,9 +15,4 @@ if(CMAKE_COMPILER_IS_GNUCXX)
 endif()
 
 file(GLOB CORELIB ${PARENT_PROJECT_DIR}/src/*.c ${PARENT_PROJECT_DIR}/src/*.cpp)
-include_directories(${PARENT_PROJECT_DIR}/include)
-include_directories(${CAIRO_INCLUDE_DIRS})
-
-add_library(icCanvasManager SHARED ${CORELIB})
-
-target_link_libraries(icCanvasManager ${CAIRO_LIBRARIES})
+set(CORELIB_INCLUDE_DIRS ${PARENT_PROJECT_DIR}/include)
