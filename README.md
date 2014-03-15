@@ -8,9 +8,26 @@ Free Software digital painting system
 2. Run the script of your choice to create the build system
 3. Compile icCanvas with the build system
 
-##Supported Platforms
+##Requirements
 
-Planned: OSX (AppKit), Linux (GTK, Qt)
+* ###Core library
+
+    The core library, icCanvasManager, can be built using a C++11 compiler and
+    cmake. It must be built on a system with cairo and development headers for
+    cairo present; future plans for non-system Cairo platforms is to compile
+    and ship our own Cairo build.
+
+    * ####Objective-C port
+
+        Requires Objective-C compiler that can parse C++11 headers.
+
+* ###AppKit frontend
+
+    This frontend targets the OSX system UI toolkit, AppKit. Makes one
+    icCanvas.app with icCanvasManager.framework inside.
+
+    Not currently tested for or intended for use with GNUStep or other
+    non-Apple Objective-C environments.
 
 ##Architecture
 
@@ -31,7 +48,8 @@ port; GObject API for a GTK port; etc)
                       Contains files built by cmake or it's child buildsystem.
     modules/        - CMake modules for finding needed external libraries, or
                       (in the future) compiling them ourselves
-    xxx-configure.* - Scripts for building on platform xxx
+    xxx-configure.* - Scripts for running CMake files for platform xxx
+    xxx-make.*      - Scripts for compiling using the resulting CMake project
 
 ###Sobmodules
 Note: This project contains submodules. Currently we do not require them but
