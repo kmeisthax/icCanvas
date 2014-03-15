@@ -22,7 +22,6 @@ namespace icCanvasManager {
         };
         
         typedef TMVBeizer<__ControlPoint, 3> __Spline;
-        __ControlPoint _last_cp;
         __Spline _curve;
     public:
         const static int PRESSURE_MAX = 65536;
