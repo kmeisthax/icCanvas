@@ -1,3 +1,5 @@
+#import <Cocoa/Cocoa.h>
+
 @interface ICMBrushStroke : NSObject
 
 - (id)init;

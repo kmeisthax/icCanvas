@@ -11,3 +11,5 @@ include_directories(include)
 add_executable(icCanvas MACOSX_BUNDLE ${ICAPPKIT_SRC})
 target_link_libraries(icCanvas ${APPKIT})
 target_link_libraries(icCanvas icCanvasManager)
+
+target_link_libraries(icCanvasManager ${APPKIT})

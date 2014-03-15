@@ -61,8 +61,8 @@ void icCanvasManager::BrushStroke::pen_begin_tilt(int32_t tilt, int32_t angle) {
 
 void icCanvasManager::BrushStroke::pen_begin_velocity(int32_t delta_x, int32_t delta_y) {
     auto& thePt = this->_curve.get_point(0,0);
-    thePt.delta_x = delta_x;
-    thePt.delta_y = delta_y;
+    thePt.dx = delta_x;
+    thePt.dy = delta_y;
 };
 
 void icCanvasManager::BrushStroke::pen_to(int32_t fromcp_x, int32_t fromcp_y, int32_t tocp_x, int32_t tocp_y, int32_t to_x, int32_t to_y) {
@@ -119,14 +119,14 @@ void icCanvasManager::BrushStroke::pen_to_velocity(int32_t fromcp_delta_x, int32
     auto &tocp = this->_curve.get_point(ptCount - 1, 2);
     auto &topt = this->_curve.get_point(ptCount - 1, 3);
 
-    fromcp.delta_x = fromcp_delta_x
-    fromcp.delta_y = fromcp_delta_y;
+    fromcp.dx = fromcp_delta_x;
+    fromcp.dy = fromcp_delta_y;
 
-    tocp.delta_x = tocp_delta_x;
-    tocp.delta_y = tocp_delta_y;
+    tocp.dx = tocp_delta_x;
+    tocp.dy = tocp_delta_y;
 
-    topt.delta_x = to_delta_x;
-    topt.delta_y = to_delta_y;
+    topt.dx = to_delta_x;
+    topt.dy = to_delta_y;
 };
 
 void icCanvasManager::BrushStroke::pen_back() {

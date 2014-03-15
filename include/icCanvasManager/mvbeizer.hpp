@@ -4,6 +4,7 @@
 #include "../icCanvasManager.hpp"
 
 #include <vector>
+#include <stdexcept>
 
 namespace icCanvasManager {
     /* Spline polynomial interpolation between any lerpable type.
@@ -58,21 +59,17 @@ namespace icCanvasManager {
 
         __Interpolated& get_point(const int splinept, const int polypt) {
             if (polypt <= _order) {
-                __Polynomial* spl = this->_storage.at(splinept);
-
-                if (spl) {
-                    return spl->_pt[polypt];
-                }
+                __Polynomial& spl = this->_storage.at(splinept);
+                return spl._pt[polypt];
+            } else {
+                throw std::out_of_range("icCanvasManager::TMVBeizer::get_point");
             }
         };
 
         void set_point(const int splinept, const int polypt, const __Interpolated& pt) {
             if (polypt <= _order) {
-                __Polynomial* spl = this->_storage.at(splinept);
-
-                if (spl) {
-                    spl->_pt[polypt] = pt;
-                }
+                __Polynomial& spl = this->_storage.at(splinept);
+                spl._pt[polypt] = pt;
             }
         };
     };
