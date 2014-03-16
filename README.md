@@ -7,6 +7,7 @@ Free Software digital painting system
 1. Install cmake
 2. Run the script of your choice to create the build system (xxx-configure)
 3. Compile icCanvas with the generated build system (xxx-make)
+4. Gather build products together to create installable package (xxx-package)
 
 Build products will appear in the build/xxx directory for your platform.
 
@@ -52,6 +53,7 @@ port; GObject API for a GTK port; etc)
                       (in the future) compiling them ourselves
     xxx-configure.* - Scripts for running CMake files for platform xxx
     xxx-make.*      - Scripts for compiling using the resulting CMake project
+    xxx-package.*   - Scripts for packaging build products for distribution
 
 ###Sobmodules
 Note: This project contains submodules. Currently we do not require them but
