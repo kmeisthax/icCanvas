@@ -13,3 +13,16 @@ target_link_libraries(icCanvas ${APPKIT})
 target_link_libraries(icCanvas icCanvasManager)
 
 target_link_libraries(icCanvasManager ${APPKIT})
+
+set(ICCANVAS_APP "\${CMAKE_INSTALL_PREFIX}/icCanvas.app")
+set(CORELIB_BUNDLE "\${CMAKE_INSTALL_PREFIX}/icCanvasManager.framework")
+
+install(TARGETS icCanvas BUNDLE DESTINATION .)
+install(CODE "
+    include(BundleUtilities)
+    fixup_bundle(\"${ICCANVAS_APP}\" \"\" \"\")
+    ")
+
+set(CPACK_GENERATOR DragNDrop)
+
+include(CPack)

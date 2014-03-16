@@ -2,4 +2,4 @@
 
 cd build/osx
 
-make
+make && cpack
