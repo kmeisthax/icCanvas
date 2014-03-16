@@ -5,8 +5,10 @@ Free Software digital painting system
 ##Building
 
 1. Install cmake
-2. Run the script of your choice to create the build system
-3. Compile icCanvas with the build system
+2. Run the script of your choice to create the build system (xxx-configure)
+3. Compile icCanvas with the generated build system (xxx-make)
+
+Build products will appear in the build/xxx directory for your platform.
 
 ##Requirements
 
