@@ -16,8 +16,8 @@
 };
 
 - (void)dealloc {
-    [super dealloc];
     delete self->_wrapped;
+    [super dealloc];
 };
 
 - (void)penBeginWithX:(int32_t)x andY:(int32_t)y {
@@ -54,6 +54,10 @@
 
 - (void)penBack {
     self->_wrapped->pen_back();
+};
+
+- (void*)getWrappedObject {
+    return (void*)self->_wrapped;
 };
 
 @end
