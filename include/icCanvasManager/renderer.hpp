@@ -31,9 +31,10 @@ namespace icCanvasManager {
          * The cairo surface pointer given to the renderer does not transfer
          * memory ownership, but must point to valid memory for the entire time
          * that you draw with this renderer.
-         * 
-         * The cairo surface must be an Image Surface.
          */
+        void enterSurface(const int32_t x, const int32_t y, const int32_t zoom, cairo_surface_t* xrsurf, const int height, const int width);
+
+        /* Convenience method for image surfaces. */
         void enterImageSurface(const int32_t x, const int32_t y, const int32_t zoom, cairo_surface_t* xrsurf);
         
         /* Given a brushstroke, draw it onto the surface at the specified
