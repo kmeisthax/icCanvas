@@ -20,6 +20,10 @@
     [super dealloc];
 };
 
+- (void)enterSurfaceAtX:(const int32_t)x andY:(const int32_t)y withZoom:(const int32_t)zoom andSurface:(cairo_surface_t*)xrsurf withHeight:(const int)height andWidth:(const int)width {
+    self->_wrapped.enterImageSurface(x, y, zoom, xrsurf, height, width);
+};
+
 - (void)enterImageSurfaceAtX:(const int32_t)x andY:(const int32_t)y withZoom:(const int32_t)zoom andSurface:(cairo_surface_t*)xrsurf {
     self->_wrapped.enterImageSurface(x, y, zoom, xrsurf);
 };
