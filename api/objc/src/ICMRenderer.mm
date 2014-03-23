@@ -30,7 +30,7 @@
 
 - (void)drawStroke:(ICMBrushStroke*)br {
     icCanvasManager::BrushStroke* cppbr = (icCanvasManager::BrushStroke*)[br getWrappedObject];
-    self->_wrapped->drawStroke(cppbr);
+    self->_wrapped->drawStroke(*cppbr);
 };
 
 - (void*)getWrappedObject {
