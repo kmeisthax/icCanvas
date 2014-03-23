@@ -1,4 +1,4 @@
-#import <icCanvasObjC.h>
+#import <icCanvasManagerObjC.h>
 #import <icCanvasAppKit.h>
 
 @implementation ICAKCanvasView {
