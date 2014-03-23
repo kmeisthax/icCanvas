@@ -9,7 +9,7 @@
     self = [super initWithFrame:frameRect];
     
     if (self != nil) {
-        self.renderer = [[ICMRenderer alloc] init];
+        self->renderer = [[ICMRenderer alloc] init];
     }
     
     return self;
@@ -17,7 +17,7 @@
 
 - (void)drawRect:(NSRect)dirtyRect {
     //Not-so-toll-free bridging
-    NSGraphicsContext cocoaContext = [NSGraphicsContext currentContext];
+    NSGraphicsContext* cocoaContext = [NSGraphicsContext currentContext];
     CGContextRef cgContext = (__bridged CGContextRef)[cocoaContext graphicsPort];
     
     CGContextTranslateCTM(cgContext, 0.0, self.bounds.size.height);
