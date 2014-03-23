@@ -25,12 +25,12 @@
 };
 
 - (void)enterImageSurfaceAtX:(const int32_t)x andY:(const int32_t)y withZoom:(const int32_t)zoom andSurface:(cairo_surface_t*)xrsurf {
-    self->_wrapped->enterImageSurface(x, y, zoom, xrsurf);
+    self->_wrapped->enterSurface(x, y, zoom, xrsurf);
 };
 
 - (void)drawStroke:(ICMBrushStroke*)br {
     icCanvasManager::BrushStroke* cppbr = (icCanvasManager::BrushStroke*)[br getWrappedObject];
-    self->drawStroke(&cppbr);
+    self->_wrapped->drawStroke(&cppbr);
 };
 
 - (void*)getWrappedObject {
