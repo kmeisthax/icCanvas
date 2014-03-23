@@ -1,6 +1,8 @@
 #import <icCanvasManagerObjC.h>
 #import <icCanvasAppKit.h>
 
+#include <cairo.h>
+
 @implementation ICAKCanvasView {
     ICMRenderer* renderer;
 }
