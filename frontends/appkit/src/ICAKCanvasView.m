@@ -18,7 +18,7 @@
 - (void)drawRect:(NSRect)dirtyRect {
     //Not-so-toll-free bridging
     NSGraphicsContext* cocoaContext = [NSGraphicsContext currentContext];
-    CGContextRef cgContext = (__bridged CGContextRef)[cocoaContext graphicsPort];
+    CGContextRef cgContext = (__bridge CGContextRef)[cocoaContext graphicsPort];
     
     CGContextTranslateCTM(cgContext, 0.0, self.bounds.size.height);
     CGContextScaleCTM(cgContext, 1.0, -1.0);
