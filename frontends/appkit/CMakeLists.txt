@@ -14,6 +14,14 @@ target_link_libraries(icCanvas icCanvasManager)
 
 target_link_libraries(icCanvasManager ${APPKIT})
 
+if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+    set_target_properties(icCanvas PROPERTIES COMPILE_FLAGS "-fobjc-arc")
+elseif (CMAKE_COMPILER_IS_GNUCXX)
+    message("The RMS is pleased.")
+elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel")
+    message("You're kidding, right?!")
+endif()
+
 set(ICCANVAS_APP "\${CMAKE_INSTALL_PREFIX}/icCanvas.app")
 set(CORELIB_BUNDLE "\${CMAKE_INSTALL_PREFIX}/icCanvasManager.framework")
 
