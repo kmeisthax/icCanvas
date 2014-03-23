@@ -1,5 +1,7 @@
 #import <Cocoa/Cocoa.h>
 
+#include <cairo.h>
+
 @interface ICMRenderer : NSObject
 
 - (id)init;
