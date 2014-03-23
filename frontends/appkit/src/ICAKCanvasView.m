@@ -1,3 +1,5 @@
+#import <icCanvasAppKit.h>
+
 @implementation ICAKCanvasView {
     ICMRenderer* renderer;
 }
