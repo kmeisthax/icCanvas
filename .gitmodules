@@ -1,6 +1,0 @@
-[submodule "ext/cairo"]
-	path = ext/cairo
-	url = git://anongit.freedesktop.org/git/cairo
-[submodule "ext/pixman"]
-	path = ext/pixman
-	url = git://anongit.freedesktop.org/git/pixman.git
