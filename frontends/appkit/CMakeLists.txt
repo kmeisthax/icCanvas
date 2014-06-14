@@ -8,6 +8,7 @@ if(!CAIRO_FOUND)
     message(FATAL_ERROR "Need Cairo to compile.")
 endif()
 
+include(${PARENT_PROJECT_DIR}/CMakeLists.txt)
 include(${PARENT_PROJECT_DIR}/api/objc/CMakeLists.txt)
 
 find_library(APPKIT AppKit)
