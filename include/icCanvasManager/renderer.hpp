@@ -24,6 +24,7 @@ namespace icCanvasManager {
         /* Draw the current brush at a particular point. */
         void applyBrush(const BrushStroke::__ControlPoint &cp);
     public:
+        Renderer();
         virtual ~Renderer();
 
         /* Specify the current drawing surface, location, and zoom level.
@@ -31,11 +32,18 @@ namespace icCanvasManager {
          * The cairo surface pointer given to the renderer does not transfer
          * memory ownership, but must point to valid memory for the entire time
          * that you draw with this renderer.
+         * 
+         * A fresh context will be created for your surface. For drawing onto
+         * already existing contexts, see enterContext.
          */
         void enterSurface(const int32_t x, const int32_t y, const int32_t zoom, cairo_surface_t* xrsurf, const int height, const int width);
 
         /* Convenience method for image surfaces. */
         void enterImageSurface(const int32_t x, const int32_t y, const int32_t zoom, cairo_surface_t* xrsurf);
+        
+        /* Convenience method for drawing directly to GUI widgets.
+         */
+        void enterContext(const int32_t x, const int32_t y, const int32_t zoom, cairo_t* xrctxt, const int height, const int width);
         
         /* Given a brushstroke, draw it onto the surface at the specified
          * position and zoom level.

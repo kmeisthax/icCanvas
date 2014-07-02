@@ -43,6 +43,7 @@ icCanvasManager::BrushStroke::__ControlPoint icCanvasManager::BrushStroke::__Con
 };
 
 void icCanvasManager::BrushStroke::pen_begin(int32_t x, int32_t y) {
+    if (this->_curve.count_points() == 0) this->_curve.extend_spline();
     auto& thePt = this->_curve.get_point(0,0);
     thePt.x = x;
     thePt.y = y;
