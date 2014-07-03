@@ -4,5 +4,6 @@
 #include "icCanvasManager/mvbeizer.hpp"
 #include "icCanvasManager/brushstroke.hpp"
 #include "icCanvasManager/renderer.hpp"
+#include "icCanvasManager/drawing.hpp"
 
 #endif

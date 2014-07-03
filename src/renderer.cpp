@@ -1,6 +1,13 @@
 #include <icCanvasManager.hpp>
 
-icCanvasManager::Renderer::~Renderer() {};
+icCanvasManager::Renderer::Renderer():
+    xrctxt(NULL), xrsurf(NULL) {
+}
+
+icCanvasManager::Renderer::~Renderer() {
+    if (this->xrsurf) cairo_surface_destroy(this->xrsurf);
+    if (this->xrctxt) cairo_destroy(this->xrctxt);
+};
 
 void icCanvasManager::Renderer::coordToTilespace(const int32_t x, const int32_t y, int32_t* out_tx, int32_t* out_ty) {
     if (out_tx) *out_tx = (int)((float)(x - this->xmin) * this->xscale);
@@ -23,12 +30,16 @@ void icCanvasManager::Renderer::applyBrush(const icCanvasManager::BrushStroke::_
 };
 
 void icCanvasManager::Renderer::enterSurface(const int32_t x, const int32_t y, const int32_t zoom, cairo_surface_t* xrsurf, const int height, const int width) {
+    cairo_surface_reference(xrsurf);
+    
     this->x = x;
     this->y = y;
     this->zoom = std::max(zoom, 31);
+    
+    if (this->xrsurf) cairo_surface_destroy(this->xrsurf);
     this->xrsurf = xrsurf;
-
-    cairo_destroy(this->xrctxt);
+    
+    if (this->xrctxt) cairo_destroy(this->xrctxt);
     this->xrctxt = cairo_create(this->xrsurf);
 
     this->tw = width;
@@ -46,12 +57,16 @@ void icCanvasManager::Renderer::enterSurface(const int32_t x, const int32_t y, c
 }
 
 void icCanvasManager::Renderer::enterImageSurface(const int32_t x, const int32_t y, const int32_t zoom, cairo_surface_t* xrsurf) {
+    cairo_surface_reference(xrsurf);
+    
     this->x = x;
     this->y = y;
     this->zoom = std::max(zoom, 31);
+    
+    if (this->xrsurf) cairo_surface_destroy(this->xrsurf);
     this->xrsurf = xrsurf;
     
-    cairo_destroy(this->xrctxt);
+    if (this->xrctxt) cairo_destroy(this->xrctxt);
     this->xrctxt = cairo_create(this->xrsurf);
 
     this->tw = cairo_image_surface_get_width(this->xrsurf);
@@ -67,6 +82,33 @@ void icCanvasManager::Renderer::enterImageSurface(const int32_t x, const int32_t
     this->xmax = x + (size >> 1);
     this->ymax = y + (size >> 1);
 };
+
+void icCanvasManager::Renderer::enterContext(const int32_t x, const int32_t y, const int32_t zoom, cairo_t* xrctxt, const int height, const int width) {
+    cairo_reference(xrctxt);
+    
+    this->x = x;
+    this->y = y;
+    this->zoom = std::max(zoom, 31);
+    
+    if (this->xrsurf) cairo_surface_destroy(this->xrsurf);
+    this->xrsurf = NULL;
+    
+    if (this->xrctxt) cairo_destroy(this->xrctxt);
+    this->xrctxt = xrctxt;
+    
+    this->tw = width;
+    this->th = height;
+
+    int64_t size = UINT32_MAX >> this->zoom;
+    this->xmin = x - (size >> 1);
+    this->ymin = y - (size >> 1);
+
+    this->xscale = (float)this->tw / (float)size;
+    this->yscale = (float)this->th / (float)size;
+
+    this->xmax = x + (size >> 1);
+    this->ymax = y + (size >> 1);
+}
 
 void icCanvasManager::Renderer::drawStroke(icCanvasManager::BrushStroke& br) {
     this->applyBrush(br._curve.evaluate_for_point(0));

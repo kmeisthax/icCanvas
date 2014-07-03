@@ -24,5 +24,6 @@ include_directories(include)
 add_executable(icCanvasGtk ${ICGTK_SRC})
 
 target_link_libraries(icCanvasGtk ${GTKMM_LIBRARIES})
+target_link_libraries(icCanvasGtk icCanvasManager)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
