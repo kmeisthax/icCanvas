@@ -15,13 +15,13 @@ bool icCanvasGtk::CanvasWidget::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
     auto strokePtr = this->doc->begin(), end = this->doc->end();
     auto capi_cr = (cairo_t*)cr->cobj();
     
-    auto clear_ptn = Cairo::SolidPattern::create_rgb(1.0f, 0.0f, 1.0f);
+    auto clear_ptn = Cairo::SolidPattern::create_rgb(1.0f, 1.0f, 1.0f);
     
     cr->save();
     cr->set_source(clear_ptn);
     cr->paint();
     
-    this->r.enterContext(0, 0, 65535, capi_cr, this->get_allocated_height(), this->get_allocated_width());
+    this->r.enterContext(0, 0, 13, capi_cr, this->get_allocated_height(), this->get_allocated_width());
     
     for (; strokePtr != end; strokePtr++) {
         this->r.drawStroke(*strokePtr);

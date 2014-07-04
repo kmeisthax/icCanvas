@@ -1,4 +1,5 @@
 #include <icCanvasManager.hpp>
+#include <iostream>
 
 icCanvasManager::Renderer::Renderer():
     xrctxt(NULL), xrsurf(NULL) {
@@ -17,15 +18,17 @@ void icCanvasManager::Renderer::coordToTilespace(const int32_t x, const int32_t 
 void icCanvasManager::Renderer::applyBrush(const icCanvasManager::BrushStroke::__ControlPoint &cp) {
     //Hardcoded brush size and color
     uint32_t brush_size = 65535;
-    cairo_set_source_rgba(this->xrctxt, 0,0,0,1.0);
-
+    cairo_set_source_rgba(this->xrctxt, 0.0, 0.0, 0.0, 1.0);
+    
     int tx, ty;
     this->coordToTilespace(cp.x, cp.y, &tx, &ty);
 
-    if (0 < tx || tx >= this->tw) return;
-    if (0 < ty || ty >= this->th) return;
-
+    if (0 > tx || tx >= this->tw) return;
+    if (0 > ty || ty >= this->th) return;
+    
+    cairo_new_path(this->xrctxt);
     cairo_arc(this->xrctxt, tx, ty, brush_size * this->xscale, 0, 2*3.14159);
+    cairo_close_path(this->xrctxt);
     cairo_fill(this->xrctxt);
 };
 
@@ -34,7 +37,7 @@ void icCanvasManager::Renderer::enterSurface(const int32_t x, const int32_t y, c
     
     this->x = x;
     this->y = y;
-    this->zoom = std::max(zoom, 31);
+    this->zoom = std::min(zoom, 31);
     
     if (this->xrsurf) cairo_surface_destroy(this->xrsurf);
     this->xrsurf = xrsurf;
@@ -61,7 +64,7 @@ void icCanvasManager::Renderer::enterImageSurface(const int32_t x, const int32_t
     
     this->x = x;
     this->y = y;
-    this->zoom = std::max(zoom, 31);
+    this->zoom = std::min(zoom, 31);
     
     if (this->xrsurf) cairo_surface_destroy(this->xrsurf);
     this->xrsurf = xrsurf;
@@ -88,7 +91,7 @@ void icCanvasManager::Renderer::enterContext(const int32_t x, const int32_t y, c
     
     this->x = x;
     this->y = y;
-    this->zoom = std::max(zoom, 31);
+    this->zoom = std::min(zoom, 31);
     
     if (this->xrsurf) cairo_surface_destroy(this->xrsurf);
     this->xrsurf = NULL;
