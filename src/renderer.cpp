@@ -116,13 +116,17 @@ void icCanvasManager::Renderer::enterContext(const int32_t x, const int32_t y, c
 }
 
 void icCanvasManager::Renderer::drawStroke(icCanvasManager::BrushStroke& br) {
-    this->applyBrush(br._curve.evaluate_for_point(0.0));
-    this->applyBrush(br._curve.evaluate_for_point(0.125));
-    this->applyBrush(br._curve.evaluate_for_point(0.25));
-    this->applyBrush(br._curve.evaluate_for_point(0.375));
-    this->applyBrush(br._curve.evaluate_for_point(0.50));
-    this->applyBrush(br._curve.evaluate_for_point(0.625));
-    this->applyBrush(br._curve.evaluate_for_point(0.75));
-    this->applyBrush(br._curve.evaluate_for_point(0.875));
-    this->applyBrush(br._curve.evaluate_for_point(0.999));
+    auto num_segments = br.count_segments();
+    
+    for (int i = 0; i < num_segments; i++) {
+        this->applyBrush(br._curve.evaluate_for_point(i + 0.0));
+        this->applyBrush(br._curve.evaluate_for_point(i + 0.125));
+        this->applyBrush(br._curve.evaluate_for_point(i + 0.25));
+        this->applyBrush(br._curve.evaluate_for_point(i + 0.375));
+        this->applyBrush(br._curve.evaluate_for_point(i + 0.50));
+        this->applyBrush(br._curve.evaluate_for_point(i + 0.625));
+        this->applyBrush(br._curve.evaluate_for_point(i + 0.75));
+        this->applyBrush(br._curve.evaluate_for_point(i + 0.875));
+        this->applyBrush(br._curve.evaluate_for_point(i + 0.999));
+    }
 };

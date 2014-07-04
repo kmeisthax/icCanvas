@@ -144,3 +144,7 @@ void icCanvasManager::BrushStroke::pen_back() {
     this->_curve.contract_spline();
     this->pos--;
 };
+
+icCanvasManager::BrushStroke::spline_size_type icCanvasManager::BrushStroke::count_segments() {
+    this->_curve.count_points();
+};

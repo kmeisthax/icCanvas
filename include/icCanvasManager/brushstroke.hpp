@@ -25,6 +25,8 @@ namespace icCanvasManager {
         __Spline _curve;
         __Spline::size_type pos;
     public:
+        typedef __Spline::size_type spline_size_type;
+        
         BrushStroke();
         virtual ~BrushStroke();
         
@@ -74,6 +76,9 @@ namespace icCanvasManager {
         
         //Erase the last spline section.
         void pen_back();
+        
+        //Count the number of spline segments.
+        spline_size_type count_segments();
 
         friend class Renderer;
     };
