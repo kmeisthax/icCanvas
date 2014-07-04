@@ -51,6 +51,10 @@
     self->_wrapped->pen_to_velocity(fromcp_delta_x, fromcp_delta_y, tocp_delta_x, tocp_delta_y, to_delta_x, to_delta_y);
 };
 
+- (void)penExtendWithContinuityLevel:(int) lvl {
+    self->_wrapped->pen_extend(lvl);
+};
+
 - (void)penBack {
     self->_wrapped->pen_back();
 };

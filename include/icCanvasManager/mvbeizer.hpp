@@ -32,6 +32,21 @@ namespace icCanvasManager {
             return pt1 + (pt2 - pt1) * (pos - pos1) * (1 / (pos2 - pos1));
         }
     public:
+        typedef typename std::vector<__Polynomial>::size_type size_type;
+        
+        /* Interpolate the stored spline at point t.
+         * 
+         * The whole-number portion of t specifies what spline section to use.
+         * So, for example, in a three-section spline, the following three half
+         * open ranges are defined as follows:
+         * 
+         *      [0.0, 1.0) - Spline segment 0
+         *      [1.0, 2.0) - Spline segment 1
+         *      [2.0, 3.0) - Spline segment 2
+         * 
+         * with all other possible spline ranges undefined (and most likely,
+         * crashing the program).
+         */
         __Interpolated evaluate_for_point(float t) {
             int polynomID = (int)t;
             

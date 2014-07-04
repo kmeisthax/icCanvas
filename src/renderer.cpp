@@ -16,8 +16,10 @@ void icCanvasManager::Renderer::coordToTilespace(const int32_t x, const int32_t 
 };
 
 void icCanvasManager::Renderer::applyBrush(const icCanvasManager::BrushStroke::__ControlPoint &cp) {
+    //std::cerr << cp.x << "," << cp.y << std::endl;
+    
     //Hardcoded brush size and color
-    uint32_t brush_size = 65535;
+    uint32_t brush_size = 4096;
     cairo_set_source_rgba(this->xrctxt, 0.0, 0.0, 0.0, 1.0);
     
     int tx, ty;
@@ -114,5 +116,13 @@ void icCanvasManager::Renderer::enterContext(const int32_t x, const int32_t y, c
 }
 
 void icCanvasManager::Renderer::drawStroke(icCanvasManager::BrushStroke& br) {
-    this->applyBrush(br._curve.evaluate_for_point(0));
+    this->applyBrush(br._curve.evaluate_for_point(0.0));
+    this->applyBrush(br._curve.evaluate_for_point(0.125));
+    this->applyBrush(br._curve.evaluate_for_point(0.25));
+    this->applyBrush(br._curve.evaluate_for_point(0.375));
+    this->applyBrush(br._curve.evaluate_for_point(0.50));
+    this->applyBrush(br._curve.evaluate_for_point(0.625));
+    this->applyBrush(br._curve.evaluate_for_point(0.75));
+    this->applyBrush(br._curve.evaluate_for_point(0.875));
+    this->applyBrush(br._curve.evaluate_for_point(0.999));
 };

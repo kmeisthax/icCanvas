@@ -13,6 +13,7 @@
 - (void)penToFromControlPointPressure:(int32_t)fromcp_pressure toControlPointPressure:(int32_t)tocp_pressure toPressure:(int32_t)to_pressure;
 - (void)penToFromControlPointTilt:(int32_t)fromcp_tilt andAngle:(int32_t)fromcp_angle toControlPointTilt:(int32_t)tocp_tilt andAngle:(int32_t)tocp_angle toTilt:(int32_t)to_tilt andAngle:(int32_t)to_angle;
 - (void)penToFromControlPointDeltaX:(int32_t)fromcp_delta_x andDeltaY:(int32_t)fromcp_delta_y toControlPointDeltaX:(int32_t)tocp_delta_x andDeltaY:(int32_t)tocp_delta_y toDeltaX:(int32_t)to_delta_x andDeltaY:(int32_t)to_delta_y;
+- (void)penExtendWithContinuityLevel:(int) lvl;
 - (void)penBack;
 
 - (void*)getWrappedObject;

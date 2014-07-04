@@ -21,7 +21,7 @@ bool icCanvasGtk::CanvasWidget::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
     cr->set_source(clear_ptn);
     cr->paint();
     
-    this->r.enterContext(0, 0, 13, capi_cr, this->get_allocated_height(), this->get_allocated_width());
+    this->r.enterContext(0, 0, 14, capi_cr, this->get_allocated_height(), this->get_allocated_width());
     
     for (; strokePtr != end; strokePtr++) {
         this->r.drawStroke(*strokePtr);
