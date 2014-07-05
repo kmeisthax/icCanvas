@@ -205,15 +205,37 @@ void icCanvasManager::Renderer::drawStroke(icCanvasManager::BrushStroke& br) {
             for (int k = 0; k < iterates; k++) {
                 float step = j / iterates;
                 
+                if (this_t >= (i + 1)) {
+                    this_t = i + 2;
+                    break;
+                }
                 auto k1 = step * diff(this_t);
-                auto k2 = step * diff(this_t + (k1 / 2.0));
-                auto k3 = step * diff(this_t + (k2 / 2.0));
-                auto k4 = step * diff(this_t + k3);
+                
+                auto t2 = this_t + (k1 / 2.0);
+                if (t2 >= (i + 1)) {
+                    this_t = i + 2;
+                    break;
+                }
+                auto k2 = step * diff(t2);
+                
+                auto t3 = this_t + (k2 / 2.0);
+                if (t3 >= (i + 1)) {
+                    this_t = i + 2;
+                    break;
+                }
+                auto k3 = step * diff(t3);
+                
+                auto t4 = this_t + k3;
+                if (t4 >= (i + 1)) {
+                    this_t = i + 2;
+                    break;
+                }
+                auto k4 = step * diff(t4);
                 
                 this_t += (k1 + 2 * k2 + 2 * k3 + k4) / 6.0;
             }
             
-            if (this_t > (i + 1)) {
+            if (this_t >= (i + 1)) {
                 //Our arclength function is currently broken, so bail out if we
                 //are already off the edge of the polynomial.
                 break;

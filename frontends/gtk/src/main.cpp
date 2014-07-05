@@ -9,7 +9,7 @@ int main (int argc, char *argv[]) {
     window.set_default_size(400, 400);
     
     icCanvasGtk::CanvasWidget canvasWdgt;
-    canvasWdgt.set_size_request(200, 400);
+    canvasWdgt.set_size_request(100, 100);
     
     window.add(canvasWdgt);
     window.show_all();
