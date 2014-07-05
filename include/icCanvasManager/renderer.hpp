@@ -23,6 +23,9 @@ namespace icCanvasManager {
 
         /* Draw the current brush at a particular point. */
         void applyBrush(const BrushStroke::__ControlPoint &cp);
+        
+        class _DifferentialCurveFunctor;
+        float curve_arc_length(int polynomID, BrushStroke::__Spline::derivative_type &dt);
     public:
         Renderer();
         virtual ~Renderer();

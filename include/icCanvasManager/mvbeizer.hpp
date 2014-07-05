@@ -34,7 +34,30 @@ namespace icCanvasManager {
     public:
         typedef typename std::vector<__Polynomial>::size_type size_type;
         
+        /* Beizer derivatives are lower-order. */
+        typedef TMVBeizer<__Interpolated, _order - 1> derivative_type;
+        
+        /* Compute the derivative of the Beizer curve. */
+        derivative_type derivative() {
+            derivative_type out;
+            
+            for (int i = 0; i < this->_storage.size(); i++) {
+                out.extend_spline();
+                
+                for (int j = 0; j < _order; j++) {
+                    auto derivPt = out.get_point(i, j);
+                    derivPt = (this->get_point(i, j+1) - this->get_point(i, j)) * _order;
+                    out.set_point(i, j, derivPt);
+                }
+            }
+            
+            return out;
+        };
+        
         /* Interpolate the stored spline at point t.
+         * 
+         * Uses de Casteljau's algorithm (iterated lerps) to calculate points
+         * on the curve. It's ridiculously easy to understand.
          * 
          * The whole-number portion of t specifies what spline section to use.
          * So, for example, in a three-section spline, the following three half

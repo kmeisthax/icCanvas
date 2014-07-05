@@ -1,4 +1,5 @@
 #include <icCanvasManager.hpp>
+#include <cmath>
 #include <iostream>
 
 icCanvasManager::Renderer::Renderer():
@@ -20,7 +21,7 @@ void icCanvasManager::Renderer::applyBrush(const icCanvasManager::BrushStroke::_
     
     //Hardcoded brush size and color
     uint32_t brush_size = 4096;
-    cairo_set_source_rgba(this->xrctxt, 0.0, 0.0, 0.0, 1.0);
+    cairo_set_source_rgba(this->xrctxt, 0.0, 0.0, 0.0, 0.125);
     
     int tx, ty;
     this->coordToTilespace(cp.x, cp.y, &tx, &ty);
@@ -115,18 +116,110 @@ void icCanvasManager::Renderer::enterContext(const int32_t x, const int32_t y, c
     this->ymax = y + (size >> 1);
 }
 
+class icCanvasManager::Renderer::_DifferentialCurveFunctor {
+        icCanvasManager::BrushStroke::__Spline::derivative_type& d;
+    public:
+        _DifferentialCurveFunctor(icCanvasManager::BrushStroke::__Spline::derivative_type& d) : d(d) {};
+        float operator() (float t) {
+            auto dpt = this->d.evaluate_for_point(t);
+            
+            return 1 / sqrt((float)dpt.x * (float)dpt.x + (float)dpt.y * (float)dpt.y);
+        }
+};
+
+//Numerical factors required for Gauss-Legendre integration.
+//The choice of 20 is motivated by the source examples for
+//http://pomax.github.io/bezierinfo/ which consistently use 20 terms
+static float gauss_weights[20] = {
+    0.1527533871307258,
+    0.1527533871307258,
+    0.1491729864726037,
+    0.1491729864726037,
+    0.1420961093183820,
+    0.1420961093183820,
+    0.1316886384491766,
+    0.1316886384491766,
+    0.1181945319615184,
+    0.1181945319615184,
+    0.1019301198172404,
+    0.1019301198172404,
+    0.0832767415767048,
+    0.0832767415767048,
+    0.0626720483341091,
+    0.0626720483341091,
+    0.0406014298003869,
+    0.0406014298003869,
+    0.0176140071391521,
+    0.0176140071391521
+};
+
+static float gauss_abscissae[20] = {
+    -0.0765265211334973,
+     0.0765265211334973,
+    -0.2277858511416451,
+     0.2277858511416451,
+    -0.3737060887154195,
+     0.3737060887154195,
+    -0.5108670019508271,
+     0.5108670019508271,
+    -0.6360536807265150,
+     0.6360536807265150,
+    -0.7463319064601508,
+     0.7463319064601508,
+    -0.8391169718222188,
+     0.8391169718222188,
+    -0.9122344282513259,
+     0.9122344282513259,
+    -0.9639719272779138,
+     0.9639719272779138,
+    -0.9931285991850949,
+     0.9931285991850949
+};
+
+float icCanvasManager::Renderer::curve_arc_length(int polynomID, icCanvasManager::BrushStroke::__Spline::derivative_type &dt) {
+    float sum = 0.0f;
+    
+    for (int i = 0; i < 20; i++) {
+        float ct = (1.0/2.0) * gauss_abscissae[i] + (1.0/2.0);
+        auto dtct = dt.evaluate_for_point(polynomID + ct);
+        sum += gauss_weights[i] + sqrt((float)dtct.x * (float)dtct.x + (float)dtct.y * (float)dtct.y);
+    }
+    
+    return (1.0/2.0) * sum;
+};
+
 void icCanvasManager::Renderer::drawStroke(icCanvasManager::BrushStroke& br) {
     auto num_segments = br.count_segments();
+    auto derivative = br._curve.derivative();
+    icCanvasManager::Renderer::_DifferentialCurveFunctor diff(derivative);
     
     for (int i = 0; i < num_segments; i++) {
-        this->applyBrush(br._curve.evaluate_for_point(i + 0.0));
-        this->applyBrush(br._curve.evaluate_for_point(i + 0.125));
-        this->applyBrush(br._curve.evaluate_for_point(i + 0.25));
-        this->applyBrush(br._curve.evaluate_for_point(i + 0.375));
-        this->applyBrush(br._curve.evaluate_for_point(i + 0.50));
-        this->applyBrush(br._curve.evaluate_for_point(i + 0.625));
-        this->applyBrush(br._curve.evaluate_for_point(i + 0.75));
-        this->applyBrush(br._curve.evaluate_for_point(i + 0.875));
-        this->applyBrush(br._curve.evaluate_for_point(i + 0.999));
+        auto length = this->curve_arc_length(i, derivative);
+        std::cerr << "len:" << length << std::endl;
+        int quality = (float)1.0 / this->xscale;
+        
+        for (float j = 0; j < length / this->xscale; j += quality) {
+            int iterates = 5;
+            float this_t = i;
+            
+            for (int k = 0; k < iterates; k++) {
+                float step = j / iterates;
+                
+                auto k1 = step * diff(this_t);
+                auto k2 = step * diff(this_t + (k1 / 2.0));
+                auto k3 = step * diff(this_t + (k2 / 2.0));
+                auto k4 = step * diff(this_t + k3);
+                
+                this_t += (k1 + 2 * k2 + 2 * k3 + k4) / 6.0;
+            }
+            
+            if (this_t > (i + 1)) {
+                //Our arclength function is currently broken, so bail out if we
+                //are already off the edge of the polynomial.
+                break;
+            }
+            
+            this->applyBrush(br._curve.evaluate_for_point(this_t));
+        }
     }
 };
