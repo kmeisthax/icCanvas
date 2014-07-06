@@ -5,13 +5,26 @@
 
 @implementation ICAKCanvasView {
     ICMRenderer* renderer;
+    ICMDrawing* drawing;
 }
 
-- (id)initWithFrame:(NSRect)frameRect {
+- (id)initWithDrawing:(ICMDrawing*) drawing {
+    self = [super init];
+    
+    if (self != nil) {
+        self->renderer = [[ICMRenderer alloc] init];
+        self->drawing = drawing;
+    }
+    
+    return self;
+};
+
+- (id)initWithFrame:(NSRect)frameRect andDrawing:(ICMDrawing*) drawing {
     self = [super initWithFrame:frameRect];
     
     if (self != nil) {
         self->renderer = [[ICMRenderer alloc] init];
+        self->drawing = drawing;
     }
     
     return self;
@@ -26,11 +39,11 @@
     CGContextScaleCTM(cgContext, 1.0, -1.0);
     cairo_surface_t* xrsurf = cairo_quartz_surface_create_for_cg_context(cgContext, self.bounds.size.width, self.bounds.size.height);
     
-    [self.renderer enterSurfaceAtX:0 andY:0 withZoom:65535 andSurface:xrsurf withHeight:self.bounds.size.height andWidth:self.bounds.size.width];
+    [self->renderer enterSurfaceAtX:0 andY:0 withZoom:65535 andSurface:xrsurf withHeight:self.bounds.size.height andWidth:self.bounds.size.width];
     
-    ICMBrushStroke* bsptr = [[ICMBrushStroke alloc] init];
-    [bsptr penBeginWithX:32 andY:16];
-    [self.renderer drawStroke:bsptr];
+    for (int i = 0; i < [self->drawing strokesCount]; i++) {
+        [self->renderer drawStroke:[self->drawing strokeAtTime:i]];
+    }
 };
 
 @end

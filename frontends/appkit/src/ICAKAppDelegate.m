@@ -1,4 +1,5 @@
 #import <icCanvasAppKit.h>
+#import <icCanvasManagerObjC.h>
 
 @implementation ICAKAppDelegate
 
@@ -7,7 +8,9 @@
     self.window = [[NSWindow alloc] initWithContentRect:r styleMask:NSTitledWindowMask backing:NSBackingStoreBuffered defer:TRUE];
     [self.window makeKeyAndOrderFront:nil];
     
-    ICAKCanvasView* cv = [[ICAKCanvasView alloc] init];
+    ICMDrawing* drawing = [[ICMDrawing alloc] init];
+    
+    ICAKCanvasView* cv = [[ICAKCanvasView alloc] initWithDrawing: drawing];
     [self.window setContentView:cv];
 }
 

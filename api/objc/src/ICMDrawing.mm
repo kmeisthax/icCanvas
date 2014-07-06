@@ -30,7 +30,7 @@
 };
 
 - (ICMBrushStroke*)strokeAtTime:(int) time {
-    icCanvasManager::BrushStroke* bsptr = self->_wrapped->stroke_at_time(time);
+    icCanvasManager::BrushStroke* bsptr = &self->_wrapped->stroke_at_time(time);
     
     return [[ICMBrushStroke alloc] initFromWrappedObject:(void*)bsptr];
 };
@@ -42,3 +42,5 @@
 - (void*)getWrappedObject {
     return (void*)self->_wrapped;
 };
+
+@end

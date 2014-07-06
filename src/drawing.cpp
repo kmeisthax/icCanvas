@@ -12,11 +12,11 @@ icCanvasManager::Drawing::Drawing() {
 icCanvasManager::Drawing::~Drawing() {};
 
 icCanvasManager::Drawing::stroke_iterator icCanvasManager::Drawing::begin() {
-    this->strokes.begin();
+    return this->strokes.begin();
 };
 
 icCanvasManager::Drawing::stroke_iterator icCanvasManager::Drawing::end() {
-    this->strokes.end();
+    return this->strokes.end();
 };
 
 icCanvasManager::BrushStroke& icCanvasManager::Drawing::stroke_at_time(int time) {
@@ -24,5 +24,5 @@ icCanvasManager::BrushStroke& icCanvasManager::Drawing::stroke_at_time(int time)
 };
 
 int icCanvasManager::Drawing::strokes_count() {
-    return this->strokes.count();
+    return this->strokes.size();
 };
