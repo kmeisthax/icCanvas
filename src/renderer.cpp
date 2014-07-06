@@ -11,30 +11,6 @@ icCanvasManager::Renderer::~Renderer() {
     if (this->xrctxt) cairo_destroy(this->xrctxt);
 };
 
-void icCanvasManager::Renderer::coordToTilespace(const int32_t x, const int32_t y, int32_t* out_tx, int32_t* out_ty) {
-    if (out_tx) *out_tx = (int)((float)(x - this->xmin) * this->xscale);
-    if (out_ty) *out_ty = (int)((float)(y - this->ymin) * this->yscale);
-};
-
-void icCanvasManager::Renderer::applyBrush(const icCanvasManager::BrushStroke::__ControlPoint &cp) {
-    //std::cerr << cp.x << "," << cp.y << std::endl;
-    
-    //Hardcoded brush size and color
-    uint32_t brush_size = 4096;
-    cairo_set_source_rgba(this->xrctxt, 0.0, 0.0, 0.0, 0.125);
-    
-    int tx, ty;
-    this->coordToTilespace(cp.x, cp.y, &tx, &ty);
-
-    if (0 > tx || tx >= this->tw) return;
-    if (0 > ty || ty >= this->th) return;
-    
-    cairo_new_path(this->xrctxt);
-    cairo_arc(this->xrctxt, tx, ty, brush_size * this->xscale, 0, 2*3.14159);
-    cairo_close_path(this->xrctxt);
-    cairo_fill(this->xrctxt);
-};
-
 void icCanvasManager::Renderer::enterSurface(const int32_t x, const int32_t y, const int32_t zoom, cairo_surface_t* xrsurf, const int height, const int width) {
     cairo_surface_reference(xrsurf);
     
@@ -244,4 +220,29 @@ void icCanvasManager::Renderer::drawStroke(icCanvasManager::BrushStroke& br) {
             this->applyBrush(br._curve.evaluate_for_point(this_t));
         }
     }
+};
+
+void icCanvasManager::Renderer::applyBrush(const icCanvasManager::BrushStroke::__ControlPoint &cp) {
+    //std::cerr << cp.x << "," << cp.y << std::endl;
+    
+    //Hardcoded brush size and color
+    uint32_t brush_size = 4096;
+    auto brush_size_tspace = brush_size * this->xscale;
+    cairo_set_source_rgba(this->xrctxt, 0.0, 0.0, 0.0, 1.0 / brush_size_tspace);
+    
+    int tx, ty;
+    this->coordToTilespace(cp.x, cp.y, &tx, &ty);
+
+    if (0 > tx || tx >= this->tw) return;
+    if (0 > ty || ty >= this->th) return;
+    
+    cairo_new_path(this->xrctxt);
+    cairo_arc(this->xrctxt, tx, ty, brush_size * this->xscale, 0, 2*3.14159);
+    cairo_close_path(this->xrctxt);
+    cairo_fill(this->xrctxt);
+};
+
+void icCanvasManager::Renderer::coordToTilespace(const int32_t x, const int32_t y, int32_t* out_tx, int32_t* out_ty) {
+    if (out_tx) *out_tx = (int)((float)(x - this->xmin) * this->xscale);
+    if (out_ty) *out_ty = (int)((float)(y - this->ymin) * this->yscale);
 };
