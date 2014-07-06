@@ -15,6 +15,16 @@
     return self;
 };
 
+- (id)initFromWrappedObject:(void*)optr {
+    self = [super init];
+    
+    if (self != nil) {
+        self->_wrapped = (icCanvasManager::Renderer*)optr;
+    }
+    
+    return self;
+};
+
 - (void)dealloc {
     delete self->_wrapped;
 };

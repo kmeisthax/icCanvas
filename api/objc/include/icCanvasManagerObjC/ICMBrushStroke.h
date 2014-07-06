@@ -3,6 +3,7 @@
 @interface ICMBrushStroke : NSObject
 
 - (id)init;
+- (id)initFromWrappedObject:(void*)optr;
 - (void)dealloc;
 
 - (void)penBeginWithX:(int32_t)x andY:(int32_t)y;

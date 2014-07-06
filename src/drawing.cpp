@@ -18,3 +18,11 @@ icCanvasManager::Drawing::stroke_iterator icCanvasManager::Drawing::begin() {
 icCanvasManager::Drawing::stroke_iterator icCanvasManager::Drawing::end() {
     this->strokes.end();
 };
+
+icCanvasManager::BrushStroke& icCanvasManager::Drawing::stroke_at_time(int time) {
+    return this->strokes.at(time);
+};
+
+int icCanvasManager::Drawing::strokes_count() {
+    return this->strokes.count();
+};

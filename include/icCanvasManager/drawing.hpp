@@ -18,6 +18,8 @@ namespace icCanvasManager {
         
         stroke_iterator begin();
         stroke_iterator end();
+        BrushStroke& stroke_at_time(int time);
+        int strokes_count();
     };
 }
 
