@@ -11,26 +11,42 @@ Free Software digital painting system
 
 Build products will appear in the build/xxx directory for your platform.
 
+###Available platforms
+
+* linux-gtk (GTK frontend, for Linux and perhaps other UNIX-y platforms)
+* osx (AppKit frontend)
+
 ##Requirements
 
 * ###Core library
 
     The core library, icCanvasManager, can be built using a C++11 compiler and
-    cmake. It must be built on a system with cairo and development headers for
-    cairo present; future plans for non-system Cairo platforms is to compile
-    and ship our own Cairo build.
+    cmake.
 
     * ####Objective-C port
 
         Requires Objective-C compiler that can parse C++11 headers.
 
-* ###AppKit frontend
+* ###GTK frontend
+    
+    This frontend targets GTK, a well-supported UI toolkit on Linux distros.
+    
+    In the future this frontend may also target the Windows platform, if I ever
+    bother to reinstall Windows again.
+    
+    Requires gtkmm and cairomm as build dependencies.
 
+* ###AppKit frontend
+    
     This frontend targets the OSX system UI toolkit, AppKit. Makes one
     icCanvas.app with icCanvasManager.framework inside.
 
     Not currently tested for or intended for use with GNUStep or other
     non-Apple Objective-C environments.
+    
+    Builds Cairo and it's dependencies itself, by downloading them from their
+    respective source repositories. Python is required (and provided by OSX)
+    during the build process.
 
 ##Architecture
 
@@ -51,22 +67,10 @@ port; GObject API for a GTK port; etc)
                       Contains files built by cmake or it's child buildsystem.
     modules/        - CMake modules for finding needed external libraries, or
                       (in the future) compiling them ourselves
+    tools/          - Python scripts required by certain build processes
     xxx-configure.* - Scripts for running CMake files for platform xxx
     xxx-make.*      - Scripts for compiling using the resulting CMake project
     xxx-package.*   - Scripts for packaging build products for distribution
-
-###Sobmodules
-Note: This project contains submodules. Currently we do not require them but
-future frontend ports may mandate compiling and including an external library,
-which will be downloaded with submodules. For those platforms building will
-require the use of some submodule commands:
-
-    git submodule update
-
-Please do not use the submodules contained in ext/xxx to develop those
-external libraries, no matter how tempting. It will only cause you pain. Only
-use the submodule repos to update the superproject's reference commit to the
-next stable version.
 
 ##Features
 
@@ -89,7 +93,7 @@ but this scale will be user-definable and only used to define what 100% zoom
 means.
 
 ###Intuitive drawing workflow
-The primary means of drawing will be through brush strokes already fmailiar to
+The primary means of drawing will be through brush strokes already familiar to
 users of raster editing programs. Vector shapes may be supported in the future
 but the primary use case is "raster-like" drawing.
 
