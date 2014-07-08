@@ -2,7 +2,7 @@
 #include <icCanvasManager.hpp>
 
 @implementation ICMRenderer {
-    icCanvasManager::Renderer* _wrapped;
+    icCanvasManager::RefPtr<icCanvasManager::BrushStroke> _wrapped;
 }
 
 - (id)init {

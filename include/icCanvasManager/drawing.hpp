@@ -7,9 +7,9 @@
 
 namespace icCanvasManager {
     //Class which stores all context relating to a drawing.
-    class Drawing {
+    class Drawing : public RefCnt {
         //TODO: Layer model
-        std::vector<BrushStroke> strokes;
+        std::vector<RefPtr<BrushStroke>> strokes;
     public:
         typedef std::vector<BrushStroke>::iterator stroke_iterator;
         
@@ -18,7 +18,7 @@ namespace icCanvasManager {
         
         stroke_iterator begin();
         stroke_iterator end();
-        BrushStroke& stroke_at_time(int time);
+        RefPtr<BrushStroke> stroke_at_time(int time);
         int strokes_count();
     };
 }

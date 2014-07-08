@@ -164,9 +164,9 @@ float icCanvasManager::Renderer::curve_arc_length(int polynomID, icCanvasManager
     return (1.0/2.0) * sum;
 };
 
-void icCanvasManager::Renderer::drawStroke(icCanvasManager::BrushStroke& br) {
-    auto num_segments = br.count_segments();
-    auto derivative = br._curve.derivative();
+void icCanvasManager::Renderer::drawStroke(icCanvasManager::RefPtr<icCanvasManager::BrushStroke> br) {
+    auto num_segments = br->count_segments();
+    auto derivative = br->_curve.derivative();
     icCanvasManager::Renderer::_DifferentialCurveFunctor diff(derivative);
     
     for (int i = 0; i < num_segments; i++) {
@@ -217,7 +217,7 @@ void icCanvasManager::Renderer::drawStroke(icCanvasManager::BrushStroke& br) {
                 break;
             }
             
-            this->applyBrush(br._curve.evaluate_for_point(this_t));
+            this->applyBrush(br->_curve.evaluate_for_point(this_t));
         }
     }
 };

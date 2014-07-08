@@ -9,7 +9,7 @@
 namespace icCanvasManager {
     /* Class which implements icCanvas drawing methods.
      */
-    class Renderer {
+    class Renderer : public RefCnt {
         int32_t x, y, zoom;             //Canvas parameters
         int32_t tw, th;                 //Surface parameters
         float xscale, yscale;           //Derived caluations
@@ -51,7 +51,7 @@ namespace icCanvasManager {
         /* Given a brushstroke, draw it onto the surface at the specified
          * position and zoom level.
          */
-        void drawStroke(BrushStroke& br);
+        void drawStroke(RefPtr<BrushStroke> br);
     };
 }
 
