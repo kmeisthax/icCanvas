@@ -2,7 +2,7 @@
 #include <icCanvasManager.hpp>
 
 @implementation ICMDrawing {
-    icCanvasManager::Drawing* _wrapped;
+    icCanvasManager::RefPtr<icCanvasManager::BrushStroke> _wrapped;
 }
 
 - (id)init {

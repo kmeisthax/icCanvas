@@ -9,7 +9,7 @@
 namespace icCanvasManager {
     class Renderer;
 
-    class BrushStroke {
+    class BrushStroke : public RefCnt {
         struct __ControlPoint {
             int x, y;
             int pressure;
