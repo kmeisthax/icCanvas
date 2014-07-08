@@ -3,6 +3,8 @@
 
 #include "../icCanvasManager.hpp"
 
+#include <cstddef>
+
 namespace icCanvasManager {
     template <typename __RefCls>
     class RefPtr {
@@ -14,7 +16,7 @@ namespace icCanvasManager {
             tgt->ref();
         };
 
-        virtual ~RefCls() {
+        virtual ~RefPtr() {
             if (tgt->deref() == 0) {
                 delete tgt;
             }
@@ -55,7 +57,7 @@ namespace icCanvasManager {
             tgt = *optr;
             tgt->ref();
 
-            return this;
+            return *this;
         }
 
         RefPtr<__RefCls>& operator =(__RefCls *optr) {
@@ -66,17 +68,17 @@ namespace icCanvasManager {
             tgt = optr;
             tgt->ref();
 
-            return this;
+            return *this;
         }
 
-        bool operator bool() {
+        operator bool() {
             return tgt != NULL;
         }
 
-        void* operator void*() {
+        operator void*() {
             return (void*)tgt;
         }
-    }
+    };
 }
 
 #endif

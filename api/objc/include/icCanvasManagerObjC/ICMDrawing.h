@@ -4,7 +4,6 @@
 
 - (id)init;
 - (id)initFromWrappedObject:(void*)optr;
-- (void)dealloc;
 
 - (ICMBrushStroke*)strokeAtTime:(int) time;
 - (int)strokesCount;

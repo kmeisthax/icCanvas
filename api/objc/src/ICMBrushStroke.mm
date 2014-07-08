@@ -25,10 +25,6 @@
     return self;
 };
 
-- (void)dealloc {
-    delete self->_wrapped;
-};
-
 - (void)penBeginWithX:(int32_t)x andY:(int32_t)y {
     self->_wrapped->pen_begin(x, y);
 };

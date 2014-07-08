@@ -11,7 +11,7 @@ namespace icCanvasManager {
         //TODO: Layer model
         std::vector<RefPtr<BrushStroke>> strokes;
     public:
-        typedef std::vector<BrushStroke>::iterator stroke_iterator;
+        typedef std::vector<RefPtr<BrushStroke>>::iterator stroke_iterator;
         
         Drawing();
         virtual ~Drawing();

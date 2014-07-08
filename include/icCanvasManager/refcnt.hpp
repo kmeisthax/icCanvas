@@ -10,9 +10,9 @@ namespace icCanvasManager {
         RefCnt();
         virtual ~RefCnt();
 
-        void ref();
-        void deref();
-    }
+        int ref();
+        int deref();
+    };
 }
 
 #endif

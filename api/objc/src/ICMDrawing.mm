@@ -2,7 +2,7 @@
 #include <icCanvasManager.hpp>
 
 @implementation ICMDrawing {
-    icCanvasManager::RefPtr<icCanvasManager::BrushStroke> _wrapped;
+    icCanvasManager::RefPtr<icCanvasManager::Drawing> _wrapped;
 }
 
 - (id)init {
@@ -25,14 +25,8 @@
     return self;
 };
 
-- (void)dealloc {
-    delete self->_wrapped;
-};
-
 - (ICMBrushStroke*)strokeAtTime:(int) time {
-    icCanvasManager::BrushStroke* bsptr = &self->_wrapped->stroke_at_time(time);
-    
-    return [[ICMBrushStroke alloc] initFromWrappedObject:(void*)bsptr];
+    return [[ICMBrushStroke alloc] initFromWrappedObject:self->_wrapped->stroke_at_time(time)];
 };
 
 - (int)strokesCount {

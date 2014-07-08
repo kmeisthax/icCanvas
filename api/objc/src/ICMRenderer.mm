@@ -2,7 +2,7 @@
 #include <icCanvasManager.hpp>
 
 @implementation ICMRenderer {
-    icCanvasManager::RefPtr<icCanvasManager::BrushStroke> _wrapped;
+    icCanvasManager::RefPtr<icCanvasManager::Renderer> _wrapped;
 }
 
 - (id)init {
@@ -25,10 +25,6 @@
     return self;
 };
 
-- (void)dealloc {
-    delete self->_wrapped;
-};
-
 - (void)enterSurfaceAtX:(const int32_t)x andY:(const int32_t)y withZoom:(const int32_t)zoom andSurface:(cairo_surface_t*)xrsurf withHeight:(const int)height andWidth:(const int)width {
     self->_wrapped->enterSurface(x, y, zoom, xrsurf, height, width);
 };
@@ -38,8 +34,8 @@
 };
 
 - (void)drawStroke:(ICMBrushStroke*)br {
-    icCanvasManager::BrushStroke* cppbr = (icCanvasManager::BrushStroke*)[br getWrappedObject];
-    self->_wrapped->drawStroke(*cppbr);
+    icCanvasManager::RefPtr<icCanvasManager::BrushStroke> cppbr = (icCanvasManager::BrushStroke*)[br getWrappedObject];
+    self->_wrapped->drawStroke(cppbr);
 };
 
 - (void*)getWrappedObject {
