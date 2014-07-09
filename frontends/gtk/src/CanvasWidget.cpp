@@ -4,10 +4,11 @@ icCanvasGtk::CanvasWidget::CanvasWidget() :
     Glib::ObjectBase("icCanvasGtkCanvasWidget"), Gtk::Widget()
 {
     this->set_has_window(false);
+    this->r = new icCanvasManager::Renderer();
 };
 icCanvasGtk::CanvasWidget::~CanvasWidget() {};
 
-void icCanvasGtk::CanvasWidget::set_drawing(icCanvasManager::Drawing* newDoc) {
+void icCanvasGtk::CanvasWidget::set_drawing(icCanvasManager::RefPtr<icCanvasManager::Drawing> newDoc) {
     this->doc = newDoc;
 }
 
@@ -21,10 +22,10 @@ bool icCanvasGtk::CanvasWidget::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
     cr->set_source(clear_ptn);
     cr->paint();
     
-    this->r.enterContext(0, 0, 14, capi_cr, this->get_allocated_height(), this->get_allocated_width());
+    this->r->enterContext(0, 0, 14, capi_cr, this->get_allocated_height(), this->get_allocated_width());
     
     for (; strokePtr != end; strokePtr++) {
-        this->r.drawStroke(*strokePtr);
+        this->r->drawStroke(*strokePtr);
     }
     
     cr->restore();

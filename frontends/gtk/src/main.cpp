@@ -14,8 +14,8 @@ int main (int argc, char *argv[]) {
     window.add(canvasWdgt);
     window.show_all();
     
-    icCanvasManager::Drawing doc;
-    canvasWdgt.set_drawing(&doc);
+    icCanvasManager::RefPtr<icCanvasManager::Drawing> doc = new icCanvasManager::Drawing();
+    canvasWdgt.set_drawing(doc);
     
     return app->run(window);
 }

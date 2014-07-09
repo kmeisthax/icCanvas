@@ -13,11 +13,19 @@ namespace icCanvasManager {
         RefPtr() : tgt(NULL) {};
 
         RefPtr(__RefCls* ptr) : tgt(ptr) {
-            tgt->ref();
+            if (tgt != NULL) {
+                tgt->ref();
+            }
         };
 
+        RefPtr(const RefPtr<__RefCls>& ptr) : tgt(ptr.tgt) {
+            if (tgt != NULL) {
+                tgt->ref();
+            }
+        }
+
         virtual ~RefPtr() {
-            if (tgt->deref() == 0) {
+            if (tgt != NULL && tgt->deref() == 0) {
                 delete tgt;
             }
         };
@@ -50,18 +58,18 @@ namespace icCanvasManager {
         }
 
         RefPtr<__RefCls>& operator =(RefPtr<__RefCls> &optr) {
-            if (tgt->deref() == 0) {
+            if (tgt != NULL && tgt->deref() == 0) {
                 delete tgt;
             }
 
-            tgt = *optr;
+            tgt = optr.tgt;
             tgt->ref();
 
             return *this;
         }
 
         RefPtr<__RefCls>& operator =(__RefCls *optr) {
-            if (tgt->deref() == 0) {
+            if (tgt != NULL && tgt->deref() == 0) {
                 delete tgt;
             }
 

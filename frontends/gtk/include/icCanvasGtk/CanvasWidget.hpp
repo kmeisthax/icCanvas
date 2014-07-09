@@ -6,13 +6,13 @@
 
 namespace icCanvasGtk {
     class CanvasWidget : public Gtk::Widget {
-            icCanvasManager::Renderer r;
-            icCanvasManager::Drawing *doc;
+            icCanvasManager::RefPtr<icCanvasManager::Renderer> r;
+            icCanvasManager::RefPtr<icCanvasManager::Drawing> doc;
         public:
             CanvasWidget();
             virtual ~CanvasWidget();
             
-            void set_drawing(icCanvasManager::Drawing *newDoc);
+            void set_drawing(icCanvasManager::RefPtr<icCanvasManager::Drawing> newDoc);
         protected:
             virtual bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr);
     };
