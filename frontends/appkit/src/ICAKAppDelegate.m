@@ -5,8 +5,9 @@
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification {
     NSRect r = {{100,100}, {250, 250}};
-    self.window = [[NSWindow alloc] initWithContentRect:r styleMask:NSTitledWindowMask backing:NSBackingStoreBuffered defer:TRUE];
+    self.window = [[NSWindow alloc] initWithContentRect:r styleMask:(NSTitledWindowMask|NSClosableWindowMask|NSMiniaturizableWindowMask|NSResizableWindowMask) backing:NSBackingStoreBuffered defer:TRUE];
     [self.window makeKeyAndOrderFront:nil];
+    [self.window setCollectionBehavior:(self.window.collectionBehavior|NSWindowCollectionBehaviorFullScreenPrimary)];
     
     ICMDrawing* drawing = [[ICMDrawing alloc] init];
     
