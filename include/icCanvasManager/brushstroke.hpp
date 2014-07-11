@@ -81,6 +81,7 @@ namespace icCanvasManager {
         spline_size_type count_segments();
 
         friend class Renderer;
+        friend class SplineFitter;
     };
 };
 

@@ -8,5 +8,6 @@
 #include "icCanvasManager/brushstroke.hpp"
 #include "icCanvasManager/renderer.hpp"
 #include "icCanvasManager/drawing.hpp"
+#include "icCanvasManager/splinefitter.hpp"
 
 #endif
