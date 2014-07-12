@@ -4,8 +4,8 @@ icCanvasManager::Drawing::Drawing() {
     icCanvasManager::RefPtr<icCanvasManager::BrushStroke> aStroke = new icCanvasManager::BrushStroke();
     this->strokes.emplace_back(aStroke);
     
-    icCanvasManager::StrokeFitter sfit;
-    sfit->spline_fitter(aStroke, 0);
+    icCanvasManager::RefPtr<icCanvasManager::SplineFitter> sfit = new icCanvasManager::SplineFitter();
+    sfit->begin_fitting(aStroke, 0);
 
     sfit->add_fit_point(-65535, 32768, icCanvasManager::BrushStroke::PRESSURE_MAX, 0, 0, 0, 0);
     sfit->add_fit_point(-32768, -65535, icCanvasManager::BrushStroke::PRESSURE_MAX, 0, 0, 0, 0);

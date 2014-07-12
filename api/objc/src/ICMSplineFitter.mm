@@ -1,5 +1,7 @@
 #import <icCanvasManagerObjC.h>
 
+#include <icCanvasManager.hpp>
+
 @implementation ICMSplineFitter {
     icCanvasManager::RefPtr<icCanvasManager::SplineFitter> _wrapped;
 }
@@ -25,7 +27,7 @@
 };
 
 - (void)beginFittingBrushStroke:(ICMBrushStroke*)stroke withErrorThreshold:(int)errorThreshold {
-    icCanvasManager::RefPtr<icCanvasManager::BrushStroke> cppbr = (icCanvasManager::BrushStroke*)[br getWrappedObject];
+    icCanvasManager::RefPtr<icCanvasManager::BrushStroke> cppbr = (icCanvasManager::BrushStroke*)[stroke getWrappedObject];
     self->_wrapped->begin_fitting(cppbr, errorThreshold);
 };
 
