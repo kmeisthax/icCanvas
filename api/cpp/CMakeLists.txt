@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 2.8)
 
 include_directories(${CORELIB_INCLUDE_DIRS})
 include_directories(${CAIRO_INCLUDE_DIRS})
+include_directories(${EIGEN_INCLUDE_DIRS})
 
 add_library(icCanvasManager SHARED ${CORELIB})
 

@@ -1,18 +1,22 @@
 #ifndef __ICCANVASMANAGER_SPLINEFITTER_HPP_
 #define __ICCANVASMANAGER_SPLINEFITTER_HPP_
 
+#include "../icCanvasManager.hpp"
+
 #include <vector>
 #include <Eigen/Dense>
 
 namespace icCanvasManager {
+    class BrushStroke;
+    
     class SplineFitter : public RefCnt {
         //Constant data
         Eigen::Matrix4f beizer_4_coeff;
         Eigen::Matrix4f beizer_4_invcoeff;
         
         //Per-fit data
-        std::vector<BrushStoke::__ControlPoint> unfitted_points;
-        std::vector<int> distances, index;
+        std::vector<BrushStroke::__ControlPoint> unfitted_points;
+        std::vector<int> distances, indexes;
         RefPtr<BrushStroke> target_curve;
         int unfitted_id;
     public:
@@ -40,7 +44,7 @@ namespace icCanvasManager {
         /* Calculate the final, fitted stroke.
          */
         void finish_fitting();
-    }
+    };
 }
 
 #endif

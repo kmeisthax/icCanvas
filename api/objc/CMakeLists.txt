@@ -5,6 +5,7 @@ file(GLOB CORELIB_SHRUGGED ${PARENT_PROJECT_DIR}/api/objc/src/*.m ${PARENT_PROJE
 include_directories(${PARENT_PROJECT_DIR}/api/objc/include)
 include_directories(${CORELIB_INCLUDE_DIRS})
 include_directories(${CAIRO_INCLUDE_DIRS})
+include_directories(${EIGEN_INCLUDE_DIRS})
 
 add_library(icCanvasManager SHARED ${CORELIB} ${CORELIB_SHRUGGED})
 set_target_properties(icCanvasManager PROPERTIES FRAMEWORK 1)

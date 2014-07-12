@@ -5,6 +5,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PARENT_PROJECT_DIR}/modules")
 
 include(${PARENT_PROJECT_DIR}/CMakeLists.txt)
 
+find_package(Eigen)
 find_package(Cairo)
 
 if(!CAIRO_FOUND)
