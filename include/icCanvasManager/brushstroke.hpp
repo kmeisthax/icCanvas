@@ -8,6 +8,7 @@
 
 namespace icCanvasManager {
     class Renderer;
+    class SplineFitter;
 
     class BrushStroke : public RefCnt {
         struct __ControlPoint {
@@ -19,6 +20,16 @@ namespace icCanvasManager {
             __ControlPoint operator+(const __ControlPoint& that);
             __ControlPoint operator-(const __ControlPoint& that);
             __ControlPoint operator*(const float& that);
+        };
+        
+        enum __Attribute {
+            ATTRIBUTE_XPOS,
+            ATTRIBUTE_YPOS,
+            ATTRIBUTE_PRESSURE,
+            ATTRIBUTE_TILT,
+            ATTRIBUTE_ANGLE,
+            ATTRIBUTE_XDELTA,
+            ATTRIBUTE_YDELTA
         };
         
         typedef TMVBeizer<__ControlPoint, 3> __Spline;

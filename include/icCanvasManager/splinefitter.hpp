@@ -1,12 +1,20 @@
 #ifndef __ICCANVASMANAGER_SPLINEFITTER_HPP_
 #define __ICCANVASMANAGER_SPLINEFITTER_HPP_
 
-#import <vector>
+#include <vector>
+#include <Eigen/Dense>
 
 namespace icCanvasManager {
     class SplineFitter : public RefCnt {
+        //Constant data
+        Eigen::Matrix4f beizer_4_coeff;
+        Eigen::Matrix4f beizer_4_invcoeff;
+        
+        //Per-fit data
         std::vector<BrushStoke::__ControlPoint> unfitted_points;
+        std::vector<int> distances, index;
         RefPtr<BrushStroke> target_curve;
+        int unfitted_id;
     public:
         SplineFitter();
         virtual ~SplineFitter();
@@ -26,16 +34,10 @@ namespace icCanvasManager {
          *
          * This function may only be called after a storage stroke and error
          * threshold have been established with begin_fitting.
-         *
-         * During the fitting operation, the BrushStroke given may be filled
-         * with a best-guess estimation of the final curve as you fill points
-         * into it. You must finish the operation with finish_fitting before
-         * using the final curve for anything other than an interactive
-         * preview.
          */
         void add_fit_point(int x, int y, int pressure, int tilt, int angle, int dx, int dy);
 
-        /* Generate the final curve.
+        /* Calculate the final, fitted stroke.
          */
         void finish_fitting();
     }
