@@ -16,7 +16,7 @@ namespace icCanvasManager {
         
         //Per-fit data
         std::vector<BrushStroke::__ControlPoint> unfitted_points;
-        std::vector<int> distances, indexes;
+        std::vector<int> distances;
         RefPtr<BrushStroke> target_curve;
         int unfitted_id;
     public:
