@@ -7,6 +7,7 @@
 
 - (ICMBrushStroke*)strokeAtTime:(int) time;
 - (int)strokesCount;
+- (void)appendStroke:(ICMBrushStroke*)stroke;
 
 - (void*)getWrappedObject;
 

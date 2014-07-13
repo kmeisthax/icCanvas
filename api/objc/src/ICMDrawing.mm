@@ -33,6 +33,12 @@
     return self->_wrapped->strokes_count();
 };
 
+- (void)appendStroke:(ICMBrushStroke*)stroke {
+    icCanvasManager::RefPtr<icCanvasManager::BrushStroke> cppbr = (icCanvasManager::BrushStroke*)[stroke getWrappedObject];
+    
+    self->_wrapped->append_stroke(cppbr);
+};
+
 - (void*)getWrappedObject {
     return (void*)self->_wrapped;
 };

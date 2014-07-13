@@ -40,3 +40,7 @@ icCanvasManager::RefPtr<icCanvasManager::BrushStroke> icCanvasManager::Drawing::
 int icCanvasManager::Drawing::strokes_count() {
     return this->strokes.size();
 };
+
+void icCanvasManager::Drawing::append_stroke(icCanvasManager::RefPtr<icCanvasManager::BrushStroke> stroke) {
+    this->strokes.emplace_back(stroke);
+};

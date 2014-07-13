@@ -20,6 +20,8 @@ namespace icCanvasManager {
         stroke_iterator end();
         RefPtr<BrushStroke> stroke_at_time(int time);
         int strokes_count();
+
+        void append_stroke(RefPtr<BrushStroke> stroke);
     };
 }
 
