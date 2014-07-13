@@ -1,6 +1,7 @@
 #include <icCanvasManager.hpp>
 
 #include <cmath>
+#include <iostream>
 
 icCanvasManager::SplineFitter::SplineFitter() : beizer_4_coeff(4,4) {
     this->beizer_4_coeff << -1.0,  3.0, -3.0, 1.0,
@@ -14,15 +15,13 @@ icCanvasManager::SplineFitter::SplineFitter() : beizer_4_coeff(4,4) {
 icCanvasManager::SplineFitter::~SplineFitter() {};
 
 void icCanvasManager::SplineFitter::begin_fitting(icCanvasManager::RefPtr<icCanvasManager::BrushStroke> storage, int error_threshold) {
-    this->unfitted_points.clear();
-    this->distances.clear();
-    this->distances.push_back(0);
+    if (this->unfitted_points.size() > 0) this->unfitted_points.clear();
+    if (this->distances.size() > 0) this->distances.clear();
     this->target_curve = storage;
     this->unfitted_id = 0;
 };
 
 void icCanvasManager::SplineFitter::add_fit_point(int x, int y, int pressure, int tilt, int angle, int dx, int dy) {
-    auto& lastcp = this->unfitted_points.back();
     icCanvasManager::BrushStroke::__ControlPoint cp;
     
     cp.x = x;
@@ -32,15 +31,22 @@ void icCanvasManager::SplineFitter::add_fit_point(int x, int y, int pressure, in
     cp.angle = angle;
     cp.dx = dx;
     cp.dy = dy;
-    
-    this->unfitted_points.push_back(cp);
+
     auto ptsize = this->unfitted_points.size();
-    
-    if (ptsize < 2) return;
+    if (ptsize < 1) {
+        this->distances.push_back(0);
+        this->unfitted_points.push_back(cp);
+        return;
+    }
+
+    auto lastcp = this->unfitted_points.back();
+    int lastDist = this->distances.back();
+    this->unfitted_points.push_back(cp);
+    ptsize++;
 
     int xDelta = cp.x - lastcp.x, yDelta = cp.y - lastcp.y;
     int segDist = (int)sqrt((float)xDelta * (float)xDelta + (float)yDelta * (float)yDelta);
-    int newTotalDist = this->distances.at(ptsize - 2) + segDist;
+    int newTotalDist = lastDist + segDist;
     this->distances.push_back(newTotalDist);
     
     Eigen::Matrix<float, Eigen::Dynamic, 4> b_indexes(ptsize, 4);
@@ -56,7 +62,7 @@ void icCanvasManager::SplineFitter::add_fit_point(int x, int y, int pressure, in
          j != this->unfitted_points.end() &&
          k != ptsize;
          i++, j++, k++) {
-        auto tval = (float)(*i) / (float)newTotalDist;
+        float tval = (float)(*i) / (float)newTotalDist;
         
         b_indexes(k, 0) = tval * tval * tval;
         b_indexes(k, 1) = tval * tval;
@@ -72,11 +78,10 @@ void icCanvasManager::SplineFitter::add_fit_point(int x, int y, int pressure, in
         ydeltaVec(k, 0) = j->dy;
     }
     
-    auto b_indexes_transpose = b_indexes.transpose();
-    auto b_indexes_matrix = b_indexes_transpose * b_indexes;
-    Eigen::MatrixXf bmat_identity = Eigen::MatrixXf::Identity(b_indexes_matrix.rows(), b_indexes_matrix.rows());
-    
-    auto b_matrix_inverse = b_indexes_matrix.llt().solve(bmat_identity);
+    Eigen::Matrix<float, 4, Eigen::Dynamic> b_indexes_transpose = b_indexes.transpose();
+    Eigen::Matrix4f b_indexes_matrix = b_indexes_transpose * b_indexes;
+    Eigen::Matrix4f bmat_identity = Eigen::MatrixXf::Identity(4,4);
+    Eigen::MatrixXf b_matrix_inverse = b_indexes_matrix.llt().solve(bmat_identity);
 
     Eigen::Vector4f curve_xpos = this->beizer_4_invcoeff * b_matrix_inverse * b_indexes_transpose * xposVec;
     Eigen::Vector4f curve_ypos = this->beizer_4_invcoeff * b_matrix_inverse * b_indexes_transpose * yposVec;
