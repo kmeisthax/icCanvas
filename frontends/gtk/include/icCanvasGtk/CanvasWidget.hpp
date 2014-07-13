@@ -6,8 +6,7 @@
 
 namespace icCanvasGtk {
     class CanvasWidget : public Gtk::Widget {
-            icCanvasManager::RefPtr<icCanvasManager::Renderer> r;
-            icCanvasManager::RefPtr<icCanvasManager::Drawing> doc;
+            icCanvasManager::RefPtr<icCanvasManager::CanvasView> cv;
         public:
             CanvasWidget();
             virtual ~CanvasWidget();
