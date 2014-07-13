@@ -1,7 +1,6 @@
 #include <icCanvasManager.hpp>
 
 #include <cmath>
-#include <iostream>
 
 icCanvasManager::SplineFitter::SplineFitter() : beizer_4_coeff(4,4) {
     this->beizer_4_coeff << -1.0,  3.0, -3.0, 1.0,
@@ -49,10 +48,7 @@ void icCanvasManager::SplineFitter::add_fit_point(int x, int y, int pressure, in
     
     auto i = this->distances.begin();
     auto j = this->unfitted_points.begin();
-    
-    std::cerr << this->distances.size() << std::endl;
-    std::cerr << this->unfitted_points.size() << std::endl;
-    std::cerr << ptsize << std::endl;
+
     assert(this->distances.size() == this->unfitted_points.size() && this->distances.size() == ptsize);
 
     for (int k = 0;
@@ -89,13 +85,7 @@ void icCanvasManager::SplineFitter::add_fit_point(int x, int y, int pressure, in
     Eigen::Vector4f curve_angle = this->beizer_4_invcoeff * b_matrix_inverse * b_indexes_transpose * angleVec;
     Eigen::Vector4f curve_xdelta = this->beizer_4_invcoeff * b_matrix_inverse * b_indexes_transpose * xdeltaVec;
     Eigen::Vector4f curve_ydelta = this->beizer_4_invcoeff * b_matrix_inverse * b_indexes_transpose * ydeltaVec;
-    
-    std::cerr << this->beizer_4_invcoeff << std::endl;
-    std::cerr << b_matrix_inverse << std::endl;
-    std::cerr << b_indexes_transpose << std::endl;
-    std::cerr << xposVec << std::endl;
-    std::cerr << curve_xpos << std::endl;
-    
+
     this->target_curve->pen_begin(curve_xpos(0,0), curve_ypos(0,0));
     this->target_curve->pen_begin_pressure(curve_pressure(0,0));
     this->target_curve->pen_begin_tilt(curve_tilt(0,0), curve_angle(0,0));
