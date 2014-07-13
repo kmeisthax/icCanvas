@@ -43,38 +43,46 @@ void icCanvasManager::SplineFitter::add_fit_point(int x, int y, int pressure, in
     this->distances.push_back(newTotalDist);
     this->indexes.push_back(0);
     
-    Eigen::Matrix<float, Eigen::Dynamic, 4> b_indexes;
-    Eigen::Matrix<float, Eigen::Dynamic, 1> xposVec, yposVec, pressureVec, tiltVec, angleVec, xdeltaVec, ydeltaVec;
+    Eigen::Matrix<float, Eigen::Dynamic, 4> b_indexes(ptsize, 4);
+    Eigen::Matrix<float, Eigen::Dynamic, 1> xposVec(ptsize, 1), yposVec(ptsize, 1), pressureVec(ptsize, 1), tiltVec(ptsize, 1), angleVec(ptsize, 1), xdeltaVec(ptsize, 1), ydeltaVec(ptsize, 1);
     
     auto i = this->distances.begin();
     auto j = this->indexes.begin();
     auto k = this->unfitted_points.begin();
     
-    for (;
+    for (int l = 0;
          i != this->distances.end() &&
          j != this->indexes.end() &&
-         k != this->unfitted_points.end();
-         i++, j++, k++) {
+         k != this->unfitted_points.end() &&
+         l != ptsize;
+         i++, j++, k++, l++) {
         auto tval = (float)(*i) / (float)newTotalDist;
         *j = (int)tval;
         
-        b_indexes << tval * tval * tval, tval * tval, tval, 1.0f;
-        xposVec << k->x;
-        yposVec << k->y;
-        pressureVec << k->pressure;
-        tiltVec << k->tilt;
-        angleVec << k->angle;
-        xdeltaVec << k->dx;
-        ydeltaVec << k->dy;
+        b_indexes(l,0) = tval * tval * tval;
+        b_indexes(l,1) = tval * tval;
+        b_indexes(l,2) = tval;
+        b_indexes(l,3) = 1.0f;
+
+        xposVec(l, 0) = k->x;
+        yposVec(l, 0) = k->y;
+        pressureVec(l, 0) = k->pressure;
+        tiltVec(l, 0) = k->tilt;
+        angleVec(l, 0) = k->angle;
+        xdeltaVec(l, 0) = k->dx;
+        ydeltaVec(l, 0) = k->dy;
     }
     
     auto b_indexes_transpose = b_indexes.transpose();
     auto b_indexes_matrix = b_indexes_transpose * b_indexes;
     Eigen::MatrixXf b_matrix_inverse;
-    Eigen::MatrixXf bmat_identity = Eigen::MatrixXf::Identity(ptsize, ptsize);
+    Eigen::MatrixXf bmat_identity = Eigen::MatrixXf::Identity(b_indexes_matrix.rows(), b_indexes_matrix.rows());
     
-    if (b_indexes_matrix.determinant() == 0) b_matrix_inverse = b_indexes_matrix.llt().solve(bmat_identity);
-    else b_matrix_inverse = b_indexes_matrix.inverse();
+    if (b_indexes_matrix.determinant() == 0) {
+        b_matrix_inverse = b_indexes_matrix.llt().solve(bmat_identity);
+    } else {
+        b_matrix_inverse = b_indexes_matrix.inverse();
+    }
     
     auto curve_xpos = this->beizer_4_invcoeff * b_matrix_inverse * b_indexes_transpose * xposVec;
     auto curve_ypos = this->beizer_4_invcoeff * b_matrix_inverse * b_indexes_transpose * yposVec;
