@@ -9,5 +9,6 @@
 #include "icCanvasManager/renderer.hpp"
 #include "icCanvasManager/drawing.hpp"
 #include "icCanvasManager/splinefitter.hpp"
+#include "icCanvasManager/canvasview.hpp"
 
 #endif
