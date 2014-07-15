@@ -27,6 +27,9 @@ namespace icCanvasManager {
 
         /* Respond to a resize from the native window system. */
         void set_size(double width, double height);
+
+        /* Respond to mouse input. */
+        void mouse(int x, int y, bool button1, bool button2, bool button3);
     };
 }
 
