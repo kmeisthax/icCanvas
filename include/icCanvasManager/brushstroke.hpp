@@ -48,8 +48,17 @@ namespace icCanvasManager {
 
         //Set the start point of the current spline segment.
         void pen_begin(int32_t x, int32_t y);
+
+        //Pressure ranges from 0 to PRESSURE_MAX
         void pen_begin_pressure(int32_t pressure);
+
+        //Tilt ranges from 0 (fully upright) to TILT_ANGLE_QUARTER
+        //Angle may exceed TILT_ANGLE_FULL or fall below 0, as needed to
+        //    preserve the proper turning direction of the pen. 0 represents
+        //    pointing towards the top of the screen. All results should be
+        //    interpreted modulo TILT_ANGLE_FULL when rendering.
         void pen_begin_tilt(int32_t tilt, int32_t angle);
+
         void pen_begin_velocity(int32_t delta_x, int32_t delta_y);
         
         //Set the end and control points of the next spline section.

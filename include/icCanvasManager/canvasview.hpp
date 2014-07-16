@@ -11,8 +11,19 @@ namespace icCanvasManager {
      */
     class CanvasView : public RefCnt {
         RefPtr<Renderer> renderer;
+        RefPtr<SplineFitter> fitter;
         RefPtr<Drawing> drawing;
-        double width, height;
+
+        double width, height;   //In window-system coordinates.
+        float zoom;             //Same as the Renderer zoom levels.
+        int x_scroll, y_scroll; //In canvas coordinates.
+        float x_scale, y_scale;
+
+        //During spline fitting only.
+        RefPtr<BrushStroke> built_stroke;
+
+        //Convert window-space coordinates to canvas coordinates.
+        windowToCoordspace(const int32_t x, const int32_t y, int32_t* out_tx, int32_t* out_ty)
     public:
         CanvasView();
         ~CanvasView();
@@ -29,7 +40,9 @@ namespace icCanvasManager {
         void set_size(double width, double height);
 
         /* Respond to mouse input. */
-        void mouse(int x, int y, bool button1, bool button2, bool button3);
+        void mouse_down(int x, int y, int deltaX, int deltaY);
+        void mouse_drag(int x, int y, int deltaY, int deltaY);
+        void mouse_up(int x, int y, int deltaX, int deltaY);
     };
 }
 
