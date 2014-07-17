@@ -7,5 +7,8 @@
 - (id)initWithFrame:(NSRect)frameRect andDrawing:(ICMDrawing*) drawing;
 - (BOOL)isFlipped;
 - (void)drawRect:(NSRect)dirtyRect;
+- (void)mouseDown:(NSEvent*)theEvent;
+- (void)mouseDragged:(NSEvent*)theEvent;
+- (void)mouseUp:(NSEvent*)theEvent;
 
 @end

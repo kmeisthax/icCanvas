@@ -39,6 +39,18 @@
     self->_wrapped->set_size(width, height);
 };
 
+- (void)mouseDownWithX:(int)x andY:(int)y andDeltaX:(int)deltaX andDeltaY:(int)deltaY {
+    self->_wrapped->mouse_down(x, y, deltaX, deltaY);
+};
+
+- (void)mouseDragWithX:(int)x andY:(int)y andDeltaX:(int)deltaX andDeltaY:(int)deltaY {
+    self->_wrapped->mouse_drag(x, y, deltaX, deltaY);
+};
+
+- (void)mouseUpWithX:(int)x andY:(int)y andDeltaX:(int)deltaX andDeltaY:(int)deltaY {
+    self->_wrapped->mouse_up(x, y, deltaX, deltaY);
+};
+
 - (void*)getWrappedObject {
     return (void*)self->_wrapped;
 };
