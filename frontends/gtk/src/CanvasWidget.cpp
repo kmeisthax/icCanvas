@@ -5,6 +5,7 @@ icCanvasGtk::CanvasWidget::CanvasWidget() :
 {
     this->set_has_window(false);
     this->cv = new icCanvasManager::CanvasView();
+    this->add_events(Gdk::BUTTON_MOTION_MASK | Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK);
 };
 icCanvasGtk::CanvasWidget::~CanvasWidget() {};
 
