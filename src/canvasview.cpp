@@ -42,7 +42,7 @@ void icCanvasManager::CanvasView::set_size(double width, double height) {
     this->y_scale = this->height / (float)size;
 };
 
-void icCanvasManager::Renderer::windowToCoordspace(const int32_t x, const int32_t y, int32_t* out_tx, int32_t* out_ty) {
+void icCanvasManager::CanvasView::windowToCoordspace(const int32_t x, const int32_t y, int32_t* out_tx, int32_t* out_ty) {
     if (out_tx) *out_tx = (int)((float)x / this->x_scale + this->x_scroll);
     if (out_ty) *out_ty = (int)((float)y / this->y_scale + this->y_scroll);
 };

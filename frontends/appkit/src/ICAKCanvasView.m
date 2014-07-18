@@ -63,21 +63,21 @@
     NSPoint event_location = [theEvent locationInWindow];
     NSPoint local_point = [self convertPoint:event_location fromView:nil];
     
-    [self->internal mouseDownWithX:local_point.x andY:local_point.y andDeltaX:theEvent.deltaX and DeltaY:theEvent.deltaY];
+    [self->internal mouseDownWithX:local_point.x andY:local_point.y andDeltaX:theEvent.deltaX andDeltaY:theEvent.deltaY];
 };
 
 - (void)mouseDragged:(NSEvent*)theEvent {
     NSPoint event_location = [theEvent locationInWindow];
     NSPoint local_point = [self convertPoint:event_location fromView:nil];
     
-    [self->internal mouseDragWithX:local_point.x andY:local_point.y andDeltaX:theEvent.deltaX and DeltaY:theEvent.deltaY];
+    [self->internal mouseDragWithX:local_point.x andY:local_point.y andDeltaX:theEvent.deltaX andDeltaY:theEvent.deltaY];
 };
 
 - (void)mouseUp:(NSEvent*)theEvent {
     NSPoint event_location = [theEvent locationInWindow];
     NSPoint local_point = [self convertPoint:event_location fromView:nil];
     
-    [self->internal mouseUpWithX:local_point.x andY:local_point.y andDeltaX:theEvent.deltaX and DeltaY:theEvent.deltaY];
+    [self->internal mouseUpWithX:local_point.x andY:local_point.y andDeltaX:theEvent.deltaX andDeltaY:theEvent.deltaY];
 };
 
 @end
