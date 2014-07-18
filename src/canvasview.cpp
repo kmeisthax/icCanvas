@@ -4,8 +4,8 @@ icCanvasManager::CanvasView::CanvasView() {
     this->renderer = new icCanvasManager::Renderer();
     this->fitter = new icCanvasManager::SplineFitter();
 
-    this->x_scroll = 0;
-    this->y_scroll = 0;
+    this->x_center = 0;
+    this->y_center = 0;
     this->zoom = 14;
 };
 
@@ -24,7 +24,7 @@ void icCanvasManager::CanvasView::draw(cairo_t *ctxt, cairo_rectangle_t dirtyAre
     cairo_paint(ctxt);
     cairo_pattern_destroy(clear_ptn);
 
-    this->renderer->enterContext(this->x_scroll, this->y_scroll, (int)this->zoom, ctxt, this->height, this->width);
+    this->renderer->enterContext(this->x_center, this->y_center, (int)this->zoom, ctxt, this->height, this->width);
 
     for (; strokePtr != end; strokePtr++) {
         this->renderer->drawStroke(*strokePtr);
@@ -40,6 +40,8 @@ void icCanvasManager::CanvasView::set_size(double width, double height) {
     int64_t size = UINT32_MAX >> (int)this->zoom;
     this->x_scale = this->width / (float)size;
     this->y_scale = this->height / (float)size;
+    this->x_scroll = this->x_center - (width / this->x_scale / 2);
+    this->y_scroll = this->y_center - (height / this->y_scale / 2);
 };
 
 void icCanvasManager::CanvasView::windowToCoordspace(const int32_t x, const int32_t y, int32_t* out_tx, int32_t* out_ty) {

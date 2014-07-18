@@ -16,7 +16,8 @@ namespace icCanvasManager {
 
         double width, height;   //In window-system coordinates.
         float zoom;             //Same as the Renderer zoom levels.
-        int x_scroll, y_scroll; //In canvas coordinates.
+        int x_scroll, y_scroll; //The top-left edge of the view in canvas coord
+        int x_center, y_center; //The center of the screen, also canvas coords
         float x_scale, y_scale;
 
         //During spline fitting only.
