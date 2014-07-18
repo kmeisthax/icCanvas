@@ -63,7 +63,9 @@ namespace icCanvasManager {
             }
 
             tgt = optr.tgt;
-            tgt->ref();
+            if (tgt != NULL) {
+                tgt->ref();
+            }
 
             return *this;
         }
@@ -74,7 +76,9 @@ namespace icCanvasManager {
             }
 
             tgt = optr;
-            tgt->ref();
+            if (tgt != NULL) {
+                tgt->ref();
+            }
 
             return *this;
         }
