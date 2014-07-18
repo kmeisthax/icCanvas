@@ -78,6 +78,7 @@
     NSPoint local_point = [self convertPoint:event_location fromView:nil];
     
     [self->internal mouseUpWithX:local_point.x andY:local_point.y andDeltaX:theEvent.deltaX andDeltaY:theEvent.deltaY];
+    [self setNeedsDisplay:YES];
 };
 
 @end
