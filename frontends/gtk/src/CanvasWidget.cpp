@@ -63,8 +63,6 @@ bool icCanvasGtk::CanvasWidget::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 }
 
 bool icCanvasGtk::CanvasWidget::on_button_press_event(GdkEventButton *evt) {
-    std::cout << evt->x << "x" << evt->y;
-
     if (evt->type == GDK_BUTTON_PRESS) {
         this->cv->mouse_down(evt->x, evt->y, 0, 0);
 

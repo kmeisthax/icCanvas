@@ -171,7 +171,6 @@ void icCanvasManager::Renderer::drawStroke(icCanvasManager::RefPtr<icCanvasManag
     
     for (int i = 0; i < num_segments; i++) {
         auto length = this->curve_arc_length(i, derivative);
-        std::cerr << "len:" << length << std::endl;
         int quality = (float)1.0 / this->xscale;
         
         for (float j = 0; j < length / this->xscale; j += quality) {
@@ -223,8 +222,6 @@ void icCanvasManager::Renderer::drawStroke(icCanvasManager::RefPtr<icCanvasManag
 };
 
 void icCanvasManager::Renderer::applyBrush(const icCanvasManager::BrushStroke::__ControlPoint &cp) {
-    //std::cerr << cp.x << "," << cp.y << std::endl;
-    
     //Hardcoded brush size and color
     uint32_t brush_size = 4096;
     auto brush_size_tspace = brush_size * this->xscale;
