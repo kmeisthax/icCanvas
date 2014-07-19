@@ -19,6 +19,15 @@ namespace icCanvasManager {
         std::vector<int> distances;
         RefPtr<BrushStroke> target_curve;
         int unfitted_id;
+
+        //Measure the fitting error of the current curve segment.
+        struct __ErrorPoint {
+            float x, y;
+            float pressure;
+            float tilt, angle;
+            float dx, dy;
+        };
+        __ErrorPoint measure_fitting_error();
     public:
         SplineFitter();
         virtual ~SplineFitter();

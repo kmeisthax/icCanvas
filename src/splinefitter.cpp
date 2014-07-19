@@ -103,3 +103,25 @@ void icCanvasManager::SplineFitter::add_fit_point(int x, int y, int pressure, in
 };
 
 void icCanvasManager::SplineFitter::finish_fitting() {};
+
+icCanvasManager::SplineFitter::__ErrorPoint icCanvasManager::SplineFitter::measure_fitting_error() {
+    icCanvasManager::SplineFitter::__ErrorPoint errorPt = {0,0,0,0,0,0,0};
+    int newTotalDist = this->distances.back();
+
+    for (i = this->distances.begin(), j = this->unfitted_points.begin();
+         i != this->distances.end() && j = this->unfitted_points.end();
+         i++, j++) {
+        float tval = (float)(*i) / (float)newTotalDist;
+        icCanvasManager::BrushStroke::__ControlPoint fitted_point = this->target_curve->_curve->evaluate_for_point(tval);
+
+        errorPt.x += ((*j).x - fitted_point.x) * ((*j).x - fitted_point.x);
+        errorPt.y += ((*j).y - fitted_point.y) * ((*j).y - fitted_point.y);
+        errorPt.pressure += ((*j).pressure - fitted_point.pressure) * ((*j).pressure - fitted_point.pressure);
+        errorPt.tilt += ((*j).tilt - fitted_point.tilt) * ((*j).tilt - fitted_point.tilt);
+        errorPt.angle += ((*j).angle - fitted_point.angle) * ((*j).angle - fitted_point.angle);
+        errorPt.dx += ((*j).dx - fitted_point.dx) * ((*j).dx - fitted_point.dx);
+        errorPt.dy += ((*j).dy - fitted_point.dy) * ((*j).dy - fitted_point.dy);
+    }
+
+    return errorPt;
+};
