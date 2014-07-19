@@ -40,14 +40,19 @@ void icCanvasManager::SplineFitter::add_fit_point(int x, int y, int pressure, in
         return;
     }
 
-    if (ptsize > 2) { //Error measurement is invalid with less than 3 points
+    if (ptsize > 3) { //We need a minimum point count to start splitting polybeizers
         icCanvasManager::SplineFitter::__ErrorPoint errorPt = this->measure_fitting_error();
         float max_error = std::max(errorPt.x, std::max(errorPt.y, std::max(errorPt.pressure, std::max(errorPt.tilt, std::max(errorPt.angle, std::max(errorPt.dx, errorPt.dy))))));
 
         if (max_error > std::pow((float)this->error_threshold, 2.0)) {
             //Curve exceeds the desired error, time to split
+            auto lastcp = this->unfitted_points.back();
             this->unfitted_points.clear();
+            this->unfitted_points.push_back(lastcp);
+
             this->distances.clear();
+            this->distances.push_back(0);
+
             this->target_curve->pen_extend();
             this->unfitted_id++;
 
