@@ -131,7 +131,8 @@ icCanvasManager::SplineFitter::__ErrorPoint icCanvasManager::SplineFitter::measu
          i != this->distances.end() && j != this->unfitted_points.end();
          i++, j++) {
         float tval = (float)(*i) / (float)newTotalDist;
-        icCanvasManager::BrushStroke::__ControlPoint fitted_point = this->target_curve->_curve.evaluate_for_point(this->unfitted_id + tval);
+
+        icCanvasManager::BrushStroke::__ControlPoint fitted_point = this->target_curve->_curve.evaluate_for_point(this->unfitted_id + tval, this->unfitted_id);
 
         errorPt.x += std::pow((float)(*j).x - (float)fitted_point.x, 2.0);
         errorPt.y += std::pow((float)(*j).y - (float)fitted_point.y, 2.0);
