@@ -59,24 +59,24 @@ namespace icCanvasManager {
          * Uses de Casteljau's algorithm (iterated lerps) to calculate points
          * on the curve. It's ridiculously easy to understand.
          * 
-         * The whole-number portion of t specifies what spline section to use.
-         * So, for example, in a three-section spline, the following three half
-         * open ranges are defined as follows:
+         * The range of T is 0 to the number of segments present on the curve.
+         * e.g. for a 3-segment curve, T is valid for the half-open range [0.0,
+         * 3.0). Points equal to or greater than 3.0 will extrapolate the final
+         * segment of the curve.
          * 
-         *      [0.0, 1.0) - Spline segment 0
-         *      [1.0, 2.0) - Spline segment 1
-         *      [2.0, 3.0) - Spline segment 2
-         * 
-         * with all other possible spline ranges undefined (and most likely,
-         * crashing the program).
+         * As TMVBeizer is a spline curve, use segment to specify what spline
+         * segment to use. Otherwise, it will be selected by rounding down T.
+         * The segment parameter can be useful for non-continuous curves, e.g.
+         * to sample off one side or the other of a discontinuity. It can also
+         * be used to extrapolate an individual curve segment.
          */
-        __Interpolated evaluate_for_point(float t) {
-            int polynomID = (int)t;
+        __Interpolated evaluate_for_point(float t, int segment = -1) {
+            if (segment == -1) segment = (int)t;
             
-            __Polynomial thePoly = this->_storage.at(polynomID);
+            __Polynomial thePoly = this->_storage.at(segment);
             for (int i = _order; i > 0; i--) {
                 for (int j = 0; j < i; j++) {
-                    thePoly._pt[j] = _lerp(thePoly._pt[j], polynomID, thePoly._pt[j+1], polynomID+1, t);
+                    thePoly._pt[j] = _lerp(thePoly._pt[j], segment, thePoly._pt[j+1], segment+1, t);
                 }
             }
             
