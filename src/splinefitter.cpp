@@ -19,6 +19,7 @@ void icCanvasManager::SplineFitter::begin_fitting(icCanvasManager::RefPtr<icCanv
     if (this->distances.size() > 0) this->distances.clear();
     this->target_curve = storage;
     this->unfitted_id = 0;
+    this->error_threshold = error_threshold;
 };
 
 void icCanvasManager::SplineFitter::add_fit_point(int x, int y, int pressure, int tilt, int angle, int dx, int dy) {
@@ -37,6 +38,21 @@ void icCanvasManager::SplineFitter::add_fit_point(int x, int y, int pressure, in
         this->distances.push_back(0);
         this->unfitted_points.push_back(cp);
         return;
+    }
+
+    if (ptsize > 2) { //Error measurement is invalid with less than 3 points
+        icCanvasManager::SplineFitter::__ErrorPoint errorPt = this->measure_fitting_error();
+        float max_error = std::max(errorPt.x, std::max(errorPt.y, std::max(errorPt.pressure, std::max(errorPt.tilt, std::max(errorPt.angle, std::max(errorPt.dx, errorPt.dy))))));
+
+        if (max_error > std::pow((float)this->error_threshold, 2.0)) {
+            //Curve exceeds the desired error, time to split
+            this->unfitted_points.clear();
+            this->distances.clear();
+            this->target_curve.pen_extend();
+            this->unfitted_id++;
+
+            return;
+        }
     }
 
     auto lastcp = this->unfitted_points.back();
@@ -112,15 +128,15 @@ icCanvasManager::SplineFitter::__ErrorPoint icCanvasManager::SplineFitter::measu
          i != this->distances.end() && j = this->unfitted_points.end();
          i++, j++) {
         float tval = (float)(*i) / (float)newTotalDist;
-        icCanvasManager::BrushStroke::__ControlPoint fitted_point = this->target_curve->_curve->evaluate_for_point(tval);
+        icCanvasManager::BrushStroke::__ControlPoint fitted_point = this->target_curve->_curve->evaluate_for_point(this->unfitted_id + tval);
 
-        errorPt.x += ((*j).x - fitted_point.x) * ((*j).x - fitted_point.x);
-        errorPt.y += ((*j).y - fitted_point.y) * ((*j).y - fitted_point.y);
-        errorPt.pressure += ((*j).pressure - fitted_point.pressure) * ((*j).pressure - fitted_point.pressure);
-        errorPt.tilt += ((*j).tilt - fitted_point.tilt) * ((*j).tilt - fitted_point.tilt);
-        errorPt.angle += ((*j).angle - fitted_point.angle) * ((*j).angle - fitted_point.angle);
-        errorPt.dx += ((*j).dx - fitted_point.dx) * ((*j).dx - fitted_point.dx);
-        errorPt.dy += ((*j).dy - fitted_point.dy) * ((*j).dy - fitted_point.dy);
+        errorPt.x += std::pow((float)(*j).x - (float)fitted_point.x, 2.0);
+        errorPt.y += std::pow((float)(*j).y - (float)fitted_point.y, 2.0);
+        errorPt.pressure += std::pow((float)(*j).pressure - (float)fitted_point.pressure, 2.0);
+        errorPt.tilt += std::pow((float)(*j).tilt - (float)fitted_point.tilt, 2.0);
+        errorPt.angle += std::pow((float)(*j).angle - (float)fitted_point.angle, 2.0);
+        errorPt.dx += std::pow((float)(*j).dx - (float)fitted_point.dx, 2.0);
+        errorPt.dy += std::pow((float)(*j).dy - (float)fitted_point.dy, 2.0);
     }
 
     return errorPt;

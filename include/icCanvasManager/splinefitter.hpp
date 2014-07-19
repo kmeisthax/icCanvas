@@ -19,6 +19,7 @@ namespace icCanvasManager {
         std::vector<int> distances;
         RefPtr<BrushStroke> target_curve;
         int unfitted_id;
+        int error_threshold;
 
         //Measure the fitting error of the current curve segment.
         struct __ErrorPoint {
