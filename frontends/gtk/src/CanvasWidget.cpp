@@ -90,6 +90,8 @@ bool icCanvasGtk::CanvasWidget::on_button_release_event(GdkEventButton *evt) {
 
         this->lastx = evt->x;
         this->lasty = evt->y;
+
+        this->queue_draw();
     }
 
     return true;
