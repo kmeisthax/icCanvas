@@ -48,7 +48,7 @@ void icCanvasManager::SplineFitter::add_fit_point(int x, int y, int pressure, in
             //Curve exceeds the desired error, time to split
             this->unfitted_points.clear();
             this->distances.clear();
-            this->target_curve.pen_extend();
+            this->target_curve->pen_extend();
             this->unfitted_id++;
 
             return;
@@ -124,11 +124,14 @@ icCanvasManager::SplineFitter::__ErrorPoint icCanvasManager::SplineFitter::measu
     icCanvasManager::SplineFitter::__ErrorPoint errorPt = {0,0,0,0,0,0,0};
     int newTotalDist = this->distances.back();
 
-    for (i = this->distances.begin(), j = this->unfitted_points.begin();
-         i != this->distances.end() && j = this->unfitted_points.end();
+    auto i = this->distances.begin();
+    auto j = this->unfitted_points.begin();
+
+    for (;
+         i != this->distances.end() && j != this->unfitted_points.end();
          i++, j++) {
         float tval = (float)(*i) / (float)newTotalDist;
-        icCanvasManager::BrushStroke::__ControlPoint fitted_point = this->target_curve->_curve->evaluate_for_point(this->unfitted_id + tval);
+        icCanvasManager::BrushStroke::__ControlPoint fitted_point = this->target_curve->_curve.evaluate_for_point(this->unfitted_id + tval);
 
         errorPt.x += std::pow((float)(*j).x - (float)fitted_point.x, 2.0);
         errorPt.y += std::pow((float)(*j).y - (float)fitted_point.y, 2.0);
