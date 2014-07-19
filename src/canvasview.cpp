@@ -51,7 +51,7 @@ void icCanvasManager::CanvasView::windowToCoordspace(const int32_t x, const int3
 
 void icCanvasManager::CanvasView::mouse_down(int x, int y, int deltaX, int deltaY) {
     this->built_stroke = new icCanvasManager::BrushStroke();
-    this->fitter->begin_fitting(this->built_stroke, 0);
+    this->fitter->begin_fitting(this->built_stroke, this->width / this->x_scale);
 };
 
 void icCanvasManager::CanvasView::mouse_drag(int x, int y, int deltaX, int deltaY) {
