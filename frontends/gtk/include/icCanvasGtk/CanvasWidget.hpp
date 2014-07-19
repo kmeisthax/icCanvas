@@ -7,6 +7,7 @@
 namespace icCanvasGtk {
     class CanvasWidget : public Gtk::Widget {
             icCanvasManager::RefPtr<icCanvasManager::CanvasView> cv;
+            Glib::RefPtr<Gdk::Window> evtWindow;
 
             //GDK doesn't provide mouse event deltas, so we have to generate them ourselves
             double lastx, lasty;
@@ -16,6 +17,9 @@ namespace icCanvasGtk {
             
             void set_drawing(icCanvasManager::RefPtr<icCanvasManager::Drawing> newDoc);
         protected:
+            virtual void on_realize() override;
+            virtual void on_unrealize() override;
+
             virtual bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
 
             virtual bool on_button_press_event(GdkEventButton *evt) override;
