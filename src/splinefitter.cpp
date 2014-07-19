@@ -44,7 +44,7 @@ void icCanvasManager::SplineFitter::add_fit_point(int x, int y, int pressure, in
         icCanvasManager::SplineFitter::__ErrorPoint errorPt = this->measure_fitting_error();
         float max_error = std::max(errorPt.x, std::max(errorPt.y, std::max(errorPt.pressure, std::max(errorPt.tilt, std::max(errorPt.angle, std::max(errorPt.dx, errorPt.dy))))));
 
-        if (max_error > std::pow((float)this->error_threshold, 2.0)) {
+        if (max_error > (float)this->error_threshold) {
             //Curve exceeds the desired error, time to split
             auto lastcp = this->unfitted_points.back();
             this->unfitted_points.clear();
