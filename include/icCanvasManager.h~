@@ -1,7 +1,0 @@
-#ifndef __ICCANVASMANAGER_BRUSHSTROKE__H_
-#define __ICCANVASMANAGER_BRUSHSTROKE__H_
-
-#include "icCanvasManager/mvbeizer.hpp"
-#include "icCanvasManager/brushstroke.h"
-
-#endif
