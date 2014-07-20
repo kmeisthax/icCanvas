@@ -10,5 +10,6 @@
 #include "icCanvasManager/drawing.hpp"
 #include "icCanvasManager/splinefitter.hpp"
 #include "icCanvasManager/canvasview.hpp"
+#include "icCanvasManager/tilecache.hpp"
 
 #endif
