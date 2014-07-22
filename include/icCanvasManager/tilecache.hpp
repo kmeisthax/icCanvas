@@ -1,7 +1,10 @@
-#ifndef __ICCANVASMANAGER_SPLINEFITTER_HPP_
-#define __ICCANVASMANAGER_SPLINEFITTER_HPP_
+#ifndef __ICCANVASMANAGER_TILECACHE_HPP_
+#define __ICCANVASMANAGER_TILECACHE_HPP_
 
 #include "../icCanvasManager.hpp"
+
+#include <map>
+#include <tuple>
 
 namespace icCanvasManager {
     /* Stores pre-drawn tiles for later display.
@@ -11,6 +14,11 @@ namespace icCanvasManager {
      * level and time index.
      */
     class TileCache : public RefCnt {
+        /* Tuple of X position, Y position, and zoom level. */
+        typedef std::tuple<int, int, int> __PosKey;
+        typedef std::map<int, cairo_surface_t*> __TimeMap;
+
+        std::map<__PosKey, __TimeMap> _cache;
     public:
         const int TILE_SIZE = 256;
 
