@@ -14,11 +14,55 @@ namespace icCanvasManager {
      * level and time index.
      */
     class TileCache : public RefCnt {
-        /* Tuple of X position, Y position, and zoom level. */
-        typedef std::tuple<int, int, int> __PosKey;
-        typedef std::map<int, cairo_surface_t*> __TimeMap;
+    public:
+        struct Tile {
+            cairo_surface_t* image,
+            int x, y, size, time;
+        }
 
-        std::map<__PosKey, __TimeMap> _cache;
+        class TileCacheQuery : public RefCnt {
+            int x_lower, x_higher,
+                y_lower, y_higher,
+                size_lower, size_higher,
+                time_lower, time_higher;
+            bool x_cond_lower, x_cond_higher,
+                 y_cond_lower, y_cond_higher,
+                 size_cond_lower, size_cond_higher,
+                 time_cond_lower, time_cond_higher;
+
+        public:
+            TileCacheQuery();
+            virtual ~TileCacheQuery();
+
+            void query_x_gte(int x_lower_bound);
+            void query_x_eq(int x_equals);
+            void query_x_lt(int x_higher_bound);
+
+            void query_y_gte(int y_lower_bound);
+            void query_y_eq(int y_equals);
+            void query_y_lt(int y_higher_bound);
+
+            void query_size_gte(int size_lower_bound);
+            void query_size_eq(int size_equals);
+            void query_size_lt(int size_higher_bound);
+
+            void query_time_gte(int time_lower_bound);
+            void query_time_eq(int time_equals);
+            void query_time_lt(int time_higher_bound);
+
+            friend TileCache;
+        }
+    private:
+        std::vector<Tile> _storage;
+
+        /* Tiles are indexed by std::map.
+         *
+         * The key is the integer value of the index, while the value is an
+         * index into the _storage array.
+         */
+        typedef std::multimap<int, int> __IntIndex;
+
+        __IntIndex _xIndex, _yIndex, _sizeIndex, _timeIndex;
     public:
         const int TILE_SIZE = 256;
 
@@ -34,32 +78,26 @@ namespace icCanvasManager {
          *
          * If a surface of the same position, size, and timeindex already
          * exists, it will be supplanted by the incoming index.
+         *
+         * The ID of the resulting tilecache tile is stored.
          */
-        void store(int x, int y, int size, int timeindex, cairo_surface_t* store);
+        int store(int x, int y, int size, int timeindex, cairo_surface_t* store);
 
         /* Retrieve a particular tile from the tilecache.
          *
-         * The returned Cairo surface will always be an image surface of size
-         * TILE_SIZE.
+         * The input is a TileCacheQuery, which allows you to query by x/y
+         * position, size, and time, in both less-than and greater-than forms.
          *
-         * Do not draw onto the returned surface.
-         *
-         * NULL will be returned if the particular tile surface does not exist,
-         * in which case you should probably render it and store it here.
-         *
-         * You can search by time index. The timeindex_after property lets you
-         * select tiles with a time index greater than or equal to the one
-         * specified. The timeindex_before property lets you select tiles with
-         * a time index less than the one specified. A negative time index
-         * indicates a "don't care", e.g. the condition will not be tested.
-         *
-         * In the event that more than one tile satisfies positional, size, and
-         * time requirements, lookup will return any one of the tiles at random
-         * (i.e. the behavior is undefined beyond "you will get ONE tile".) If
-         * you specify a non-NULL pointer to out_timeindex, lookup will tell
-         * you the time index of the tile you recieved.
+         * Results of executing a query are returned as a list of Tile IDs.
          */
-        cairo_surface_t* lookup(int x, int y, int size, int timeindex_after = -1, int timeindex_before = -1, int* out_timeindex = NULL);
+        std::vector<int> execute(TileCacheQuery& query);
+
+        /* Return a reference to the Tile structure known by a particular ID.
+         *
+         * Do not alter the contents of the Tile as it may invalidate the
+         * tilecache indexes.
+         */
+        Tile& tile_at(int tileID);
     }
 }
 
