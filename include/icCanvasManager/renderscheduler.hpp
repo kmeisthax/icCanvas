@@ -18,13 +18,18 @@ namespace icCanvasManager {
         /* Put a request for a tile to be rendered. */
         request_tile(RefPtr<Drawing> d, int x, int y, int size, int time);
 
-        /* Collect fulfilled requests.
+        /* Collect fulfilled requests into a drawing's TileCache.
          *
          * Since a RenderScheduler can be responsible for rendering more than
          * one drawing at a time, you must collect each drawing's tiles
          * individually.
+         *
+         * You should call this method periodically as the implementation of
+         * RenderScheduler is allowed to complete rendering asynchronously, or
+         * even concurrently with the execution of the main thread. Ideally,
+         * you should collect requests right before each draw operation.
          */
-        collect_requests(RefPtr<Drawing> d, RefPtr<TileCache> tcache);
+        collect_requests(RefPtr<Drawing> d);
     }
 }
 
