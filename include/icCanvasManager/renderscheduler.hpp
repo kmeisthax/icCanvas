@@ -1,6 +1,10 @@
 #ifndef __ICCANVASMANAGER_RENDERSCHEDULER_HPP_
 #define __ICCANVASMANAGER_RENDERSCHEDULER_HPP_
 
+#include <icCanvasManager.hpp>
+
+#include <cairo.h>
+
 namespace icCanvasManager {
     /* RenderScheduler handles the rendering of tiles to off-screen surfaces.
      *
@@ -11,6 +15,14 @@ namespace icCanvasManager {
      * periodically to fill a TileCache with rendered tiles.
      */
     class RenderScheduler : public RefCnt {
+        struct __Response {
+            Drawing* d;
+            int x, y, size, time;
+            cairo_surface_t* tile;
+        }
+
+        std::vector<__Response> _uncollected;
+        RefCnt<Renderer> _renderer;
     public:
         RenderScheduler();
         ~RenderScheduler();
