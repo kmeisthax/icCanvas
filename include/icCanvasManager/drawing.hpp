@@ -12,6 +12,7 @@ namespace icCanvasManager {
         std::vector<RefPtr<BrushStroke>> _strokes;
 
         RefPtr<TileCache> _cache;
+        RefPtr<RenderScheduler> _sched;
     public:
         typedef std::vector<RefPtr<BrushStroke>>::iterator stroke_iterator;
         
@@ -26,6 +27,7 @@ namespace icCanvasManager {
         void append_stroke(RefPtr<BrushStroke> stroke);
 
         RefPtr<TileCache> get_tilecache();
+        RefPtr<RenderScheduler> get_scheduler();
     };
 }
 
