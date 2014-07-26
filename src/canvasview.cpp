@@ -42,7 +42,7 @@ void icCanvasManager::CanvasView::draw(cairo_t *ctxt, cairo_rectangle_t dirtyAre
 
     //Phase 2: Copy/scale tiles onto view
     for (; begin != end; begin++) {
-        auto &tile = tilecache->tile_at(*begin));
+        auto &tile = tilecache->tile_at(*begin);
 
         cairo_save(ctxt);
 
@@ -52,10 +52,10 @@ void icCanvasManager::CanvasView::draw(cairo_t *ctxt, cairo_rectangle_t dirtyAre
 
         this->coordToWindowspace(tile.x, tile.y, &txpos, &typos);
 
-        cairo_scale(ctxt, scale_factor);
-        cairo_translate(ctxt, txpos, typos);
+        cairo_scale(ctxt, scale_factor, scale_factor);
+        cairo_translate(ctxt, (double)txpos, (double)typos);
 
-        cairo_set_source_surface(ctxt, tile.image);
+        cairo_set_source_surface(ctxt, tile.image, 0, 0);
         cairo_paint(ctxt);
 
         cairo_restore(ctxt);
@@ -71,7 +71,7 @@ void icCanvasManager::CanvasView::draw(cairo_t *ctxt, cairo_rectangle_t dirtyAre
 
     for (int i = 0; i <= x_tile_count; i++) {
         for (int j = 0; j <= y_tile_count; j++) {
-            renderscheduler->request(this->drawing, base_x + (request_size * i), base_y + (request_size * j), highest_zoom, this->strokes_count);
+            renderscheduler->request_tile(this->drawing, base_x + (request_size * i), base_y + (request_size * j), highest_zoom, this->drawing->strokes_count());
         }
     }
 
@@ -97,7 +97,7 @@ void icCanvasManager::CanvasView::windowToCoordspace(const int32_t x, const int3
     if (out_ty) *out_ty = (int)((float)y / this->y_scale + this->y_scroll);
 };
 
-void icCanvasManager::Renderer::coordToWindowspace(const int32_t x, const int32_t y, int32_t* out_tx, int32_t* out_ty) {
+void icCanvasManager::CanvasView::coordToWindowspace(const int32_t x, const int32_t y, int32_t* out_tx, int32_t* out_ty) {
     if (out_tx) *out_tx = (int)((float)(x - this->x_scroll) * this->x_scale);
     if (out_ty) *out_ty = (int)((float)(y - this->y_scroll) * this->y_scale);
 };

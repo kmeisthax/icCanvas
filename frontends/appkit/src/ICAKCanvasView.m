@@ -50,7 +50,10 @@
     cairo_t* ctxt = cairo_create(xrsurf);
     cairo_rectangle_t cr_dirty = {dirtyRect.origin.x, dirtyRect.origin.y, dirtyRect.size.width, dirtyRect.size.height};
     
-    [self->internal setSizeWidth:self.bounds.size.width andHeight:self.bounds.size.height];
+    NSSize testSize = {1.0, 1.0};
+    NSSize scaleSize = [self convertSizeToBacking:testSize];
+    
+    [self->internal setSizeWidth:self.bounds.size.width andHeight:self.bounds.size.height andUiScale:scaleSize.width];
     [self->internal drawWithContext:ctxt inDirtyRect:cr_dirty];
     
     CGContextRestoreGState(cgContext);

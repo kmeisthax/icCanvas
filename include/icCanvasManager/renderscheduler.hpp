@@ -19,16 +19,16 @@ namespace icCanvasManager {
             Drawing* d;
             int x, y, size, time;
             cairo_surface_t* tile;
-        }
+        };
 
         std::vector<__Response> _uncollected;
-        RefCnt<Renderer> _renderer;
+        RefPtr<Renderer> _renderer;
     public:
         RenderScheduler();
         ~RenderScheduler();
 
         /* Put a request for a tile to be rendered. */
-        request_tile(RefPtr<Drawing> d, int x, int y, int size, int time);
+        void request_tile(RefPtr<Drawing> d, int x, int y, int size, int time);
 
         /* Collect fulfilled requests into a drawing's TileCache.
          *
@@ -41,8 +41,8 @@ namespace icCanvasManager {
          * even concurrently with the execution of the main thread. Ideally,
          * you should collect requests right before each draw operation.
          */
-        collect_requests(RefPtr<Drawing> d);
-    }
+        void collect_requests(RefPtr<Drawing> d);
+    };
 }
 
 #endif

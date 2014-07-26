@@ -35,8 +35,8 @@
     self->_wrapped->draw(context, dirtyArea);
 };
 
-- (void)setSizeWidth:(double)width andHeight:(double)height {
-    self->_wrapped->set_size(width, height);
+- (void)setSizeWidth:(double)width andHeight:(double)height andUiScale:(double)ui_scale {
+    self->_wrapped->set_size(width, height, ui_scale);
 };
 
 - (void)mouseDownWithX:(int)x andY:(int)y andDeltaX:(int)deltaX andDeltaY:(int)deltaY {

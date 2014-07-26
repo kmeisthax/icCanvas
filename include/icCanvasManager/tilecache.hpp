@@ -16,19 +16,19 @@ namespace icCanvasManager {
     class TileCache : public RefCnt {
     public:
         struct Tile {
-            cairo_surface_t* image,
+            cairo_surface_t* image;
             int x, y, size, time;
-        }
+        };
 
         class TileCacheQuery : public RefCnt {
-            int x_lower, x_higher,
-                y_lower, y_higher,
-                size_lower, size_higher,
-                time_lower, time_higher;
-            bool x_cond_lower, x_cond_higher,
-                 y_cond_lower, y_cond_higher,
-                 size_cond_lower, size_cond_higher,
-                 time_cond_lower, time_cond_higher;
+            int x_lower, x_upper,
+                y_lower, y_upper,
+                size_lower, size_upper,
+                time_lower, time_upper;
+            bool x_cond_lower, x_cond_upper,
+                 y_cond_lower, y_cond_upper,
+                 size_cond_lower, size_cond_upper,
+                 time_cond_lower, time_cond_upper;
 
         public:
             TileCacheQuery();
@@ -51,7 +51,7 @@ namespace icCanvasManager {
             void query_time_lt(int time_higher_bound);
 
             friend TileCache;
-        }
+        };
     private:
         std::vector<Tile> _storage;
 
@@ -64,7 +64,7 @@ namespace icCanvasManager {
 
         __IntIndex _xIndex, _yIndex, _sizeIndex, _timeIndex;
     public:
-        const int TILE_SIZE = 256;
+        static const int TILE_SIZE = 256;
 
         TileCache();
         virtual ~TileCache();
@@ -98,7 +98,7 @@ namespace icCanvasManager {
          * tilecache indexes.
          */
         Tile& tile_at(int tileID);
-    }
+    };
 }
 
 #endif

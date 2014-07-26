@@ -6,6 +6,9 @@
 #include <vector>
 
 namespace icCanvasManager {
+    class TileCache;
+    class RenderScheduler;
+
     //Class which stores all context relating to a drawing.
     class Drawing : public RefCnt {
         //TODO: Layer model

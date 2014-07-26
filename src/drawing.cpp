@@ -2,7 +2,7 @@
 
 icCanvasManager::Drawing::Drawing() {
     this->_cache = new icCanvasManager::TileCache();
-    this->_scheduler = new icCanvasManager::RenderScheduler();
+    this->_sched = new icCanvasManager::RenderScheduler();
 };
 icCanvasManager::Drawing::~Drawing() {};
 
@@ -31,5 +31,5 @@ icCanvasManager::RefPtr<icCanvasManager::TileCache> icCanvasManager::Drawing::ge
 };
 
 icCanvasManager::RefPtr<icCanvasManager::RenderScheduler> icCanvasManager::Drawing::get_scheduler() {
-    return this->_scheduler;
+    return this->_sched;
 };
