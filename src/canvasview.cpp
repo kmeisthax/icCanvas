@@ -19,7 +19,7 @@ void icCanvasManager::CanvasView::attach_drawing(icCanvasManager::RefPtr<icCanva
 };
 
 void icCanvasManager::CanvasView::draw(cairo_t *ctxt, cairo_rectangle_t dirtyArea) {
-    int maximum_scale = std::max(this->x_scale, this->y_scale);
+    float maximum_scale = std::max(this->x_scale, this->y_scale);
     float square_size = std::max(this->width, this->height);
     int canvas_width = this->width / this->x_scale, canvas_height = this->height / this->y_scale;
     int lowest_zoom = std::floor(log2(square_size));
