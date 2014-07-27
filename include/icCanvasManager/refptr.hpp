@@ -90,6 +90,10 @@ namespace icCanvasManager {
         operator void*() {
             return (void*)tgt;
         }
+
+        operator __RefCls*() {
+            return tgt;
+        }
     };
 }
 

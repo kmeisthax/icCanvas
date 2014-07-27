@@ -18,6 +18,9 @@ void icCanvasManager::RenderScheduler::request_tile(icCanvasManager::RefPtr<icCa
     for (int i = 0; i < time; i++) {
         this->_renderer->drawStroke(d->stroke_at_time(i));
     }
+
+    icCanvasManager::RenderScheduler::__Response r = {d, x, y, size, time, imgsurf};
+    this->_uncollected.push_back(r);
 };
 
 void icCanvasManager::RenderScheduler::collect_requests(icCanvasManager::RefPtr<icCanvasManager::Drawing> d) {
