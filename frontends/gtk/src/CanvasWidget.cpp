@@ -48,7 +48,7 @@ void icCanvasGtk::CanvasWidget::on_unrealize() {
 bool icCanvasGtk::CanvasWidget::on_draw(const Cairo::RefPtr<Cairo::Context>& cr) {
     auto capi_cr = (cairo_t*)cr->cobj();
     
-    this->cv->set_size(this->get_allocated_width(), this->get_allocated_height());
+    this->cv->set_size(this->get_allocated_width(), this->get_allocated_height(), this->get_scale_factor());
     
     cairo_rectangle_t dirtyRect;
     double x1, y1, x2, y2;
