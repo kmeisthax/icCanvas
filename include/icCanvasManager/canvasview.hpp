@@ -15,10 +15,10 @@ namespace icCanvasManager {
         RefPtr<Drawing> drawing;
 
         double width, height;   //In window-system coordinates.
-        float zoom;             //Same as the Renderer zoom levels.
+        float zoom;             //Number of canvas units per viewspace pixel.
         int x_scroll, y_scroll; //The top-left edge of the view in canvas coord
         int x_center, y_center; //The center of the screen, also canvas coords
-        float x_scale, y_scale;
+        float x_size, y_size;   //Size of the view in canvas units.
         float ui_scale;
 
         //During spline fitting only.
