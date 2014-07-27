@@ -64,8 +64,8 @@ void icCanvasManager::CanvasView::draw(cairo_t *ctxt, cairo_rectangle_t dirtyAre
 
     //Phase 3: Request tiles we couldn't find
     auto request_size = UINT32_MAX >> highest_zoom;
-    auto request_mask = !request_size;
-    auto base_x = this->x_scroll & request_mask, base_y = this->y_scroll & request_mask;
+    auto base_x = this->x_scroll - this->x_scroll % request_size;
+    auto base_y = this->y_scroll - this->y_scroll % request_size;
     auto x_tile_count = std::ceil((float)(2 * (this->x_center - this->x_scroll)) / (float)request_size);
     auto y_tile_count = std::ceil((float)(2 * (this->y_center - this->y_scroll)) / (float)request_size);
 
