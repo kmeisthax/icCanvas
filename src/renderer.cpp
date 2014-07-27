@@ -232,8 +232,8 @@ void icCanvasManager::Renderer::applyBrush(const icCanvasManager::BrushStroke::_
     int tx, ty;
     this->coordToTilespace(cp.x, cp.y, &tx, &ty);
 
-    if (0 > tx || tx >= this->tw) return;
-    if (0 > ty || ty >= this->th) return;
+    if ((0 - brush_size_tspace) > tx || tx >= (this->tw + brush_size_tspace)) return;
+    if ((0 - brush_size_tspace) > ty || ty >= (this->th + brush_size_tspace)) return;
     
     cairo_new_path(this->xrctxt);
     cairo_arc(this->xrctxt, tx, ty, brush_size * this->xscale, 0, 2*3.14159);
