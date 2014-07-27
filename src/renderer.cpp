@@ -1,6 +1,5 @@
 #include <icCanvasManager.hpp>
 #include <cmath>
-#include <iostream>
 
 icCanvasManager::Renderer::Renderer():
     xrctxt(NULL), xrsurf(NULL) {
@@ -63,6 +62,9 @@ void icCanvasManager::Renderer::enterImageSurface(const int32_t x, const int32_t
 
     this->xmax = x + (size >> 1);
     this->ymax = y + (size >> 1);
+
+    cairo_set_source_rgba(this->xrctxt, 1.0, 0.0, 1.0, 1.0);
+    cairo_paint(this->xrctxt);
 };
 
 void icCanvasManager::Renderer::enterContext(const int32_t x, const int32_t y, const int32_t zoom, cairo_t* xrctxt, const int height, const int width) {
@@ -223,7 +225,7 @@ void icCanvasManager::Renderer::drawStroke(icCanvasManager::RefPtr<icCanvasManag
 
 void icCanvasManager::Renderer::applyBrush(const icCanvasManager::BrushStroke::__ControlPoint &cp) {
     //Hardcoded brush size and color
-    uint32_t brush_size = 4096;
+    uint32_t brush_size = 10 * 65536;
     auto brush_size_tspace = brush_size * this->xscale;
     cairo_set_source_rgba(this->xrctxt, 0.0, 0.0, 0.0, 1.0 / brush_size_tspace);
     

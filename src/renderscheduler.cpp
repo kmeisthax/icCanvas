@@ -12,6 +12,7 @@ icCanvasManager::RenderScheduler::~RenderScheduler() {
 
 void icCanvasManager::RenderScheduler::request_tile(icCanvasManager::RefPtr<icCanvasManager::Drawing> d, int x, int y, int size, int time) {
     cairo_surface_t* imgsurf = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, icCanvasManager::TileCache::TILE_SIZE, icCanvasManager::TileCache::TILE_SIZE);
+    cairo_surface_reference(imgsurf);
 
     this->_renderer->enterImageSurface(x, y, size, imgsurf);
 
@@ -28,6 +29,7 @@ void icCanvasManager::RenderScheduler::collect_requests(icCanvasManager::RefPtr<
     while (i != this->_uncollected.end()) {
         if (i->d == d) {
             d->get_tilecache()->store(i->x, i->y, i->size, i->time, i->tile);
+            cairo_surface_destroy(i->tile);
             i = this->_uncollected.erase(i);
         } else {
             i++;

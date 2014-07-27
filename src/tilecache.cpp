@@ -92,6 +92,16 @@ int icCanvasManager::TileCache::store(int x, int y, int size, int timeindex, cai
     *tref = {store, x, y, size, timeindex};
     cairo_surface_reference(store);
 
+    std::pair<int, int> xindex_entry = {x, the_tid};
+    std::pair<int, int> yindex_entry = {y, the_tid};
+    std::pair<int, int> sizeindex_entry = {size, the_tid};
+    std::pair<int, int> timeindex_entry = {timeindex, the_tid};
+
+    this->_xIndex.insert(xindex_entry);
+    this->_yIndex.insert(yindex_entry);
+    this->_sizeIndex.insert(sizeindex_entry);
+    this->_timeIndex.insert(timeindex_entry);
+
     return the_tid;
 };
 
@@ -143,27 +153,27 @@ std::vector<int> icCanvasManager::TileCache::execute(icCanvasManager::TileCache:
 
     for (; xindex_start != xindex_end; xindex_start++) {
         if (query.y_cond_lower && this->_storage.at(xindex_start->second).y < query.y_lower) {
-            break;
+            continue;
         }
 
         if (query.y_cond_upper && this->_storage.at(xindex_start->second).y >= query.y_upper) {
-            break;
+            continue;
         }
 
         if (query.size_cond_lower && this->_storage.at(xindex_start->second).size < query.size_lower) {
-            break;
+            continue;
         }
 
         if (query.size_cond_upper && this->_storage.at(xindex_start->second).size >= query.size_upper) {
-            break;
+            continue;
         }
 
         if (query.time_cond_lower && this->_storage.at(xindex_start->second).time < query.time_lower) {
-            break;
+            continue;
         }
 
         if (query.time_cond_upper && this->_storage.at(xindex_start->second).time >= query.time_upper) {
-            break;
+            continue;
         }
 
         results.push_back(xindex_start->second);
