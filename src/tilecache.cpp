@@ -182,6 +182,20 @@ std::vector<int> icCanvasManager::TileCache::execute(icCanvasManager::TileCache:
     return results;
 };
 
+int icCanvasManager::TileCache::lookup(int x, int y, int size, int timeindex) {
+    auto timerange = this->_timeIndex.equal_range(timeindex);
+    auto begin = timerange.first, end = timerange.second;
+
+    for (; begin != end; begin++) {
+        auto &tile = this->_storage.at(begin->second);
+        if (tile.x == x && tile.y == y && tile.size == size) {
+            return begin->second;
+        }
+    }
+
+    return -1;
+};
+
 icCanvasManager::TileCache::Tile& icCanvasManager::TileCache::tile_at(int tileID) {
     return this->_storage.at(tileID);
 };

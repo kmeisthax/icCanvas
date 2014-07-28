@@ -83,7 +83,7 @@ namespace icCanvasManager {
          */
         int store(int x, int y, int size, int timeindex, cairo_surface_t* store);
 
-        /* Retrieve a particular tile from the tilecache.
+        /* Retrieve a range of tiles from the tilecache.
          *
          * The input is a TileCacheQuery, which allows you to query by x/y
          * position, size, and time, in both less-than and greater-than forms.
@@ -91,6 +91,13 @@ namespace icCanvasManager {
          * Results of executing a query are returned as a list of Tile IDs.
          */
         std::vector<int> execute(TileCacheQuery& query);
+
+        /* Retrieve an exact tile from the tilecache.
+         *
+         * For consistency's sake we return an index into the tilecache
+         * much like the execute function.
+         */
+        int lookup(int x, int y, int size, int timeindex);
 
         /* Return a reference to the Tile structure known by a particular ID.
          *

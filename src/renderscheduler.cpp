@@ -11,6 +11,10 @@ icCanvasManager::RenderScheduler::~RenderScheduler() {
 };
 
 void icCanvasManager::RenderScheduler::request_tile(icCanvasManager::RefPtr<icCanvasManager::Drawing> d, int x, int y, int size, int time) {
+    if (d->get_tilecache()->lookup(x, y, size, time) != -1) {
+        return;
+    }
+
     cairo_surface_t* imgsurf = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, icCanvasManager::TileCache::TILE_SIZE, icCanvasManager::TileCache::TILE_SIZE);
     cairo_surface_reference(imgsurf);
 
