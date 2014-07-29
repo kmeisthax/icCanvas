@@ -51,6 +51,28 @@ namespace icCanvasManager {
          */
         void set_size(double width, double height, double ui_scale);
 
+        /* Configure the internal widget size to be the whole canvas size.
+         *
+         * This is useful for window systems that handle their own scrolling,
+         * assuming that they can represent a widget 2^32 pixels big.
+         */
+        void set_size(double ui_scale);
+
+        /* Get the currently configured size.
+         */
+        void get_size(double *out_width, double *out_size, double *out_ui_scale);
+
+        /* Set the current center point on the canvas to render from.
+         *
+         * If you are using the UI toolkit's native scrolling, set this to zero
+         * and never look back.
+         */
+        void set_scroll_center(int x, int y);
+
+        /* Set the zoom factor of the view.
+         */
+        void set_zoom(int vpixel_size);
+
         /* Respond to mouse input. */
         void mouse_down(int x, int y, int deltaX, int deltaY);
         void mouse_drag(int x, int y, int deltaX, int deltaY);

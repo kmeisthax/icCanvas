@@ -89,6 +89,35 @@ void icCanvasManager::CanvasView::set_size(double width, double height, double u
     this->y_scroll = this->y_center - (height * this->zoom / 2.0);
 };
 
+void icCanvasManager::CanvasView::set_size(double ui_scale) {
+    this->set_size(UINT32_MAX / this->zoom, UINT32_MAX / this->zoom, ui_scale);
+};
+
+void icCanvasManager::CanvasView::get_size(double *out_width, double *out_size, double *out_ui_scale) {
+    if (out_width) *out_width = this->width;
+    if (out_height) *out_height = this->height;
+    if (out_ui_scale) *out_ui_scale = this->ui_scale;
+};
+
+void icCanvasManager::CanvasView::set_scroll_center(int x, int y) {
+    this->x_center = x;
+    this->y_center = y;
+
+    this->x_size = this->width * this->zoom;
+    this->y_size = this->height * this->zoom;
+    this->x_scroll = this->x_center - (width * this->zoom / 2.0);
+    this->y_scroll = this->y_center - (height * this->zoom / 2.0);
+};
+
+void icCanvasManager::CanvasView::set_zoom(int vpixel_size) {
+    this->zoom = vpixel_size;
+
+    this->x_size = this->width * this->zoom;
+    this->y_size = this->height * this->zoom;
+    this->x_scroll = this->x_center - (width * this->zoom / 2.0);
+    this->y_scroll = this->y_center - (height * this->zoom / 2.0);
+};
+
 void icCanvasManager::CanvasView::windowToCoordspace(const int32_t x, const int32_t y, int32_t* out_tx, int32_t* out_ty) {
     if (out_tx) *out_tx = (int)((float)x * this->zoom + this->x_scroll);
     if (out_ty) *out_ty = (int)((float)y * this->zoom + this->y_scroll);
