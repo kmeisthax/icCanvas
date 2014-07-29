@@ -12,7 +12,19 @@
     ICMDrawing* drawing = [[ICMDrawing alloc] init];
     
     ICAKCanvasView* cv = [[ICAKCanvasView alloc] initWithDrawing: drawing];
-    [self.window setContentView:cv];
+    NSScrollView* scv = [[NSScrollView alloc] initWithFrame: [[self.window contentView] frame]];
+    
+    NSPoint center = {0,0};
+    [cv sizeToFitCanvas];
+    
+    [scv setHasVerticalScroller:YES];
+    [scv setHasHorizontalScroller:YES];
+    [scv setBorderType:NSNoBorder];
+    [scv setAutoresizingMask:NSViewWidthSizable|NSViewHeightSizable];
+    [scv setDocumentView:cv];
+    [[scv documentView] scrollPoint:center];
+    
+    [self.window setContentView:scv];
 }
 
 @end
