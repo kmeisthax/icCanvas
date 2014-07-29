@@ -11,4 +11,6 @@
 - (void)mouseDragged:(NSEvent*)theEvent;
 - (void)mouseUp:(NSEvent*)theEvent;
 
+- (void)sizeToFitCanvas;
+
 @end

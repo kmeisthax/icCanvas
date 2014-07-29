@@ -84,4 +84,17 @@
     [self setNeedsDisplay:YES];
 };
 
+- (void)sizeToFitCanvas {
+    NSSize testSize = {1.0, 1.0};
+    NSSize scaleSize = [self convertSizeToBacking:testSize];
+    
+    double pwidth, pheight;
+    [self->internal setSizeUiScale:scaleSize.width];
+    [self->internal getSizeWidth:&pwidth andHeight:&pheight andUiScale:NULL];
+    
+    NSRect bounds = {-pwidth/2.0, -pheight/2.0, pwidth/2.0, pheight/2.0};
+    
+    [self setFrame: bounds];
+};
+
 @end
