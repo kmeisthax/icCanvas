@@ -90,10 +90,17 @@ void icCanvasManager::CanvasView::set_size(double width, double height, double u
 };
 
 void icCanvasManager::CanvasView::set_size(double ui_scale) {
-    this->set_size(UINT32_MAX / this->zoom, UINT32_MAX / this->zoom, ui_scale);
+    this->width = UINT32_MAX / this->zoom;
+    this->height = UINT32_MAX / this->zoom;
+    this->ui_scale = ui_scale;
+
+    this->x_size = this->width * this->zoom;
+    this->y_size = this->height * this->zoom;
+    this->x_scroll = this->x_center - (width * this->zoom / 2.0);
+    this->y_scroll = this->y_center - (height * this->zoom / 2.0);
 };
 
-void icCanvasManager::CanvasView::get_size(double *out_width, double *out_size, double *out_ui_scale) {
+void icCanvasManager::CanvasView::get_size(double *out_width, double *out_height, double *out_ui_scale) {
     if (out_width) *out_width = this->width;
     if (out_height) *out_height = this->height;
     if (out_ui_scale) *out_ui_scale = this->ui_scale;

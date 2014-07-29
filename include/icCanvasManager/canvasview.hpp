@@ -60,7 +60,7 @@ namespace icCanvasManager {
 
         /* Get the currently configured size.
          */
-        void get_size(double *out_width, double *out_size, double *out_ui_scale);
+        void get_size(double *out_width, double *out_height, double *out_ui_scale);
 
         /* Set the current center point on the canvas to render from.
          *
