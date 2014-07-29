@@ -39,6 +39,22 @@
     self->_wrapped->set_size(width, height, ui_scale);
 };
 
+- (void)setSizeUiScale:(double)ui_scale {
+    self->_wrapped->set_size(ui_scale);
+};
+
+- (void)getSizeWidth:(double*)out_width andHeight:(double*)out_height andUiScale:(double*)out_ui_scale {
+    self->_wrapped->get_size(out_width, out_height, out_ui_scale);
+};
+
+- (void)setScrollCenterX:(int)x andY:(int)y {
+    self->_wrapped->set_scroll_center(x, y);
+};
+
+- (void)setZoom:(int)vpixel_size {
+    self->_wrapped->set_zoom(vpixel_size);
+};
+
 - (void)mouseDownWithX:(int)x andY:(int)y andDeltaX:(int)deltaX andDeltaY:(int)deltaY {
     self->_wrapped->mouse_down(x, y, deltaX, deltaY);
 };
