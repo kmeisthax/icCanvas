@@ -54,7 +54,7 @@
     NSSize scaleSize = [self convertSizeToBacking:testSize];
     
     [self->internal setSizeWidth:self.bounds.size.width andHeight:self.bounds.size.height andUiScale:scaleSize.width];
-    [self->internal drawWithContext:ctxt inDirtyRect:cr_dirty];
+    [self->internal drawWithContext:ctxt];
     
     CGContextRestoreGState(cgContext);
     

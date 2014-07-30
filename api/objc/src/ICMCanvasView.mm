@@ -31,8 +31,8 @@
     self->_wrapped->attach_drawing(cppdr);
 };
 
-- (void)drawWithContext:(cairo_t*)context inDirtyRect:(cairo_rectangle_t) dirtyArea {
-    self->_wrapped->draw(context, dirtyArea);
+- (void)drawWithContext:(cairo_t*)context {
+    self->_wrapped->draw(context);
 };
 
 - (void)setSizeWidth:(double)width andHeight:(double)height andUiScale:(double)ui_scale {
