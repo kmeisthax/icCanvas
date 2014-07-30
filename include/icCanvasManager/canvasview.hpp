@@ -27,6 +27,12 @@ namespace icCanvasManager {
         //Convert window-space coordinates to canvas coordinates and back.
         void windowToCoordspace(const int32_t x, const int32_t y, int32_t* out_tx, int32_t* out_ty);
         void coordToWindowspace(const int32_t x, const int32_t y, int32_t* out_tx, int32_t* out_ty);
+
+        //Request all tiles within a particular rectangle.
+        void request_tiles(cairo_rectangle_t* rect);
+
+        //Draw tiles within a particular rectangle.
+        void draw_tiles(cairo_t* ctxt, cairo_rectangle_t* rect);
     public:
         CanvasView();
         ~CanvasView();
@@ -41,8 +47,11 @@ namespace icCanvasManager {
          * such that one pixel in the context represents as many physical
          * display pixels as is specified in set_size. Some window systems may
          * perform this for you, others do not.
+         *
+         * The Cairo context is expected to contain valid clip rectangle(s)
+         * indicating the regions of the widget in need of redrawing.
          */
-        void draw(cairo_t *ctxt, cairo_rectangle_t dirtyArea);
+        void draw(cairo_t *ctxt);
 
         /* Respond to a resize from the native window system.
          *

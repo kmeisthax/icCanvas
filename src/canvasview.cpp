@@ -18,21 +18,29 @@ void icCanvasManager::CanvasView::attach_drawing(icCanvasManager::RefPtr<icCanva
     this->drawing = drawing;
 };
 
-void icCanvasManager::CanvasView::draw(cairo_t *ctxt, cairo_rectangle_t dirtyArea) {
-    float square_size = std::max(this->width, this->height);
+void icCanvasManager::CanvasView::request_tiles(cairo_rectangle_t* rect) {
+    int highest_zoom = std::ceil(31 - log2(icCanvasManager::TileCache::TILE_SIZE * this->zoom));
+    auto request_size = UINT32_MAX >> highest_zoom;
+    auto rect_x_scroll = this->x_scroll + rect->x;
+    auto rect_y_scroll = this->y_scroll + rect->y;
+    auto base_x = rect_x_scroll - rect_x_scroll % request_size;
+    auto base_y = rect_y_scroll - rect_y_scroll % request_size;
+    auto x_tile_count = std::ceil(rect->width / (float)request_size);
+    auto y_tile_count = std::ceil(rect->height / (float)request_size);
+
+    for (int i = 0; i <= x_tile_count; i++) {
+        for (int j = 0; j <= y_tile_count; j++) {
+            renderscheduler->request_tile(this->drawing, base_x + (request_size * i), base_y + (request_size * j), highest_zoom, this->drawing->strokes_count());
+        }
+    }
+};
+
+void icCanvasManager::CanvasView::draw_tiles(cairo_t* ctxt, cairo_rectangle_t* rect) {
+    float square_size = std::max(rect->width, rect->height);
     int lowest_zoom = std::floor(31 - log2(square_size * this->zoom));
     int highest_zoom = std::ceil(31 - log2(icCanvasManager::TileCache::TILE_SIZE * this->zoom));
-    auto clear_ptn = cairo_pattern_create_rgb(1.0f, 1.0f, 1.0f);
-
-    //Phase 0: Clear the surface
-    cairo_save(ctxt);
-    cairo_set_source(ctxt, clear_ptn);
-    cairo_paint(ctxt);
-    cairo_pattern_destroy(clear_ptn);
 
     //Phase 1: Look up tiles from cache
-    auto renderscheduler = this->drawing->get_scheduler();
-    renderscheduler->collect_requests(this->drawing);
 
     icCanvasManager::TileCache::TileCacheQuery qu1;
     qu1.query_size_gte(lowest_zoom);
@@ -61,20 +69,30 @@ void icCanvasManager::CanvasView::draw(cairo_t *ctxt, cairo_rectangle_t dirtyAre
 
         cairo_restore(ctxt);
     }
+};
 
-    //Phase 3: Request tiles we couldn't find
-    auto request_size = UINT32_MAX >> highest_zoom;
-    auto base_x = this->x_scroll - this->x_scroll % request_size;
-    auto base_y = this->y_scroll - this->y_scroll % request_size;
-    auto x_tile_count = std::ceil((float)(2 * (this->x_center - this->x_scroll)) / (float)request_size);
-    auto y_tile_count = std::ceil((float)(2 * (this->y_center - this->y_scroll)) / (float)request_size);
+void icCanvasManager::CanvasView::draw(cairo_t *ctxt) {
+    auto clear_ptn = cairo_pattern_create_rgb(1.0f, 1.0f, 1.0f);
 
-    for (int i = 0; i <= x_tile_count; i++) {
-        for (int j = 0; j <= y_tile_count; j++) {
-            renderscheduler->request_tile(this->drawing, base_x + (request_size * i), base_y + (request_size * j), highest_zoom, this->drawing->strokes_count());
-        }
+    //Phase 0: Clear the surface
+    cairo_save(ctxt);
+    cairo_set_source(ctxt, clear_ptn);
+    cairo_paint(ctxt);
+    cairo_pattern_destroy(clear_ptn);
+
+    cairo_rectangle_list_t* rectList = cairo_copy_clip_rectangle_list(ctxt);
+    for (int i = 0; i < rectList->num_rectangles; i++) {
+        this->request_tiles(&rectList[i]);
     }
 
+    auto renderscheduler = this->drawing->get_scheduler();
+    renderscheduler->collect_requests(this->drawing);
+
+    for (int i = 0; i < rectList->num_rectangles; i++) {
+        this->draw_tiles(ctxt, &rectList[i]);
+    }
+
+    cairo_rectangle_list_destroy(rectList);
     cairo_restore(ctxt);
 };
 
