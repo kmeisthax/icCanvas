@@ -23,10 +23,11 @@ void icCanvasManager::CanvasView::request_tiles(cairo_rectangle_t* rect) {
     auto request_size = UINT32_MAX >> highest_zoom;
     auto rect_x_scroll = this->x_scroll + rect->x;
     auto rect_y_scroll = this->y_scroll + rect->y;
-    auto base_x = rect_x_scroll - rect_x_scroll % request_size;
-    auto base_y = rect_y_scroll - rect_y_scroll % request_size;
+    auto base_x = rect_x_scroll - fmod(rect_x_scroll, request_size);
+    auto base_y = rect_y_scroll - fmod(rect_y_scroll, request_size);
     auto x_tile_count = std::ceil(rect->width / (float)request_size);
     auto y_tile_count = std::ceil(rect->height / (float)request_size);
+    auto renderscheduler = this->drawing->get_scheduler();
 
     for (int i = 0; i <= x_tile_count; i++) {
         for (int j = 0; j <= y_tile_count; j++) {
@@ -82,14 +83,14 @@ void icCanvasManager::CanvasView::draw(cairo_t *ctxt) {
 
     cairo_rectangle_list_t* rectList = cairo_copy_clip_rectangle_list(ctxt);
     for (int i = 0; i < rectList->num_rectangles; i++) {
-        this->request_tiles(&rectList[i]);
+        this->request_tiles(&rectList->rectangles[i]);
     }
 
     auto renderscheduler = this->drawing->get_scheduler();
     renderscheduler->collect_requests(this->drawing);
 
     for (int i = 0; i < rectList->num_rectangles; i++) {
-        this->draw_tiles(ctxt, &rectList[i]);
+        this->draw_tiles(ctxt, &rectList->rectangles[i]);
     }
 
     cairo_rectangle_list_destroy(rectList);
