@@ -3,3 +3,4 @@
 #import "icCanvasManagerObjC/ICMRenderer.h"
 #import "icCanvasManagerObjC/ICMSplineFitter.h"
 #import "icCanvasManagerObjC/ICMCanvasView.h"
+#import "icCanvasManagerObjC/ICMApplication.h"

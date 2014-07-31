@@ -12,5 +12,7 @@
 #include "icCanvasManager/canvasview.hpp"
 #include "icCanvasManager/tilecache.hpp"
 #include "icCanvasManager/renderscheduler.hpp"
+#include "icCanvasManager/singleton.hpp"
+#include "icCanvasManager/application.hpp"
 
 #endif
