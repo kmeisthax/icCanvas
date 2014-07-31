@@ -26,7 +26,7 @@ namespace icCanvasManager {
         int ref() { return 1; };
         int deref() { return 1; };
 
-        __Derived& get_instance() { return this->instance; };
+        static __Derived& get_instance() { return Singleton<__Derived>::instance; };
     };
 }
 
