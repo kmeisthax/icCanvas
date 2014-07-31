@@ -50,14 +50,7 @@ bool icCanvasGtk::CanvasWidget::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
     
     this->cv->set_size(this->get_allocated_width(), this->get_allocated_height(), this->get_scale_factor());
     
-    cairo_rectangle_t dirtyRect;
-    double x1, y1, x2, y2;
-    cairo_clip_extents(capi_cr, &x1, &y1, &x2, &y2);
-    dirtyRect.x = x1;
-    dirtyRect.y = y1;
-    dirtyRect.width = x2 - x1;
-    dirtyRect.height = y2 - y1;
-    this->cv->draw(capi_cr, dirtyRect);
+    this->cv->draw(capi_cr);
     
     return true;
 }

@@ -1,7 +1,5 @@
 #include <icCanvasManager.hpp>
 
-icCanvasManager::Application
-
 icCanvasManager::Application::Application() {
     this->__scheduler = new icCanvasManager::RenderScheduler();
 };
