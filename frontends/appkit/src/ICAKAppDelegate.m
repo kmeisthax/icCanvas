@@ -22,6 +22,10 @@
     [scv setBorderType:NSNoBorder];
     [scv setAutoresizingMask:NSViewWidthSizable|NSViewHeightSizable];
     [scv setDocumentView:cv];
+    [scv setHasHorizontalRuler:YES];
+    [scv setHasVerticalRuler:YES];
+    [scv setRulersVisible:YES];
+    [scv setDrawsBackground:NO];
     [[scv documentView] scrollPoint:center];
     
     [self.window setContentView:scv];

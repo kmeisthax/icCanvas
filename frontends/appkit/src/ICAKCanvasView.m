@@ -50,6 +50,20 @@
     cairo_t* ctxt = cairo_create(xrsurf);
     cairo_rectangle_t cr_dirty = {dirtyRect.origin.x, dirtyRect.origin.y, dirtyRect.size.width, dirtyRect.size.height};
     
+    const NSRect* dirty_list;
+    NSInteger dirty_list_count;
+    [self getRectsBeingDrawn:&dirty_list count:&dirty_list_count];
+    
+    cairo_reset_clip(ctxt);
+    for (NSInteger i = 0; i < dirty_list_count; i++) {
+        cairo_move_to(ctxt, dirty_list[i].origin.x, dirty_list[i].origin.y);
+        cairo_line_to(ctxt, dirty_list[i].origin.x + dirty_list[i].size.width, dirty_list[i].origin.y);
+        cairo_line_to(ctxt, dirty_list[i].origin.x + dirty_list[i].size.width, dirty_list[i].origin.y + dirty_list[i].size.height);
+        cairo_line_to(ctxt, dirty_list[i].origin.x, dirty_list[i].origin.y + dirty_list[i].size.height);
+        cairo_line_to(ctxt, dirty_list[i].origin.x, dirty_list[i].origin.y);
+        cairo_clip(ctxt);
+    }
+    
     NSSize testSize = {1.0, 1.0};
     NSSize scaleSize = [self convertSizeToBacking:testSize];
     
