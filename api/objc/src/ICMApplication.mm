@@ -2,17 +2,11 @@
 #include <icCanvasManager.hpp>
 
 @implementation ICMApplication {
-    icCanvasManager::RefPtr<icCanvasManager::Application> _wrapped;
+    icCanvasManager::Application* _wrapped;
 }
 
-- (id)init {
-    self = [super init];
-    
-    if (self != nil) {
-        self->_wrapped = new icCanvasManager::Application();
-    }
-    
-    return self;
++ (id)getInstance {
+    return [[ICMApplication alloc] initFromWrappedObject:(void*)icCanvasManager::Application::get_instance()];
 };
 
 - (id)initFromWrappedObject:(void*)optr {

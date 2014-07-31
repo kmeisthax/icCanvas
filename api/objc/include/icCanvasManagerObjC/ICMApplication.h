@@ -2,7 +2,7 @@
 
 @interface ICMApplication : NSObject
 
-- (id)init;
++ (id)getInstance;
 - (id)initFromWrappedObject:(void*)optr;
 
 - (void)backgroundTick;
