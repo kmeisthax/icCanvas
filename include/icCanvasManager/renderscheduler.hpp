@@ -18,10 +18,11 @@ namespace icCanvasManager {
         struct __Request {
             Drawing* d;
             int x, y, size, time;
-        }
+        };
 
         struct __Response {
-            __Request req;
+            Drawing* d;
+            int x, y, size, time;
             cairo_surface_t* tile;
         };
 

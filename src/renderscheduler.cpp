@@ -21,7 +21,7 @@ void icCanvasManager::RenderScheduler::request_tile(icCanvasManager::RefPtr<icCa
 
 void icCanvasManager::RenderScheduler::background_tick() {
     if (this->_unrendered.size() > 0) {
-        auto req = this->_unrendered.pop_back();
+        auto req = this->_unrendered.back();
 
         cairo_surface_t* imgsurf = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, icCanvasManager::TileCache::TILE_SIZE, icCanvasManager::TileCache::TILE_SIZE);
         cairo_surface_reference(imgsurf);
@@ -29,10 +29,11 @@ void icCanvasManager::RenderScheduler::background_tick() {
         this->_renderer->enterImageSurface(req.x, req.y, req.size, imgsurf);
 
         for (int i = 0; i < req.time; i++) {
-            this->_renderer->drawStroke(d->stroke_at_time(i));
+            this->_renderer->drawStroke(req.d->stroke_at_time(i));
         }
 
-        icCanvasManager::RenderScheduler::__Response r = {d, x, y, size, time, imgsurf};
+        icCanvasManager::RenderScheduler::__Response r = {req.d, req.x, req.y, req.size, req.time, imgsurf};
+        this->_unrendered.pop_back();
         this->_uncollected.push_back(r);
     }
 };
