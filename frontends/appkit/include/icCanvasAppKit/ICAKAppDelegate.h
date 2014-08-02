@@ -4,4 +4,6 @@
 
 @property (retain) NSWindow *window;
 
+- (id)init;
+
 @end

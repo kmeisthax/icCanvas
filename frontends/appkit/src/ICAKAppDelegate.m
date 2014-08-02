@@ -1,7 +1,19 @@
 #import <icCanvasAppKit.h>
 #import <icCanvasManagerObjC.h>
 
-@implementation ICAKAppDelegate
+@implementation ICAKAppDelegate {
+    ICMApplication* coreApp;
+}
+
+- (id)init {
+    self = [super init];
+    
+    if (self != nil) {
+        self.coreApp = [ICMApplication getInstance];
+    }
+    
+    return self;
+}
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification {
     NSRect r = {{100,100}, {250, 250}};
