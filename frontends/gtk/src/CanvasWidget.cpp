@@ -2,7 +2,9 @@
 #include <iostream>
 
 icCanvasGtk::CanvasWidget::CanvasWidget() :
-    Glib::ObjectBase("icCanvasGtkCanvasWidget"), Gtk::Widget(),
+    Glib::ObjectBase(typeid(icCanvasGtk::CanvasWidget)),
+    Gtk::Widget(),
+    Gtk::Scrollable(),
     lastx(0), lasty(0)
 {
     this->add_events(Gdk::BUTTON_MOTION_MASK | Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK);
@@ -36,7 +38,7 @@ void icCanvasGtk::CanvasWidget::on_realize() {
         this->evtWindow = Gdk::Window::create(this->get_parent_window(), &attributes, GDK_WA_X | GDK_WA_Y);
         this->set_window(this->evtWindow);
 
-        this->evtWindow->set_user_data(this->gobj());
+        this->evtWindow->set_user_data(this->gobject_);
     }
 }
 

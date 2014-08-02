@@ -5,7 +5,7 @@
 #include <icCanvasManager.hpp>
 
 namespace icCanvasGtk {
-    class CanvasWidget : public Gtk::Widget {
+    class CanvasWidget : public Gtk::Widget, public Gtk::Scrollable {
             icCanvasManager::RefPtr<icCanvasManager::CanvasView> cv;
             Glib::RefPtr<Gdk::Window> evtWindow;
 
