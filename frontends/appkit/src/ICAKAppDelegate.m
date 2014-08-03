@@ -9,13 +9,21 @@
     self = [super init];
     
     if (self != nil) {
-        self.coreApp = [ICMApplication getInstance];
+        self->coreApp = [ICMApplication getInstance];
     }
     
     return self;
 }
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification {
+    //Attach ICMApplication background tasks
+    NSInvocation* appInvoke = [NSInvocation invocationWithMethodSignature:[self->coreApp methodSignatureForSelector:@selector(backgroundTick)]];
+    [appInvoke setSelector:@selector(backgroundTick)];
+    appInvoke.target = self->coreApp;
+    NSTimer* appTimer = [NSTimer timerWithTimeInterval:0.0 invocation:appInvoke repeats:YES];
+    [[NSRunLoop mainRunLoop] addTimer:appTimer forMode:NSDefaultRunLoopMode];
+    
+    //Create test window
     NSRect r = {{100,100}, {250, 250}};
     self.window = [[NSWindow alloc] initWithContentRect:r styleMask:(NSTitledWindowMask|NSClosableWindowMask|NSMiniaturizableWindowMask|NSResizableWindowMask) backing:NSBackingStoreBuffered defer:TRUE];
     [self.window makeKeyAndOrderFront:nil];

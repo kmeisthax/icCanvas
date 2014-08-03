@@ -88,7 +88,6 @@ void icCanvasManager::CanvasView::draw(cairo_t *ctxt) {
     }
 
     auto renderscheduler = icCanvasManager::Application::get_instance().get_render_scheduler();
-    renderscheduler->background_tick();
     renderscheduler->collect_requests(this->drawing);
 
     for (int i = 0; i < rectList->num_rectangles; i++) {
