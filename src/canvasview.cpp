@@ -28,7 +28,7 @@ void icCanvasManager::CanvasView::request_tiles(cairo_rectangle_t* rect) {
     auto base_y = rect_y_scroll - fmod(rect_y_scroll, request_size);
     auto x_tile_count = std::ceil((rect->width * this->zoom) / (float)request_size);
     auto y_tile_count = std::ceil((rect->height * this->zoom) / (float)request_size);
-    auto renderscheduler = this->drawing->get_scheduler();
+    auto renderscheduler = icCanvasManager::Application::get_instance().get_render_scheduler();
 
     for (int i = 0; i <= x_tile_count; i++) {
         for (int j = 0; j <= y_tile_count; j++) {
@@ -87,7 +87,7 @@ void icCanvasManager::CanvasView::draw(cairo_t *ctxt) {
         this->request_tiles(&rectList->rectangles[i]);
     }
 
-    auto renderscheduler = this->drawing->get_scheduler();
+    auto renderscheduler = icCanvasManager::Application::get_instance().get_render_scheduler();
     renderscheduler->background_tick();
     renderscheduler->collect_requests(this->drawing);
 
