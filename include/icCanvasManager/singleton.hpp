@@ -15,6 +15,9 @@ namespace icCanvasManager {
      * As Singletons can only exist once, you cannot subclass a Singleton. We
      * also refrain from the usual behavior of declaring a virtual destructor
      * as there is no need for polymorphism in this case.
+     *
+     * For stupid C++ reasons you must friend Singleton<__Derived> or make your
+     * constructor public, or the Singleton won't compile.
      */
     template <typename __Derived>
     class Singleton {
@@ -28,6 +31,9 @@ namespace icCanvasManager {
 
         static __Derived& get_instance() { return Singleton<__Derived>::instance; };
     };
+
+    template <typename __Derived>
+    __Derived Singleton<__Derived>::instance;
 }
 
 #endif

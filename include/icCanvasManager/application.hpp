@@ -19,6 +19,8 @@ namespace icCanvasManager {
         void background_tick();
 
         RefPtr<RenderScheduler> get_render_scheduler();
+
+        friend Singleton<Application>;
     };
 }
 
