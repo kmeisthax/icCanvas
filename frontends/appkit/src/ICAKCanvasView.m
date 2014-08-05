@@ -110,9 +110,9 @@
     [self setFrame: bounds];
 };
 
-- (void)setDrawing:(ICMDrawing*)drawing {
-    self->drawing = drawing;
-    [self->internal attachDrawing:drawing];
+- (void)setDrawing:(ICMDrawing*)newdrawing {
+    self->drawing = newdrawing;
+    [self->internal attachDrawing:newdrawing];
 };
 
 - (ICMDrawing*)drawing {

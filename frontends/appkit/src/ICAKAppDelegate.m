@@ -27,7 +27,9 @@
 - (BOOL)applicationOpenUntitledFile:(NSApplication *)theApplication {
     NSDocumentController *dc = [NSDocumentController sharedDocumentController];
     
-    [dc makeUntitledDocumentOfType:"icCanvas Drawing" error:nil];
+    [dc makeUntitledDocumentOfType:@"icCanvas Drawing" error:nil];
+    
+    return YES;
 }
 
 @end
