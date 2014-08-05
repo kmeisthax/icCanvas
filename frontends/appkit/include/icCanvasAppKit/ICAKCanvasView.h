@@ -11,6 +11,9 @@
 - (void)mouseDragged:(NSEvent*)theEvent;
 - (void)mouseUp:(NSEvent*)theEvent;
 
+- (void)setDrawing:(ICMDrawing*)drawing;
+- (ICMDrawing*)drawing;
+
 - (void)sizeToFitCanvas;
 
 @end

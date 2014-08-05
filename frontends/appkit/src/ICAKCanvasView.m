@@ -95,7 +95,6 @@
     NSPoint local_point = [self convertPoint:event_location fromView:nil];
     
     [self->internal mouseUpWithX:local_point.x andY:local_point.y andDeltaX:theEvent.deltaX andDeltaY:theEvent.deltaY];
-    [self setNeedsDisplay:YES];
 };
 
 - (void)sizeToFitCanvas {
@@ -109,6 +108,15 @@
     NSRect bounds = {-pwidth/2.0, -pheight/2.0, pwidth/2.0, pheight/2.0};
     
     [self setFrame: bounds];
+};
+
+- (void)setDrawing:(ICMDrawing*)drawing {
+    self->drawing = drawing;
+    [self->internal attachDrawing:drawing];
+};
+
+- (ICMDrawing*)drawing {
+    return self->drawing;
 };
 
 @end
