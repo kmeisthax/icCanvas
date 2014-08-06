@@ -22,6 +22,9 @@
     appInvoke.target = self->coreApp;
     NSTimer* appTimer = [NSTimer timerWithTimeInterval:0.0 invocation:appInvoke repeats:YES];
     [[NSRunLoop mainRunLoop] addTimer:appTimer forMode:NSDefaultRunLoopMode];
+    
+    //Force creation of new document
+    [[NSDocumentController sharedDocumentController] openUntitledDocumentAndDisplay:YES error: nil];
 }
 
 - (BOOL)applicationOpenUntitledFile:(NSApplication *)theApplication {
@@ -29,6 +32,10 @@
     
     [dc makeUntitledDocumentOfType:@"icCanvas Drawing" error:nil];
     
+    return YES;
+}
+
+- (BOOL)applicationShouldOpenUntitledFile:(NSApplication *)sender {
     return YES;
 }
 

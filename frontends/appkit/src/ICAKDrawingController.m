@@ -43,8 +43,7 @@
 }
 
 - (void)setDocument:(NSDocument *)document {
-    ICAKDrawing* subDoc = (ICAKDrawing*)subDoc;
-    [self->cv setDrawing:[subDoc drawing]];
+    [self->cv setDrawing:[(id)document drawing]];
 };
 
 @end
