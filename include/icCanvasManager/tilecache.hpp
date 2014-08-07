@@ -15,9 +15,23 @@ namespace icCanvasManager {
      */
     class TileCache : public RefCnt {
     public:
+        struct TileTree;
+
         struct Tile {
+            //Pointer to rendered tile. (May be NULL)
             cairo_surface_t* image;
+
+            //Authoritative information about this tile.
             int x, y, size, time;
+        };
+
+        struct TileTree {
+            int x, y, size;
+
+            int tindex; //Index of tile at this x, y, and size.
+
+            int tl, tr, bl, br; //Next level tiletree indexes.
+                                //-1 if that node of the tree does not exist.
         };
 
         class TileCacheQuery : public RefCnt {
