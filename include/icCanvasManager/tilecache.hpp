@@ -23,26 +23,29 @@ namespace icCanvasManager {
 
             //Authoritative information about this tile.
             int x, y, size, time;
+
+            //Index of previous and next tiles.
+            int time_prev, time_next;
         };
 
         struct TileTree {
             int x, y, size;
 
-            int tindex; //Index of tile at this x, y, and size.
+            int tindex; //Index of latest tile at this x, y, and size. If negative, not rendered
 
             int tl, tr, bl, br; //Next level tiletree indexes.
                                 //-1 if that node of the tree does not exist.
         };
 
         class TileCacheQuery : public RefCnt {
-            int x_lower, x_upper,
-                y_lower, y_upper,
-                size_lower, size_upper,
-                time_lower, time_upper;
-            bool x_cond_lower, x_cond_upper,
-                 y_cond_lower, y_cond_upper,
-                 size_cond_lower, size_cond_upper,
-                 time_cond_lower, time_cond_upper;
+            int x_lower, x_upper, x_equals,
+                y_lower, y_upper, y_equals,
+                size_lower, size_upper, size_equals,
+                time_lower, time_upper, time_equals;
+            bool x_cond_lower, x_cond_upper, x_cond_equals,
+                 y_cond_lower, y_cond_upper, y_cond_equals,
+                 size_cond_lower, size_cond_upper, size_cond_equals,
+                 time_cond_lower, time_cond_upper, time_cond_equals;
 
         public:
             TileCacheQuery();
@@ -68,6 +71,7 @@ namespace icCanvasManager {
         };
     private:
         std::vector<Tile> _storage;
+        std::vector<TileTree> _quadtreeIndex;
 
         /* Tiles are indexed by std::map.
          *
@@ -77,6 +81,13 @@ namespace icCanvasManager {
         typedef std::multimap<int, int> __IntIndex;
 
         __IntIndex _xIndex, _yIndex, _sizeIndex, _timeIndex;
+
+        /* Given a coordinate and size, find what index into the quadtree index
+         * corresponds to the particular location.
+         *
+         * May create new quadtree nodes.
+         */
+        int getTreeIndex(int x, int y, int size);
     public:
         static const int TILE_SIZE = 256;
 
