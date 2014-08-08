@@ -87,9 +87,6 @@ void icCanvasManager::CanvasView::draw(cairo_t *ctxt) {
         this->request_tiles(&rectList->rectangles[i]);
     }
 
-    auto renderscheduler = icCanvasManager::Application::get_instance().get_render_scheduler();
-    renderscheduler->collect_requests(this->drawing);
-
     for (int i = 0; i < rectList->num_rectangles; i++) {
         this->draw_tiles(ctxt, &rectList->rectangles[i]);
     }

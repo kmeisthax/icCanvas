@@ -38,15 +38,21 @@ void icCanvasManager::RenderScheduler::background_tick() {
     }
 };
 
-void icCanvasManager::RenderScheduler::collect_requests(icCanvasManager::RefPtr<icCanvasManager::Drawing> d) {
+int icCanvasManager::RenderScheduler::collect_requests(icCanvasManager::RefPtr<icCanvasManager::Drawing> d) {
+    int count = 0;
+
     auto i = this->_uncollected.begin();
     while (i != this->_uncollected.end()) {
         if (i->d == d) {
             d->get_tilecache()->store(i->x, i->y, i->size, i->time, i->tile);
             cairo_surface_destroy(i->tile);
             i = this->_uncollected.erase(i);
+
+            count++;
         } else {
             i++;
         }
     }
+
+    return count;
 };

@@ -1,5 +1,6 @@
 #import "icCanvasManagerObjC/ICMBrushStroke.h"
 #import "icCanvasManagerObjC/ICMDrawing.h"
+#import "icCanvasManagerObjC/ICMRenderScheduler.h"
 #import "icCanvasManagerObjC/ICMRenderer.h"
 #import "icCanvasManagerObjC/ICMSplineFitter.h"
 #import "icCanvasManagerObjC/ICMCanvasView.h"

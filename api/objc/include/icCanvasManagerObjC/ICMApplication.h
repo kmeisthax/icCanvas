@@ -6,6 +6,7 @@
 - (id)initFromWrappedObject:(void*)optr;
 
 - (void)backgroundTick;
+- (ICMRenderScheduler*)renderScheduler;
 
 - (void*)getWrappedObject;
 

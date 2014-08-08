@@ -46,4 +46,8 @@
     [self->cv setDrawing:[(id)document drawing]];
 };
 
+- (void)rendererDidRenderTiles {
+    [self->scv setNeedsDisplay:YES];
+};
+
 @end

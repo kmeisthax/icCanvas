@@ -52,8 +52,10 @@ namespace icCanvasManager {
          * You should call this method periodically (ideally, before querying
          * a drawing's tile cache) in order to ensure completed renders hit the
          * drawing's tile cache.
+         *
+         * Returns number of tiles collected - 0 if none were rendered.
          */
-        void collect_requests(RefPtr<Drawing> d);
+        int collect_requests(RefPtr<Drawing> d);
     };
 }
 

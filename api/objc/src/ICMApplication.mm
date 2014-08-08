@@ -27,4 +27,8 @@
     return (void*)self->_wrapped;
 };
 
+- (ICMRenderScheduler*)renderScheduler {
+    return [[ICMRenderScheduler alloc] initFromWrappedObject:(void*)self->_wrapped->get_render_scheduler()];
+};
+
 @end

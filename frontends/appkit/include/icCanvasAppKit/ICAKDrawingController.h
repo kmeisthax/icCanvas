@@ -5,5 +5,6 @@
 
 - (id)init;
 - (void)setDocument:(NSDocument *)document;
+- (void)rendererDidRenderTiles;
 
 @end
