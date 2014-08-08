@@ -2,7 +2,7 @@
 
 icCanvasManager::TileCache::TileCache() {
     icCanvasManager::TileCache::TileTree root = {0, 0, 0, -1, -1, -1, -1, -1};
-    self->_quadtreeIndex.push_back(root);
+    this->_quadtreeIndex.push_back(root);
 };
 icCanvasManager::TileCache::~TileCache() {};
 
@@ -76,14 +76,14 @@ int icCanvasManager::TileCache::getTreeIndex(int x, int y, int size) {
     int shiftX = x, shiftY = y, unshiftX = 0, unshiftY = 0;
 
     while (true) {
-        if (current_treenode->x = x && current_treenode->y = y && current_treenode->size == size) {
+        if (current_treenode->x == x && current_treenode->y == y && current_treenode->size == size) {
             break; //Got an exact match
         }
 
         bool useTop, useLeft;
 
-        useTop = shiftX & (UINT32_MAX & UINT32_MAX >> 1) != 0;
-        useLeft = shiftY & (UINT32_MAX & UINT32_MAX >> 1) != 0;
+        useTop = (shiftX & (UINT32_MAX & UINT32_MAX >> 1)) != 0;
+        useLeft = (shiftY & (UINT32_MAX & UINT32_MAX >> 1)) != 0;
 
         unshiftX = (unshiftX << 1) | (useTop ? 1 : 0);
         unshiftY = (unshiftY << 1) | (useLeft ? 1 : 0);
