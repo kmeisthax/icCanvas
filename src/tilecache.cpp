@@ -71,50 +71,61 @@ void icCanvasManager::TileCache::TileCacheQuery::query_time_lt(int time_upper_bo
 };
 
 int icCanvasManager::TileCache::getTreeIndex(int x, int y, int size) {
+    unsigned int size_mask = UINT32_MAX >> size;
+
+    assert((x & (size_mask >> 1)) == 0);
+    assert((y & (size_mask >> 1)) == 0);
+    assert(size < 32);
+
     int current_treenode_idx = 0;
     auto* current_treenode = &this->_quadtreeIndex.at(current_treenode_idx);
-    int shiftX = x, shiftY = y, unshiftX = 0, unshiftY = 0;
 
     while (true) {
+        assert(current_treenode->size < 32);
         if (current_treenode->x == x && current_treenode->y == y && current_treenode->size == size) {
             break; //Got an exact match
         }
 
-        bool useTop, useLeft;
+        bool useRight = x > current_treenode->x,
+             useBottom = y > current_treenode->y;
 
-        useTop = (shiftX & (UINT32_MAX & UINT32_MAX >> 1)) != 0;
-        useLeft = (shiftY & (UINT32_MAX & UINT32_MAX >> 1)) != 0;
-
-        unshiftX = (unshiftX << 1) | (useTop ? 1 : 0);
-        unshiftY = (unshiftY << 1) | (useLeft ? 1 : 0);
-
-        shiftX = shiftX << 1;
-        shiftY = shiftY << 1;
+        unsigned int next_size_mask = UINT32_MAX >> (current_treenode->size + 1);
+        int xdelta = (next_size_mask / 2 + 1) * (useRight ? 1 : -1),
+            ydelta = (next_size_mask / 2 + 1) * (useBottom ? 1 : -1),
+            nodeX = current_treenode->x + xdelta,
+            nodeY = current_treenode->y + ydelta;
 
         int* next_treenode = NULL;
 
-        if (useTop & useLeft) {
-            next_treenode = &current_treenode->tl;
-        } else if (useTop & !useLeft) {
-            next_treenode = &current_treenode->tr;
-        } else if (!useTop & useLeft) {
-            next_treenode = &current_treenode->bl;
-        } else if (!useTop & !useLeft) {
+        if (useBottom && useRight) {
             next_treenode = &current_treenode->br;
+        } else if (useBottom && !useRight) {
+            next_treenode = &current_treenode->bl;
+        } else if (!useBottom && useRight) {
+            next_treenode = &current_treenode->tr;
+        } else if (!useBottom && !useRight) {
+            next_treenode = &current_treenode->tl;
+        } else {
+            assert(false); // WTF BOOOM
         }
 
-        if (*next_treenode == -1) {
-            //Node missing. Create node.
-            int nodeX = unshiftX << (31 - current_treenode->size),
-                nodeY = unshiftY << (31 - current_treenode->size);
+        assert(next_treenode != NULL);
 
+        if (*next_treenode < 0) {
+            //Node missing. Create node.
             icCanvasManager::TileCache::TileTree newNode = {nodeX, nodeY, current_treenode->size + 1, -1, -1, -1, -1, -1};
-            *next_treenode = this->_quadtreeIndex.size();
+            current_treenode_idx = (int)this->_quadtreeIndex.size();
+            *next_treenode = current_treenode_idx;
             this->_quadtreeIndex.push_back(newNode);
+        } else {
+            current_treenode_idx = *next_treenode;
         }
 
         //Navigate to new node.
-        current_treenode_idx = *next_treenode;
+        current_treenode = &this->_quadtreeIndex.at(current_treenode_idx);
+
+        assert(current_treenode->x == nodeX);
+        assert(current_treenode->y == nodeY);
     }
 
     return current_treenode_idx;

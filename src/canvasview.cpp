@@ -20,19 +20,19 @@ void icCanvasManager::CanvasView::attach_drawing(icCanvasManager::RefPtr<icCanva
 };
 
 void icCanvasManager::CanvasView::request_tiles(cairo_rectangle_t* rect) {
-    int highest_zoom = std::ceil(31 - log2(icCanvasManager::TileCache::TILE_SIZE * this->zoom));
-    auto request_size = UINT32_MAX >> highest_zoom;
+    int highest_zoom = std::ceil(32 - log2(icCanvasManager::TileCache::TILE_SIZE * this->zoom));
+    double request_size = (UINT32_MAX >> highest_zoom) + 1;
     auto rect_x_scroll = this->x_scroll + (rect->x * this->zoom);
     auto rect_y_scroll = this->y_scroll + (rect->y * this->zoom);
-    auto base_x = rect_x_scroll - fmod(rect_x_scroll, request_size);
-    auto base_y = rect_y_scroll - fmod(rect_y_scroll, request_size);
+    auto base_x = rect_x_scroll - fmod(rect_x_scroll, request_size) + (request_size / 2);
+    auto base_y = rect_y_scroll - fmod(rect_y_scroll, request_size) + (request_size / 2);
     auto x_tile_count = std::ceil((rect->width * this->zoom) / (float)request_size);
     auto y_tile_count = std::ceil((rect->height * this->zoom) / (float)request_size);
     auto renderscheduler = icCanvasManager::Application::get_instance().get_render_scheduler();
 
     for (int i = 0; i <= x_tile_count; i++) {
         for (int j = 0; j <= y_tile_count; j++) {
-            renderscheduler->request_tile(this->drawing, base_x + (request_size * i), base_y + (request_size * j), highest_zoom, this->drawing->strokes_count());
+            renderscheduler->request_tile(this->drawing, base_x + ((int)request_size * i), base_y + ((int)request_size * j), highest_zoom, this->drawing->strokes_count());
         }
     }
 };
