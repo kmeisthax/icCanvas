@@ -20,7 +20,7 @@ void icCanvasManager::CanvasView::attach_drawing(icCanvasManager::RefPtr<icCanva
 };
 
 void icCanvasManager::CanvasView::request_tiles(cairo_rectangle_t* rect) {
-    int highest_zoom = std::ceil(32 - log2(icCanvasManager::TileCache::TILE_SIZE * this->zoom));
+    int highest_zoom = std::ceil(31 - log2(icCanvasManager::TileCache::TILE_SIZE * this->zoom));
     double request_size = (UINT32_MAX >> highest_zoom) + 1;
     auto rect_x_scroll = this->x_scroll + (rect->x * this->zoom);
     auto rect_y_scroll = this->y_scroll + (rect->y * this->zoom);
@@ -46,8 +46,8 @@ void icCanvasManager::CanvasView::draw_tiles(cairo_t* ctxt, cairo_rectangle_t* r
 
     icCanvasManager::TileCache::TileCacheQuery qu1;
     qu1.query_size_gte(lowest_zoom);
-    qu1.query_size_lt(highest_zoom+1);
-    qu1.query_time_gte(this->drawing->strokes_count() - 1);
+    qu1.query_size_lt(highest_zoom+2);
+    qu1.query_time_limit(1);
     auto tilecache = this->drawing->get_tilecache();
     auto tilelist = tilecache->execute(qu1);
     auto begin = tilelist.begin(), end = tilelist.end();

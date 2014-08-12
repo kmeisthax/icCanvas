@@ -9,12 +9,17 @@ icCanvasManager::TileCache::~TileCache() {};
 icCanvasManager::TileCache::TileCacheQuery::TileCacheQuery() {
     this->x_cond_lower = false;
     this->x_cond_upper = false;
+    this->x_cond_equals = false;
     this->y_cond_lower = false;
     this->y_cond_upper = false;
+    this->y_cond_equals = false;
     this->size_cond_lower = false;
     this->size_cond_upper = false;
+    this->size_cond_equals = false;
     this->time_cond_lower = false;
     this->time_cond_upper = false;
+    this->time_cond_equals = false;
+    this->time_cond_limit = false;
 };
 icCanvasManager::TileCache::TileCacheQuery::~TileCacheQuery() {};
 
@@ -234,17 +239,10 @@ std::vector<int> icCanvasManager::TileCache::execute(icCanvasManager::TileCache:
     while (current_level_size < maximum_quadtree_level) {
         //Expand query rectangle to the next level's tile size
         long long int tile_size = UINT32_MAX >> (current_level_size + 1);
-        int nexvrect_x_min = visrect_x_min - visrect_x_min % tile_size,
+        long long int nexvrect_x_min = visrect_x_min - visrect_x_min % tile_size,
             nexvrect_y_min = visrect_y_min - visrect_y_min % tile_size,
-            nexvrect_x_max = visrect_x_max, nexvrect_y_max = visrect_y_max;
-
-        if (nexvrect_x_max % tile_size != 0) {
-            nexvrect_x_max = visrect_x_max + tile_size - visrect_x_max % tile_size;
-        }
-
-        if (nexvrect_y_max % tile_size != 0) {
+            nexvrect_x_max = visrect_x_max + tile_size - visrect_x_max % tile_size,
             nexvrect_y_max = visrect_y_max + tile_size - visrect_y_max % tile_size;
-        }
 
         //Walk each tile in current_level
         for (auto i = current_level.begin(); i != current_level.end(); i++) {
