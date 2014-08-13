@@ -24,8 +24,8 @@ void icCanvasManager::CanvasView::request_tiles(cairo_rectangle_t* rect) {
     double request_size = (UINT32_MAX >> highest_zoom) + 1;
     auto rect_x_scroll = this->x_scroll + (rect->x * this->zoom);
     auto rect_y_scroll = this->y_scroll + (rect->y * this->zoom);
-    auto base_x = rect_x_scroll - fmod(rect_x_scroll, request_size) + (request_size / 2);
-    auto base_y = rect_y_scroll - fmod(rect_y_scroll, request_size) + (request_size / 2);
+    auto base_x = rect_x_scroll - fmod(rect_x_scroll, request_size) - (request_size / 2);
+    auto base_y = rect_y_scroll - fmod(rect_y_scroll, request_size) - (request_size / 2);
     auto x_tile_count = std::ceil((rect->width * this->zoom) / (float)request_size);
     auto y_tile_count = std::ceil((rect->height * this->zoom) / (float)request_size);
     auto renderscheduler = icCanvasManager::Application::get_instance().get_render_scheduler();
@@ -41,15 +41,24 @@ void icCanvasManager::CanvasView::draw_tiles(cairo_t* ctxt, cairo_rectangle_t* r
     float square_size = std::max(rect->width, rect->height);
     int lowest_zoom = std::floor(31 - log2(square_size * this->zoom));
     int highest_zoom = std::ceil(31 - log2(icCanvasManager::TileCache::TILE_SIZE * this->zoom));
+    int canvas_x_min = this->x_scroll + (rect->x * this->zoom),
+        canvas_x_max = this->x_scroll + (rect->x + rect->width) * this->zoom,
+        canvas_y_min = this->y_scroll + (rect->y * this->zoom),
+        canvas_y_max = this->y_scroll + (rect->y + rect->height) * this->zoom;
 
     //Phase 1: Look up tiles from cache
 
     icCanvasManager::TileCache::TileCacheQuery qu1;
+    qu1.query_x_gte(canvas_x_min);
+    qu1.query_x_lt(canvas_x_max);
+    qu1.query_y_gte(canvas_y_min);
+    qu1.query_y_lt(canvas_y_max);
     qu1.query_size_gte(lowest_zoom);
     qu1.query_size_lt(highest_zoom+2);
     qu1.query_time_limit(1);
     auto tilecache = this->drawing->get_tilecache();
     auto tilelist = tilecache->execute(qu1);
+
     auto begin = tilelist.begin(), end = tilelist.end();
 
     //Phase 2: Copy/scale tiles onto view
@@ -63,7 +72,7 @@ void icCanvasManager::CanvasView::draw_tiles(cairo_t* ctxt, cairo_rectangle_t* r
         auto scale_factor = (float)icCanvasManager::TileCache::TILE_SIZE / tile_wndsize;
         int txpos, typos; //yes I know, typos
 
-        this->coordToWindowspace(tile.x - tile_size / 2, tile.y - tile_size / 2, &txpos, &typos);
+        this->coordToWindowspace(tile.x - tile_size, tile.y - tile_size, &txpos, &typos);
 
         cairo_scale(ctxt, scale_factor, scale_factor);
         cairo_set_source_surface(ctxt, tile.image, (double)txpos, (double)typos);
