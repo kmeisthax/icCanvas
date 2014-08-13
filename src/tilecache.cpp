@@ -316,15 +316,20 @@ std::vector<int> icCanvasManager::TileCache::execute(icCanvasManager::TileCache:
 };
 
 int icCanvasManager::TileCache::lookup(int x, int y, int size, int timeindex) {
-    icCanvasManager::TileCache::TileCacheQuery tq;
-    tq.query_x_eq(x);
-    tq.query_y_eq(y);
-    tq.query_size_eq(size);
-    tq.query_time_eq(timeindex);
+    int treeIndex = this->getTreeIndex(x, y, size);
+    auto &treeNode = this->_quadtreeIndex.at(treeIndex);
 
-    auto tileList = this->execute(tq);
-    if (tileList.size() > 0) {
-        return tileList.at(0);
+    if (treeNode.tindex == -1) return -1;
+
+    int currentTileIdx = treeNode.tindex;
+
+    while (currentTileIdx != -1) {
+        auto &currentTile = this->_storage.at(currentTileIdx);
+
+        if (currentTile.time == timeindex) return currentTileIdx;
+        if (currentTile.time < timeindex) return -1;
+
+        currentTileIdx = currentTile.time_past;
     }
 
     return -1;
