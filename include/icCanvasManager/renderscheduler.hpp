@@ -41,7 +41,7 @@ namespace icCanvasManager {
          * Already filled requests (or those currently in processing) cannot be
          * revoked and will reach the TileCache anyway.
          */
-        void revoke_request(RefPtr<Drawing> d, int x_min, y_min, x_max, y_max);
+        void revoke_request(RefPtr<Drawing> d, int x_min, int y_min, int x_max, int y_max);
 
         /* Process rendering tasks whenever the application has free time.
          *
