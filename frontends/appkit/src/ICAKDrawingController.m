@@ -35,6 +35,10 @@
         [self->scv setRulersVisible:YES];
         [self->scv setDrawsBackground:NO];
         [[self->scv documentView] scrollPoint:center];
+        
+        self->scv.allowsMagnification = YES;
+        self->scv.maxMagnification = 8.0;
+        self->scv.minMagnification = 0.125;
 
         [window setContentView:self->scv];
     }
