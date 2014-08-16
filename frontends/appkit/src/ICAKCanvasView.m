@@ -54,21 +54,29 @@
     NSInteger dirty_list_count;
     [self getRectsBeingDrawn:&dirty_list count:&dirty_list_count];
     
-    cairo_reset_clip(ctxt);
+    //Manually create our own cairo rectangle list since Cairo thinks
+    //Apple's scale matrixes make the cliplist unrepresentable
+    int rectlist_size = sizeof(cairo_rectangle_t) * dirty_list_count;
+    assert(rectlist_size != 0); //WTF BOOOM
+    
+    cairo_rectangle_t* cairo_rects = (cairo_rectangle_t*)malloc(rectlist_size);
+    assert(cairo_rects);
+    
     for (NSInteger i = 0; i < dirty_list_count; i++) {
-        cairo_move_to(ctxt, dirty_list[i].origin.x, dirty_list[i].origin.y);
-        cairo_line_to(ctxt, dirty_list[i].origin.x + dirty_list[i].size.width, dirty_list[i].origin.y);
-        cairo_line_to(ctxt, dirty_list[i].origin.x + dirty_list[i].size.width, dirty_list[i].origin.y + dirty_list[i].size.height);
-        cairo_line_to(ctxt, dirty_list[i].origin.x, dirty_list[i].origin.y + dirty_list[i].size.height);
-        cairo_line_to(ctxt, dirty_list[i].origin.x, dirty_list[i].origin.y);
-        cairo_clip(ctxt);
+        cairo_rects[i] = {dirty_list[i].origin.x, dirty_list[i].origin.y, dirty_list[i].size.width, dirty_list[i].size.height};
     }
+    
+    cairo_rectangle_list_t theList;
+    theList.rectangles = cairo_rects;
+    theList.num_rectangles = dirty_list_count;
     
     NSSize testSize = {1.0, 1.0};
     NSSize scaleSize = [self convertSizeToBacking:testSize];
     
     [self->internal setSizeWidth:self.bounds.size.width andHeight:self.bounds.size.height andUiScale:scaleSize.width];
-    [self->internal drawWithContext:ctxt];
+    [self->internal drawWithContext:ctxt intoRects:&theList];
+    
+    free(cairo_rects);
     
     CGContextRestoreGState(cgContext);
     

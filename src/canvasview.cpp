@@ -82,7 +82,7 @@ void icCanvasManager::CanvasView::draw_tiles(cairo_t* ctxt, cairo_rectangle_t* r
     }
 };
 
-void icCanvasManager::CanvasView::draw(cairo_t *ctxt) {
+void icCanvasManager::CanvasView::draw(cairo_t *ctxt, cairo_rectangle_list_t *rectList) {
     auto clear_ptn = cairo_pattern_create_rgb(1.0f, 1.0f, 1.0f);
 
     //Phase 0: Clear the surface
@@ -95,7 +95,6 @@ void icCanvasManager::CanvasView::draw(cairo_t *ctxt) {
     auto renderscheduler = icCanvasManager::Application::get_instance().get_render_scheduler();
     renderscheduler->revoke_request(this->drawing, INT32_MIN, INT32_MIN, INT32_MAX, INT32_MAX);
 
-    cairo_rectangle_list_t* rectList = cairo_copy_clip_rectangle_list(ctxt);
     for (int i = 0; i < rectList->num_rectangles; i++) {
         this->request_tiles(&rectList->rectangles[i]);
     }
@@ -104,7 +103,6 @@ void icCanvasManager::CanvasView::draw(cairo_t *ctxt) {
         this->draw_tiles(ctxt, &rectList->rectangles[i]);
     }
 
-    cairo_rectangle_list_destroy(rectList);
     cairo_restore(ctxt);
 };
 
