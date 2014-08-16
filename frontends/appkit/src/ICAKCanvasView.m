@@ -63,7 +63,10 @@
     assert(cairo_rects);
     
     for (NSInteger i = 0; i < dirty_list_count; i++) {
-        cairo_rects[i] = {dirty_list[i].origin.x, dirty_list[i].origin.y, dirty_list[i].size.width, dirty_list[i].size.height};
+        cairo_rects[i].x = dirty_list[i].origin.x;
+        cairo_rects[i].y = dirty_list[i].origin.y;
+        cairo_rects[i].width = dirty_list[i].size.width;
+        cairo_rects[i].height = dirty_list[i].size.height;
     }
     
     cairo_rectangle_list_t theList;
