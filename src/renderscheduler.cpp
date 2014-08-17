@@ -31,7 +31,7 @@ void icCanvasManager::RenderScheduler::revoke_request(icCanvasManager::RefPtr<ic
 };
 
 void icCanvasManager::RenderScheduler::background_tick() {
-    int tick_request_limit = 2, rendered_requests = 0;
+    int tick_request_limit = 1, rendered_requests = 0;
 
     while (this->_unrendered.size() > 0 && rendered_requests < tick_request_limit) {
         auto req = this->_unrendered.back();
