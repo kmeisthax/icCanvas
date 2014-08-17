@@ -20,7 +20,7 @@ void icCanvasManager::CanvasView::attach_drawing(icCanvasManager::RefPtr<icCanva
 };
 
 void icCanvasManager::CanvasView::request_tiles(cairo_rectangle_t* rect) {
-    int highest_zoom = std::ceil(31 - log2(icCanvasManager::TileCache::TILE_SIZE * this->zoom));
+    int highest_zoom = std::ceil(31 - log2(icCanvasManager::TileCache::TILE_SIZE * this->zoom / this->ui_scale));
     double request_size = (UINT32_MAX >> highest_zoom) + 1;
     auto rect_x_scroll = this->x_scroll + (rect->x * this->zoom);
     auto rect_y_scroll = this->y_scroll + (rect->y * this->zoom);
@@ -40,7 +40,7 @@ void icCanvasManager::CanvasView::request_tiles(cairo_rectangle_t* rect) {
 void icCanvasManager::CanvasView::draw_tiles(cairo_t* ctxt, cairo_rectangle_t* rect) {
     float square_size = std::max(rect->width, rect->height);
     int lowest_zoom = std::floor(31 - log2(square_size * this->zoom));
-    int highest_zoom = std::ceil(31 - log2(icCanvasManager::TileCache::TILE_SIZE * this->zoom));
+    int highest_zoom = std::ceil(31 - log2(icCanvasManager::TileCache::TILE_SIZE * this->zoom / this->ui_scale));
     int canvas_x_min = this->x_scroll + (rect->x * this->zoom),
         canvas_x_max = this->x_scroll + (rect->x + rect->width) * this->zoom,
         canvas_y_min = this->y_scroll + (rect->y * this->zoom),
@@ -69,13 +69,13 @@ void icCanvasManager::CanvasView::draw_tiles(cairo_t* ctxt, cairo_rectangle_t* r
 
         auto tile_size = UINT32_MAX >> tile.size;
         auto tile_wndsize = tile_size / this->zoom;
-        auto scale_factor = (float)icCanvasManager::TileCache::TILE_SIZE / tile_wndsize;
+        auto scale_factor = tile_wndsize / (float)icCanvasManager::TileCache::TILE_SIZE;
         int txpos, typos; //yes I know, typos
 
-        this->coordToWindowspace(tile.x - tile_size, tile.y - tile_size, &txpos, &typos);
-
+        this->coordToWindowspace(tile.x - tile_size / 2, tile.y - tile_size / 2, &txpos, &typos);
+        cairo_translate(ctxt, (double)txpos, (double)typos);
         cairo_scale(ctxt, scale_factor, scale_factor);
-        cairo_set_source_surface(ctxt, tile.image, (double)txpos, (double)typos);
+        cairo_set_source_surface(ctxt, tile.image, 0, 0);
         cairo_paint(ctxt);
 
         cairo_restore(ctxt);
