@@ -42,6 +42,15 @@ void icCanvasGtk::CanvasWidget::on_realize() {
     }
 }
 
+void icCanvasGtk::CanvasWidget::on_size_allocate(Gtk::Allocation& allocation) {
+    Gtk::Widget::on_size_allocate(allocation);
+
+    if (this->get_realized()) {
+        this->evtWindow->move_resize(allocation.get_x(), allocation.get_y(), allocation.get_width(), allocation.get_height());
+        this->cv->set_size(allocation.get_width(), allocation.get_height(), this->get_scale_factor());
+    }
+};
+
 void icCanvasGtk::CanvasWidget::on_unrealize() {
     this->evtWindow.reset();
     Gtk::Widget::on_unrealize();
@@ -49,9 +58,7 @@ void icCanvasGtk::CanvasWidget::on_unrealize() {
 
 bool icCanvasGtk::CanvasWidget::on_draw(const Cairo::RefPtr<Cairo::Context>& cr) {
     auto capi_cr = (cairo_t*)cr->cobj();
-    
-    this->cv->set_size(this->get_allocated_width(), this->get_allocated_height(), this->get_scale_factor());
-    
+
     this->cv->draw(capi_cr);
     
     return true;
