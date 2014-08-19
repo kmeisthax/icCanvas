@@ -75,8 +75,20 @@ void icCanvasManager::CanvasView::draw_tiles(cairo_t* ctxt, cairo_rectangle_t* r
         this->coordToWindowspace(tile.x - tile_size / 2, tile.y - tile_size / 2, &txpos, &typos);
         cairo_translate(ctxt, (double)txpos, (double)typos);
         cairo_scale(ctxt, scale_factor, scale_factor);
+
+        cairo_move_to(ctxt, 0, 0);
+        cairo_line_to(ctxt, icCanvasManager::TileCache::TILE_SIZE, 0);
+        cairo_line_to(ctxt, icCanvasManager::TileCache::TILE_SIZE, icCanvasManager::TileCache::TILE_SIZE);
+        cairo_line_to(ctxt, 0, icCanvasManager::TileCache::TILE_SIZE);
+        cairo_line_to(ctxt, 0, 0);
+
+        cairo_set_operator(ctxt, CAIRO_OPERATOR_SOURCE);
+        cairo_set_source_rgba(ctxt, 1.0, 1.0, 1.0, 1.0);
+        cairo_fill_preserve(ctxt);
+
+        cairo_set_operator(ctxt, CAIRO_OPERATOR_OVER);
         cairo_set_source_surface(ctxt, tile.image, 0, 0);
-        cairo_paint(ctxt);
+        cairo_fill(ctxt);
 
         cairo_restore(ctxt);
     }
