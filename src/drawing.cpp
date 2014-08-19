@@ -2,7 +2,6 @@
 
 icCanvasManager::Drawing::Drawing() {
     this->_cache = new icCanvasManager::TileCache();
-    this->_sched = new icCanvasManager::RenderScheduler();
 };
 icCanvasManager::Drawing::~Drawing() {};
 
@@ -28,8 +27,4 @@ void icCanvasManager::Drawing::append_stroke(icCanvasManager::RefPtr<icCanvasMan
 
 icCanvasManager::RefPtr<icCanvasManager::TileCache> icCanvasManager::Drawing::get_tilecache() {
     return this->_cache;
-};
-
-icCanvasManager::RefPtr<icCanvasManager::RenderScheduler> icCanvasManager::Drawing::get_scheduler() {
-    return this->_sched;
 };
