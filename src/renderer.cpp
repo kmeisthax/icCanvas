@@ -63,7 +63,7 @@ void icCanvasManager::Renderer::enterImageSurface(const int32_t x, const int32_t
     this->xmax = x + (size >> 1);
     this->ymax = y + (size >> 1);
 
-    cairo_set_source_rgba(this->xrctxt, 1.0, 0.0, 1.0, 1.0);
+    cairo_set_source_rgba(this->xrctxt, 1.0, 1.0, 1.0, 0.0);
     cairo_paint(this->xrctxt);
 };
 
