@@ -48,10 +48,10 @@ namespace icCanvasManager {
          * display pixels as is specified in set_size. Some window systems may
          * perform this for you, others do not.
          *
-         * The Cairo context is expected to contain valid clip rectangle(s)
-         * indicating the regions of the widget in need of redrawing.
+         * The rectList passed in is used to determine what regions of the
+         * widget to draw. It must be valid. draw does not destroy rectList.
          */
-        void draw(cairo_t *ctxt);
+        void draw(cairo_t *ctxt, cairo_rectangle_list_t *rectList);
 
         /* Respond to a resize from the native window system.
          *

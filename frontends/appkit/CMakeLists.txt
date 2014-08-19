@@ -30,6 +30,8 @@ endif()
 set(ICCANVAS_APP "\${CMAKE_INSTALL_PREFIX}/icCanvas.app")
 set(CORELIB_BUNDLE "\${CMAKE_INSTALL_PREFIX}/icCanvasManager.framework")
 
+set_target_properties(icCanvas PROPERTIES MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/resources/Info.plist")
+
 install(TARGETS icCanvas BUNDLE DESTINATION .)
 install(CODE "
     include(BundleUtilities)

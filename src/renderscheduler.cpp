@@ -19,8 +19,21 @@ void icCanvasManager::RenderScheduler::request_tile(icCanvasManager::RefPtr<icCa
     this->_unrendered.push_back(r);
 };
 
+void icCanvasManager::RenderScheduler::revoke_request(icCanvasManager::RefPtr<icCanvasManager::Drawing> d, int x_min, int y_min, int x_max, int y_max) {
+    for (auto i = this->_unrendered.begin(); i != this->_unrendered.end(); i++) {
+        int tile_manhattan_diameter = (UINT32_MAX >> i->size) / 2;
+        if (i->d == d &&
+            i->x >= (x_min - tile_manhattan_diameter) && i->x < (x_max + tile_manhattan_diameter) &&
+            i->y >= (y_min - tile_manhattan_diameter) && i->y < (y_max + tile_manhattan_diameter)) {
+            i = this->_unrendered.erase(i);
+        }
+    }
+};
+
 void icCanvasManager::RenderScheduler::background_tick() {
-    if (this->_unrendered.size() > 0) {
+    int tick_request_limit = 1, rendered_requests = 0;
+
+    while (this->_unrendered.size() > 0 && rendered_requests < tick_request_limit) {
         auto req = this->_unrendered.back();
 
         cairo_surface_t* imgsurf = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, icCanvasManager::TileCache::TILE_SIZE, icCanvasManager::TileCache::TILE_SIZE);
@@ -35,18 +48,26 @@ void icCanvasManager::RenderScheduler::background_tick() {
         icCanvasManager::RenderScheduler::__Response r = {req.d, req.x, req.y, req.size, req.time, imgsurf};
         this->_unrendered.pop_back();
         this->_uncollected.push_back(r);
+
+        rendered_requests++;
     }
 };
 
-void icCanvasManager::RenderScheduler::collect_requests(icCanvasManager::RefPtr<icCanvasManager::Drawing> d) {
+int icCanvasManager::RenderScheduler::collect_requests(icCanvasManager::RefPtr<icCanvasManager::Drawing> d) {
+    int count = 0;
+
     auto i = this->_uncollected.begin();
     while (i != this->_uncollected.end()) {
         if (i->d == d) {
             d->get_tilecache()->store(i->x, i->y, i->size, i->time, i->tile);
             cairo_surface_destroy(i->tile);
             i = this->_uncollected.erase(i);
+
+            count++;
         } else {
             i++;
         }
     }
+
+    return count;
 };

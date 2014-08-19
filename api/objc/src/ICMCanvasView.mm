@@ -31,8 +31,8 @@
     self->_wrapped->attach_drawing(cppdr);
 };
 
-- (void)drawWithContext:(cairo_t*)context {
-    self->_wrapped->draw(context);
+- (void)drawWithContext:(cairo_t*)context intoRects:(cairo_rectangle_list_t*)rectList {
+    self->_wrapped->draw(context, rectList);
 };
 
 - (void)setSizeWidth:(double)width andHeight:(double)height andUiScale:(double)ui_scale {

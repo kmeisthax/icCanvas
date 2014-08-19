@@ -36,6 +36,13 @@ namespace icCanvasManager {
         /* Put a request for a tile to be rendered. */
         void request_tile(RefPtr<Drawing> d, int x, int y, int size, int time);
 
+        /* Revoke previously made requests in a particular canvas rectangle.
+         *
+         * Already filled requests (or those currently in processing) cannot be
+         * revoked and will reach the TileCache anyway.
+         */
+        void revoke_request(RefPtr<Drawing> d, int x_min, int y_min, int x_max, int y_max);
+
         /* Process rendering tasks whenever the application has free time.
          *
          * This function is specifically designed to be called periodically and
@@ -52,8 +59,10 @@ namespace icCanvasManager {
          * You should call this method periodically (ideally, before querying
          * a drawing's tile cache) in order to ensure completed renders hit the
          * drawing's tile cache.
+         *
+         * Returns number of tiles collected - 0 if none were rendered.
          */
-        void collect_requests(RefPtr<Drawing> d);
+        int collect_requests(RefPtr<Drawing> d);
     };
 }
 

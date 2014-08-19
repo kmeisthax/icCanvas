@@ -32,5 +32,16 @@
 	<true/>
 	<key>NSHumanReadableCopyright</key>
 	<string></string>
+    <key>CFBundleDocumentTypes</key>
+    <array>
+        <dict>
+            <key>CFBundleTypeName</key>
+            <string>icCanvas Drawing</string>
+            <key>CFBundleTypeRole</key>
+            <string>Editor</string>
+            <key>NSDocumentClass</key>
+            <string>ICAKDrawing</string>
+        </dict>
+    </array>
 </dict>
 </plist>
