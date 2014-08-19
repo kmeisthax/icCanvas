@@ -7,9 +7,7 @@
 extern "C" {
 #endif
 
-    struct icm_drawing {
-        void* __wrapped;
-    }
+    typedef void *icm_drawing;
 
     icm_drawing* icm_drawing_construct();
     int icm_drawing_reference(icm_drawing *this);
