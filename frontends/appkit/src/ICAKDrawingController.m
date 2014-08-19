@@ -21,8 +21,6 @@
 
         self->cv = [[ICAKCanvasView alloc] initWithDrawing: drawing];
         self->scv = [[NSScrollView alloc] initWithFrame: [[self.window contentView] frame]];
-
-        NSPoint center = {0,0};
         [self->cv sizeToFitCanvas];
 
         [self->scv setHasVerticalScroller:YES];
@@ -34,7 +32,23 @@
         [self->scv setHasVerticalRuler:YES];
         [self->scv setRulersVisible:YES];
         [self->scv setDrawsBackground:NO];
-        [[self->scv documentView] scrollPoint:center];
+        
+        const CGFloat midX = NSMidX([[self->scv documentView] bounds]);
+        const CGFloat midY = NSMidY([[self->scv documentView] bounds]);
+
+        const CGFloat halfWidth = NSWidth([[self->scv contentView] frame]) / 2.0;
+        const CGFloat halfHeight = NSHeight([[self->scv contentView] frame]) / 2.0;
+
+        NSPoint newOrigin;
+        if([[self->scv documentView] isFlipped])
+        {
+            newOrigin = NSMakePoint(midX - halfWidth, midY + halfHeight);
+        }
+        else
+        {
+            newOrigin = NSMakePoint(midX - halfWidth, midY - halfHeight);
+        }
+        [[self->scv documentView] scrollPoint:newOrigin];
         
         self->scv.allowsMagnification = YES;
         self->scv.maxMagnification = 8.0;
