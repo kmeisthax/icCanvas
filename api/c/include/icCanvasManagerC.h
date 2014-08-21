@@ -2,3 +2,4 @@
 #include "icCanvasManagerC/icmbrushstroke.h"
 #include "icCanvasManagerC/icmapplication.h"
 #include "icCanvasManagerC/icmrenderscheduler.h"
+#include "icCanvasManagerC/icmcanvasview.h"
