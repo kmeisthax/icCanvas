@@ -1,0 +1,1 @@
+file(GLOB CORELIB_VAPI ${PARENT_PROJECT_DIR}/api/vala/vapi/*.vapi)
