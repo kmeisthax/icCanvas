@@ -60,7 +60,7 @@ bool icCanvasGtk::CanvasWidget::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
     auto capi_cr = (cairo_t*)cr->cobj();
 
     this->cv->draw(capi_cr);
-    
+
     return true;
 }
 

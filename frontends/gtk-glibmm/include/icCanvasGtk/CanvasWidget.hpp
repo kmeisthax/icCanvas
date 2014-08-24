@@ -14,7 +14,7 @@ namespace icCanvasGtk {
         public:
             CanvasWidget();
             virtual ~CanvasWidget();
-            
+
             void set_drawing(icCanvasManager::RefPtr<icCanvasManager::Drawing> newDoc);
         protected:
             virtual void on_realize() override;
