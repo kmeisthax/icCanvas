@@ -7,16 +7,16 @@
 extern "C" {
 #endif
 
-    typedef void icm_drawing;
+    typedef void* icm_drawing;
 
-    icm_drawing* icm_drawing_construct();
-    int icm_drawing_reference(icm_drawing *this);
-    int icm_drawing_dereference(icm_drawing *this);
+    icm_drawing icm_drawing_construct();
+    int icm_drawing_reference(icm_drawing wrap);
+    int icm_drawing_dereference(icm_drawing wrap);
 
-    icm_brushstroke* icm_drawing_stroke_at_time(icm_drawing *this, int time);
-    int icm_drawing_strokes_count(icm_drawing *this);
+    icm_brushstroke icm_drawing_stroke_at_time(icm_drawing wrap, int time);
+    int icm_drawing_strokes_count(icm_drawing wrap);
 
-    void icm_drawing_append_stroke(icm_drawing *this, icm_brushstroke *stroke);
+    void icm_drawing_append_stroke(icm_drawing wrap, icm_brushstroke stroke);
 
 #ifdef __cplusplus
 }
