@@ -20,25 +20,25 @@ namespace icCanvasManager {
         [CCode (cname = "icm_brushstroke_construct")]
         public BrushStroke();
 
-        public void pen_begin(int32_t x, int32_t y);
+        public void pen_begin(int32 x, int32 y);
 
-        public void pen_begin_pressure(int32_t pressure);
-        public void pen_begin_tilt(int32_t tilt,
-            int32_t angle);
-        public void pen_begin_velocity(int32_t delta_x,
-            int32_t delta_y);
+        public void pen_begin_pressure(int32 pressure);
+        public void pen_begin_tilt(int32 tilt,
+            int32 angle);
+        public void pen_begin_velocity(int32 delta_x,
+            int32 delta_y);
 
-        public void pen_to(int32_t fromcp_x,
-            int32_t fromcp_y, int32_t tocp_x, int32_t tocp_y, int32_t to_x,
-            int32_t to_y);
+        public void pen_to(int32 fromcp_x,
+            int32 fromcp_y, int32 tocp_x, int32 tocp_y, int32 to_x,
+            int32 to_y);
         public void pen_to_pressure(
-            int32_t fromcp_pressure, int32_t tocp_pressure, int32_t to_pressure);
-        public void pen_to_tilt(int32_t fromcp_tilt,
-            int32_t fromcp_angle, int32_t tocp_tilt, int32_t tocp_angle,
-            int32_t to_tilt, int32_t to_angle);
+            int32 fromcp_pressure, int32 tocp_pressure, int32 to_pressure);
+        public void pen_to_tilt(int32 fromcp_tilt,
+            int32 fromcp_angle, int32 tocp_tilt, int32 tocp_angle,
+            int32 to_tilt, int32 to_angle);
         public void pen_to_velocity(
-            int32_t fromcp_delta_x, int32_t fromcp_delta_y, int32_t tocp_delta_x,
-            int32_t tocp_delta_y, int32_t to_delta_x, int32_t to_delta_y);
+            int32 fromcp_delta_x, int32 fromcp_delta_y, int32 tocp_delta_x,
+            int32 tocp_delta_y, int32 to_delta_x, int32 to_delta_y);
 
         public void pen_extend(int continuity_level);
         public void pen_back();
