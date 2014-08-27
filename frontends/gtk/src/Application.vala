@@ -7,6 +7,12 @@ class icCanvasGtk.Application : Gtk.Application {
     }
     
     public override void activate() {
-        print("It works\n");
+        var wnd = new Gtk.Window();
+        wnd.title = "icCanvas";
+        wnd.window_position = Gtk.WindowPosition.CENTER;
+        wnd.set_default_size(400, 400);
+        wnd.show_all();
+        
+        this.add_window(wnd);
     }
 }
