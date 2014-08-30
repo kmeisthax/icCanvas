@@ -12,9 +12,13 @@ class icCanvasGtk.Application : Gtk.Application {
         wnd.window_position = Gtk.WindowPosition.CENTER;
         wnd.set_default_size(400, 400);
         
+        var swnd = new Gtk.ScrolledWindow(null, null);
+        wnd.add(swnd);
+        
         var cwdgt = new icCanvasGtk.CanvasWidget();
         cwdgt.set_size_request(100, 100);
-        wnd.add(cwdgt);
+        swnd.add(cwdgt);
+        
         wnd.show_all();
         
         var doc = new icCanvasManager.Drawing();
