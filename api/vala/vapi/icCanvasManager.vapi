@@ -1,3 +1,4 @@
+[CCode (cheader_filename = "icCanvasManagerC.h")]
 namespace icCanvasManager {
     [CCode (cname = "icm_application",
             cprefix = "icm_application_",
