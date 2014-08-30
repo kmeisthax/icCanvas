@@ -52,4 +52,14 @@ class icCanvasGtk.CanvasWidget : Gtk.Widget, Gtk.Scrollable {
             this.cv.set_size(allocation.width, allocation.height, this.get_scale_factor());
         }
     }
+    
+    public override void unrealize() {
+        this.evtWindow = null;
+    }
+    
+    public override bool draw(Cairo.Context cr) {
+        this.cv.draw(cr, cr.copy_clip_rectangle_list());
+        
+        return true;
+    }
 }
