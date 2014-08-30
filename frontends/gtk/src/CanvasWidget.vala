@@ -45,4 +45,11 @@ class icCanvasGtk.CanvasWidget : Gtk.Widget, Gtk.Scrollable {
             this.evtWindow.set_user_data(this);
         }
     }
+    
+    public override void size_allocate(Gtk.Allocation allocation) {
+        if (this.get_realized()) {
+            this.evtWindow.move_resize(allocation.x, allocation.y, allocation.width, allocation.height);
+            this.cv.set_size(allocation.width, allocation.height, this.get_scale_factor());
+        }
+    }
 }
