@@ -58,15 +58,15 @@ namespace icCanvasManager {
         
         public void attach_drawing(icCanvasManager.Drawing drawing);
         public void draw(Cairo.Context ctxt, Cairo.RectangleList rectList);
-        public void set_size(const double width, const double height, const double ui_scale);
-        public void set_size_default(const double ui_scale);
+        public void set_size(double width, double height, double ui_scale);
+        public void set_size_default(double ui_scale);
         public void get_size(out double width, out double height, out double ui_scale);
-        public void set_scroll_center(const double x, const double y);
-        public void set_zoom(const double vpixel_size);
+        public void set_scroll_center(double x, double y);
+        public void set_zoom(double vpixel_size);
         
-        public void mouse_down(const double x, const double y, const double deltaX, const double deltaY);
-        public void mouse_drag(const double x, const double y, const double deltaX, const double deltaY);
-        public void mouse_up(const double x, const double y, const double deltaX, const double deltaY);
+        public void mouse_down(double x, double y, double deltaX, double deltaY);
+        public void mouse_drag(double x, double y, double deltaX, double deltaY);
+        public void mouse_up(double x, double y, double deltaX, double deltaY);
     }
     
     [CCode (cname = "icm_drawing",
