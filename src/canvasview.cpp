@@ -150,8 +150,6 @@ void icCanvasManager::CanvasView::set_scroll_center(const double x, const double
     this->x_center = x;
     this->y_center = y;
 
-    this->x_size = this->width * this->zoom;
-    this->y_size = this->height * this->zoom;
     this->x_scroll = this->x_center - (width * this->zoom / 2.0);
     this->y_scroll = this->y_center - (height * this->zoom / 2.0);
 };
