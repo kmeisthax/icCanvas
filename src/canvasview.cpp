@@ -118,7 +118,7 @@ void icCanvasManager::CanvasView::draw(cairo_t *ctxt, cairo_rectangle_list_t *re
     cairo_restore(ctxt);
 };
 
-void icCanvasManager::CanvasView::set_size(double width, double height, double ui_scale) {
+void icCanvasManager::CanvasView::set_size(const double width, const double height, const double ui_scale) {
     this->width = width;
     this->height = height;
     this->ui_scale = ui_scale;
@@ -129,7 +129,7 @@ void icCanvasManager::CanvasView::set_size(double width, double height, double u
     this->y_scroll = this->y_center - (height * this->zoom / 2.0);
 };
 
-void icCanvasManager::CanvasView::set_size(double ui_scale) {
+void icCanvasManager::CanvasView::set_size(const double ui_scale) {
     this->width = UINT32_MAX / this->zoom;
     this->height = UINT32_MAX / this->zoom;
     this->ui_scale = ui_scale;
@@ -146,7 +146,7 @@ void icCanvasManager::CanvasView::get_size(double *out_width, double *out_height
     if (out_ui_scale) *out_ui_scale = this->ui_scale;
 };
 
-void icCanvasManager::CanvasView::set_scroll_center(int x, int y) {
+void icCanvasManager::CanvasView::set_scroll_center(const double x, const double y) {
     this->x_center = x;
     this->y_center = y;
 
@@ -156,7 +156,7 @@ void icCanvasManager::CanvasView::set_scroll_center(int x, int y) {
     this->y_scroll = this->y_center - (height * this->zoom / 2.0);
 };
 
-void icCanvasManager::CanvasView::set_zoom(int vpixel_size) {
+void icCanvasManager::CanvasView::set_zoom(const double vpixel_size) {
     this->zoom = vpixel_size;
 
     this->x_size = this->width * this->zoom;
@@ -175,19 +175,19 @@ void icCanvasManager::CanvasView::coordToWindowspace(const int32_t x, const int3
     if (out_ty) *out_ty = (int)((float)(y - this->y_scroll) / this->zoom);
 };
 
-void icCanvasManager::CanvasView::mouse_down(int x, int y, int deltaX, int deltaY) {
+void icCanvasManager::CanvasView::mouse_down(const double x, const double y, const double deltaX, const double deltaY) {
     this->built_stroke = new icCanvasManager::BrushStroke();
     this->fitter->begin_fitting(this->built_stroke, this->width * this->zoom);
 };
 
-void icCanvasManager::CanvasView::mouse_drag(int x, int y, int deltaX, int deltaY) {
+void icCanvasManager::CanvasView::mouse_drag(const double x, const double y, const double deltaX, const double deltaY) {
     int cx, cy, cdx = deltaX * this->zoom, cdy = deltaY * this->zoom;
 
     this->windowToCoordspace(x, y, &cx, &cy);
     this->fitter->add_fit_point(cx, cy, icCanvasManager::BrushStroke::PRESSURE_MAX, 0, 0, cdx, cdy);
 };
 
-void icCanvasManager::CanvasView::mouse_up(int x, int y, int deltaX, int deltaY) {
+void icCanvasManager::CanvasView::mouse_up(const double x, const double y, const double deltaX, const double deltaY) {
     this->fitter->finish_fitting();
     this->drawing->append_stroke(this->built_stroke);
     this->built_stroke = NULL;

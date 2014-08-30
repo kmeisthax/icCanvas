@@ -38,12 +38,12 @@ extern "C" {
         d->draw(ctxt, rectList);
     };
 
-    void icm_canvasview_set_size(icm_canvasview w, double width, double height, double ui_scale) {
+    void icm_canvasview_set_size(icm_canvasview w, const double width, const double height, const double ui_scale) {
         icCanvasManager::CanvasView* d = (icCanvasManager::CanvasView*)w;
         d->set_size(width, height, ui_scale);
     };
 
-    void icm_canvasview_set_size_default(icm_canvasview w, double ui_scale) {
+    void icm_canvasview_set_size_default(icm_canvasview w, const double ui_scale) {
         icCanvasManager::CanvasView* d = (icCanvasManager::CanvasView*)w;
         d->set_size(ui_scale);
     };
@@ -53,27 +53,27 @@ extern "C" {
         d->get_size(out_width, out_height, out_ui_scale);
     };
 
-    void icm_canvasview_set_scroll_center(icm_canvasview w, int x, int y) {
+    void icm_canvasview_set_scroll_center(icm_canvasview w, const double x, const double y) {
         icCanvasManager::CanvasView* d = (icCanvasManager::CanvasView*)w;
         d->set_scroll_center(x, y);
     };
 
-    void icm_canvasview_set_zoom(icm_canvasview w, int vpixel_size) {
+    void icm_canvasview_set_zoom(icm_canvasview w, const double vpixel_size) {
         icCanvasManager::CanvasView* d = (icCanvasManager::CanvasView*)w;
         d->set_zoom(vpixel_size);
     };
 
-    void icm_canvasview_mouse_down(icm_canvasview w, int x, int y, int deltaX, int deltaY) {
+    void icm_canvasview_mouse_down(icm_canvasview w, const double x, const double y, const double deltaX, const double deltaY) {
         icCanvasManager::CanvasView* d = (icCanvasManager::CanvasView*)w;
         d->mouse_down(x, y, deltaX, deltaY);
     };
 
-    void icm_canvasview_mouse_drag(icm_canvasview w, int x, int y, int deltaX, int deltaY) {
+    void icm_canvasview_mouse_drag(icm_canvasview w, const double x, const double y, const double deltaX, const double deltaY) {
         icCanvasManager::CanvasView* d = (icCanvasManager::CanvasView*)w;
         d->mouse_drag(x, y, deltaX, deltaY);
     };
 
-    void icm_canvasview_mouse_up(icm_canvasview w, int x, int y, int deltaX, int deltaY) {
+    void icm_canvasview_mouse_up(icm_canvasview w, const double x, const double y, const double deltaX, const double deltaY) {
         icCanvasManager::CanvasView* d = (icCanvasManager::CanvasView*)w;
         d->mouse_up(x, y, deltaX, deltaY);
     };

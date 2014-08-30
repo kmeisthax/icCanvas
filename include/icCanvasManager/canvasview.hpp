@@ -58,14 +58,14 @@ namespace icCanvasManager {
          * The ui_scale parameter indicates how many physical display pixels
          * are present per window-space pixels.
          */
-        void set_size(double width, double height, double ui_scale);
+        void set_size(const double width, const double height, const double ui_scale);
 
         /* Configure the internal widget size to be the whole canvas size.
          *
          * This is useful for window systems that handle their own scrolling,
          * assuming that they can represent a widget 2^32 pixels big.
          */
-        void set_size(double ui_scale);
+        void set_size(const double ui_scale);
 
         /* Get the currently configured size.
          */
@@ -76,16 +76,16 @@ namespace icCanvasManager {
          * If you are using the UI toolkit's native scrolling, set this to zero
          * and never look back.
          */
-        void set_scroll_center(int x, int y);
+        void set_scroll_center(const double x, const double y);
 
         /* Set the zoom factor of the view.
          */
-        void set_zoom(int vpixel_size);
+        void set_zoom(const double vpixel_size);
 
         /* Respond to mouse input. */
-        void mouse_down(int x, int y, int deltaX, int deltaY);
-        void mouse_drag(int x, int y, int deltaX, int deltaY);
-        void mouse_up(int x, int y, int deltaX, int deltaY);
+        void mouse_down(const double x, const double y, const double deltaX, const double deltaY);
+        void mouse_drag(const double x, const double y, const double deltaX, const double deltaY);
+        void mouse_up(const double x, const double y, const double deltaX, const double deltaY);
     };
 }
 

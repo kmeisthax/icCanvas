@@ -35,11 +35,11 @@
     self->_wrapped->draw(context, rectList);
 };
 
-- (void)setSizeWidth:(double)width andHeight:(double)height andUiScale:(double)ui_scale {
+- (void)setSizeWidth:(const double)width andHeight:(const double)height andUiScale:(const double)ui_scale {
     self->_wrapped->set_size(width, height, ui_scale);
 };
 
-- (void)setSizeUiScale:(double)ui_scale {
+- (void)setSizeUiScale:(const double)ui_scale {
     self->_wrapped->set_size(ui_scale);
 };
 
@@ -47,23 +47,23 @@
     self->_wrapped->get_size(out_width, out_height, out_ui_scale);
 };
 
-- (void)setScrollCenterX:(int)x andY:(int)y {
+- (void)setScrollCenterX:(const double)x andY:(const double)y {
     self->_wrapped->set_scroll_center(x, y);
 };
 
-- (void)setZoom:(int)vpixel_size {
+- (void)setZoom:(const double)vpixel_size {
     self->_wrapped->set_zoom(vpixel_size);
 };
 
-- (void)mouseDownWithX:(int)x andY:(int)y andDeltaX:(int)deltaX andDeltaY:(int)deltaY {
+- (void)mouseDownWithX:(const double)x andY:(const double)y andDeltaX:(const double)deltaX andDeltaY:(const double)deltaY {
     self->_wrapped->mouse_down(x, y, deltaX, deltaY);
 };
 
-- (void)mouseDragWithX:(int)x andY:(int)y andDeltaX:(int)deltaX andDeltaY:(int)deltaY {
+- (void)mouseDragWithX:(const double)x andY:(const double)y andDeltaX:(const double)deltaX andDeltaY:(const double)deltaY {
     self->_wrapped->mouse_drag(x, y, deltaX, deltaY);
 };
 
-- (void)mouseUpWithX:(int)x andY:(int)y andDeltaX:(int)deltaX andDeltaY:(int)deltaY {
+- (void)mouseUpWithX:(const double)x andY:(const double)y andDeltaX:(const double)deltaX andDeltaY:(const double)deltaY {
     self->_wrapped->mouse_up(x, y, deltaX, deltaY);
 };
 
