@@ -95,4 +95,34 @@ class icCanvasGtk.CanvasWidget : Gtk.Widget, Gtk.Scrollable {
 
         return true;
     }
+    
+    private Gtk.Adjustment _hadjust;
+    private Gtk.Adjustment _vadjust;
+    
+    private void update_adjustments() {
+        this.cv.set_scroll_center(_hadjust.value, _vadjust.value);
+    }
+    
+    public Gtk.Adjustment hadjustment {
+        get { return this._hadjust; }
+        set {
+            this._hadjust.value_changed.disconnect(this.update_adjustments);
+            value.value_changed.connect(this.update_adjustments);
+            
+            this._hadjust = value;
+        }
+    }
+    
+    public Gtk.Adjustment vadjustment {
+        get { return this._vadjust; }
+        set {
+            this._vadjust.value_changed.disconnect(this.update_adjustments);
+            value.value_changed.connect(this.update_adjustments);
+            
+            this._vadjust = value;
+        }
+    }
+    
+    public Gtk.ScrollablePolicy hscroll_policy { get; set; }
+    public Gtk.ScrollablePolicy vscroll_policy { get; set; }
 }
