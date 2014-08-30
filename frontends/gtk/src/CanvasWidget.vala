@@ -74,7 +74,7 @@ class icCanvasGtk.CanvasWidget : Gtk.Widget, Gtk.Scrollable {
         return true;
     }
     
-    public override bool motion_notify_event(Gdk.EventButton evt) {
+    public override bool motion_notify_event(Gdk.EventMotion evt) {
         this.cv.mouse_drag(evt.x, evt.y, evt.x - this.lastx, evt.y - this.lasty);
         
         this.lastx = evt.x;
@@ -84,7 +84,7 @@ class icCanvasGtk.CanvasWidget : Gtk.Widget, Gtk.Scrollable {
     }
     
     public override bool button_release_event(Gdk.EventButton evt) {
-        if (evt.type == GDK_BUTTON_RELEASE) {
+        if (evt.type == Gdk.EventType.BUTTON_RELEASE) {
             this.cv.mouse_up(evt.x, evt.y, evt.x - this.lastx, evt.y - this.lasty);
 
             this.lastx = evt.x;
