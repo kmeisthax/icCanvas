@@ -147,11 +147,11 @@ void icCanvasManager::CanvasView::get_size(double *out_width, double *out_height
 };
 
 void icCanvasManager::CanvasView::set_scroll_center(const double x, const double y) {
-    this->x_center = x;
-    this->y_center = y;
+    this->x_center = x * this->zoom;
+    this->y_center = y * this->zoom;
 
-    this->x_scroll = this->x_center - (width * this->zoom / 2.0);
-    this->y_scroll = this->y_center - (height * this->zoom / 2.0);
+    this->x_scroll = this->x_center - (this->width * this->zoom / 2.0);
+    this->y_scroll = this->y_center - (this->height * this->zoom / 2.0);
 };
 
 void icCanvasManager::CanvasView::set_zoom(const double vpixel_size) {
