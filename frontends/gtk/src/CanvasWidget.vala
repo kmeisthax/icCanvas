@@ -1,6 +1,3 @@
-using Gtk;
-using icCanvasManager;
-
 class icCanvasGtk.CanvasWidget : Gtk.Widget, Gtk.Scrollable {
     private icCanvasManager.CanvasView cv;
     private Gdk.Window? evtWindow;
@@ -12,6 +9,7 @@ class icCanvasGtk.CanvasWidget : Gtk.Widget, Gtk.Scrollable {
         this.add_events(Gdk.EventMask.BUTTON_MOTION_MASK | Gdk.EventMask.BUTTON_PRESS_MASK | Gdk.EventMask.BUTTON_RELEASE_MASK);
         this.set_has_window(true);
         this.cv = new icCanvasManager.CanvasView();
+        this.evtWindow = null;
         
         this.lastx = 0;
         this.lasty = 0;
@@ -34,7 +32,7 @@ class icCanvasGtk.CanvasWidget : Gtk.Widget, Gtk.Scrollable {
             attributes.y = allocation.y;
             attributes.width = allocation.width;
             attributes.height = allocation.height;
-
+            
             attributes.event_mask = this.get_events() | Gdk.EventMask.EXPOSURE_MASK;
             attributes.window_type = Gdk.WindowType.CHILD;
             attributes.wclass = Gdk.WindowWindowClass.INPUT_OUTPUT;
@@ -54,6 +52,7 @@ class icCanvasGtk.CanvasWidget : Gtk.Widget, Gtk.Scrollable {
     }
     
     public override void unrealize() {
+        this.set_realized(false);
         this.evtWindow = null;
     }
     
@@ -96,18 +95,54 @@ class icCanvasGtk.CanvasWidget : Gtk.Widget, Gtk.Scrollable {
         return true;
     }
     
+    /* Scrollability */
     private Gtk.Adjustment _hadjust;
     private Gtk.Adjustment _vadjust;
     
+    private void configure_adjustment(Gtk.Adjustment adjust, double size) {
+        adjust.lower = 0;
+        adjust.value = size / 2.0;
+        adjust.upper = size;
+        
+        adjust.page_increment = 1;
+        adjust.page_size = 1;
+        adjust.step_increment = 1;
+        
+        adjust.value_changed.connect(this.update_adjustments);
+    }
+    
     private void update_adjustments() {
-        this.cv.set_scroll_center(_hadjust.value, _vadjust.value);
+        double hval = 0, vval = 0;
+        
+        if (_hadjust != null) {
+            hval = _hadjust.value;
+            
+            if (this._hadjust.value + this._hadjust.page_size > this._hadjust.upper) {
+                this._hadjust.value = this._hadjust.upper - this._hadjust.page_size;
+            }
+        }
+        
+        if (_vadjust != null) {
+            vval = _vadjust.value;
+            
+            if (this._vadjust.value + this._vadjust.page_size > this._vadjust.upper) {
+                this._vadjust.value = this._vadjust.upper - this._vadjust.page_size;
+            }
+        }
+        
+        this.cv.set_scroll_center(hval, vval);
     }
     
     public Gtk.Adjustment hadjustment {
         get { return this._hadjust; }
         set {
-            this._hadjust.value_changed.disconnect(this.update_adjustments);
-            value.value_changed.connect(this.update_adjustments);
+            if (this._hadjust != null) {
+                this._hadjust.value_changed.disconnect(this.update_adjustments);
+            }
+            
+            double width;
+            this.cv.get_maximum_size(out width, null);
+            this.configure_adjustment(value, width);
             
             this._hadjust = value;
         }
@@ -116,8 +151,13 @@ class icCanvasGtk.CanvasWidget : Gtk.Widget, Gtk.Scrollable {
     public Gtk.Adjustment vadjustment {
         get { return this._vadjust; }
         set {
-            this._vadjust.value_changed.disconnect(this.update_adjustments);
-            value.value_changed.connect(this.update_adjustments);
+            if (this._vadjust != null) {
+                this._vadjust.value_changed.disconnect(this.update_adjustments);
+            }
+            
+            double height;
+            this.cv.get_maximum_size(null, out height);
+            this.configure_adjustment(value, height);
             
             this._vadjust = value;
         }

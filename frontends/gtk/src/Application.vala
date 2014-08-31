@@ -7,7 +7,7 @@ class icCanvasGtk.Application : Gtk.Application {
     }
     
     public override void activate() {
-        var wnd = new Gtk.Window();
+        var wnd = new Gtk.Window(Gtk.WindowType.TOPLEVEL);
         wnd.title = "icCanvas";
         wnd.window_position = Gtk.WindowPosition.CENTER;
         wnd.set_default_size(400, 400);
@@ -16,7 +16,6 @@ class icCanvasGtk.Application : Gtk.Application {
         wnd.add(swnd);
         
         var cwdgt = new icCanvasGtk.CanvasWidget();
-        cwdgt.set_size_request(100, 100);
         swnd.add(cwdgt);
         
         wnd.show_all();
