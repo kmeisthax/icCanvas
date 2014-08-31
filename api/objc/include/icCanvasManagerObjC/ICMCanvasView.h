@@ -13,6 +13,7 @@
 - (void)setSizeWidth:(const double)width andHeight:(const double)height andUiScale:(const double)ui_scale;
 - (void)setSizeUiScale:(const double)ui_scale;
 - (void)getSizeWidth:(double*)out_width andHeight:(double*)out_height andUiScale:(double*)out_ui_scale;
+- (void)getMaximumSizeWidth:(double*)out_width andHeight:(double*)out_height;
 - (void)setScrollCenterX:(const double)x andY:(const double)y;
 - (void)setZoom:(const double)vpixel_size;
 

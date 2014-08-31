@@ -68,17 +68,27 @@ namespace icCanvasManager {
         void set_size(const double ui_scale);
 
         /* Get the currently configured size.
+         *
+         * The maximum_size function returns the width or height of the extent
+         * of the entire canvas at the current zoom factor.
          */
         void get_size(double *out_width, double *out_height, double *out_ui_scale);
+        void get_maximum_size(double *out_maxwidth, double *out_maxheight);
 
         /* Set the current center point on the canvas to render from.
          *
-         * If you are using the UI toolkit's native scrolling, set this to zero
-         * and never look back.
+         * Some UI toolkits handle scrolling by allowing the widget to size
+         * itself as needed and using the clip rectangle and coordinate
+         * transforms to place the view coordinate space in the correct area.
+         * In that case, set this to zero and never look back.
          */
         void set_scroll_center(const double x, const double y);
 
         /* Set the zoom factor of the view.
+         *
+         * Some UI toolkits handle zooming by scaling the coordinate transform
+         * of the provided drawing context up or down, e.g. conflating it with
+         * the physical pixel scale factor. In that case, do not call set_zoom.
          */
         void set_zoom(const double vpixel_size);
 

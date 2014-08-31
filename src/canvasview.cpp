@@ -146,6 +146,11 @@ void icCanvasManager::CanvasView::get_size(double *out_width, double *out_height
     if (out_ui_scale) *out_ui_scale = this->ui_scale;
 };
 
+void icCanvasManager::CanvasView::get_maximum_size(double *out_maxwidth, double *out_maxheight) {
+    if (out_maxwidth) *out_maxwidth = UINT32_MAX / this->zoom;
+    if (out_maxheight) *out_maxheight = UINT32_MAX / this->zoom;
+};
+
 void icCanvasManager::CanvasView::set_scroll_center(const double x, const double y) {
     this->x_center = x * this->zoom;
     this->y_center = y * this->zoom;

@@ -47,6 +47,10 @@
     self->_wrapped->get_size(out_width, out_height, out_ui_scale);
 };
 
+- (void)getMaximumSizeWidth:(double*)out_width andHeight:(double*)out_height {
+    self->_wrapped->get_maximum_size(out_width, out_height);
+};
+
 - (void)setScrollCenterX:(const double)x andY:(const double)y {
     self->_wrapped->set_scroll_center(x, y);
 };
