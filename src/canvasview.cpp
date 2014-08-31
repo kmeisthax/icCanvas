@@ -96,7 +96,7 @@ void icCanvasManager::CanvasView::draw_tiles(cairo_t* ctxt, cairo_rectangle_t* r
 };
 
 void icCanvasManager::CanvasView::draw(cairo_t *ctxt, cairo_rectangle_list_t *rectList) {
-    auto clear_ptn = cairo_pattern_create_rgb(1.0f, 0.0f, 1.0f);
+    auto clear_ptn = cairo_pattern_create_rgb(1.0f, 1.0f, 1.0f);
 
     //Phase 0: Clear the surface
     cairo_save(ctxt);
