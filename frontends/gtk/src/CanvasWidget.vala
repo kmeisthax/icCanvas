@@ -45,6 +45,8 @@ class icCanvasGtk.CanvasWidget : Gtk.Widget, Gtk.Scrollable {
     }
     
     public override void size_allocate(Gtk.Allocation allocation) {
+        base.size_allocate(allocation);
+        
         if (this.get_realized()) {
             this.evtWindow.move_resize(allocation.x, allocation.y, allocation.width, allocation.height);
             this.cv.set_size(allocation.width, allocation.height, this.get_scale_factor());
@@ -52,8 +54,8 @@ class icCanvasGtk.CanvasWidget : Gtk.Widget, Gtk.Scrollable {
     }
     
     public override void unrealize() {
-        this.set_realized(false);
         this.evtWindow = null;
+        base.unrealize();
     }
     
     public override bool draw(Cairo.Context cr) {
