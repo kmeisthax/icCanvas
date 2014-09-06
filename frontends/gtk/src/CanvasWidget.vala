@@ -102,9 +102,9 @@ class icCanvasGtk.CanvasWidget : Gtk.Widget, Gtk.Scrollable {
     private Gtk.Adjustment _vadjust;
     
     private void configure_adjustment(Gtk.Adjustment adjust, double size) {
-        adjust.lower = 0;
-        adjust.value = size / 2.0;
-        adjust.upper = size;
+        adjust.lower = size / -2.0;
+        adjust.value = 0;
+        adjust.upper = size / 2.0;
         
         adjust.page_increment = 1;
         adjust.page_size = 1;
@@ -117,19 +117,19 @@ class icCanvasGtk.CanvasWidget : Gtk.Widget, Gtk.Scrollable {
         double hval = 0, vval = 0;
         
         if (_hadjust != null) {
-            hval = _hadjust.value;
-            
             if (this._hadjust.value + this._hadjust.page_size > this._hadjust.upper) {
                 this._hadjust.value = this._hadjust.upper - this._hadjust.page_size;
             }
+            
+            hval = _hadjust.value;
         }
         
         if (_vadjust != null) {
-            vval = _vadjust.value;
-            
             if (this._vadjust.value + this._vadjust.page_size > this._vadjust.upper) {
                 this._vadjust.value = this._vadjust.upper - this._vadjust.page_size;
             }
+            
+            vval = _vadjust.value;
         }
         
         this.cv.set_scroll_center(hval, vval);
