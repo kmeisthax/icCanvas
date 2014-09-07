@@ -15,8 +15,10 @@ class icCanvasGtk.CanvasWidget : Gtk.Widget, Gtk.Scrollable {
         this.lasty = 0;
     }
     
-    public void set_drawing(icCanvasManager.Drawing d) {
-        this.cv.attach_drawing(d);
+    public icCanvasManager.Drawing drawing {
+        set {
+            this.cv.attach_drawing(value);
+        };
     }
     
     public override void realize() {
