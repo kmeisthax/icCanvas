@@ -51,6 +51,10 @@
     self->_wrapped->get_maximum_size(out_width, out_height);
 };
 
+- (void)getScaleExtentsMinimum:(double*)out_minscale andMaximum:(double*)out_maxscale {
+    self->_wrapped->get_scale_extents(out_minscale, out_maxscale);
+};
+
 - (void)setScrollCenterX:(const double)x andY:(const double)y {
     self->_wrapped->set_scroll_center(x, y);
 };

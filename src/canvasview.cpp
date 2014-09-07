@@ -152,6 +152,17 @@ void icCanvasManager::CanvasView::get_maximum_size(double *out_maxwidth, double 
     if (out_maxheight) *out_maxheight = UINT32_MAX / this->zoom;
 };
 
+void icCanvasManager::CanvasView::get_scale_extents(double *out_minscale, double *out_maxscale) {
+    if (out_minscale) {
+        double maxsize = std::max(this->width, this->height);
+        *out_minscale = maxsize / UINT32_MAX;
+    }
+
+    if (out_maxscale) {
+        *out_maxscale = this->zoom;
+    }
+};
+
 void icCanvasManager::CanvasView::set_scroll_center(const double x, const double y) {
     this->x_center = x * this->zoom;
     this->y_center = y * this->zoom;

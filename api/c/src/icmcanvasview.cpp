@@ -58,6 +58,11 @@ extern "C" {
         d->get_maximum_size(out_width, out_height);
     };
 
+    void icm_canvasview_get_scale_extents(icm_canvasview w, double *out_minscale, double *out_maxscale) {
+        icCanvasManager::CanvasView* d = (icCanvasManager::CanvasView*)w;
+        d->get_scale_extents(out_minscale, out_maxscale);
+    };
+
     void icm_canvasview_set_scroll_center(icm_canvasview w, const double x, const double y) {
         icCanvasManager::CanvasView* d = (icCanvasManager::CanvasView*)w;
         d->set_scroll_center(x, y);

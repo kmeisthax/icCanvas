@@ -62,6 +62,7 @@ namespace icCanvasManager {
         public void set_size_default(double ui_scale);
         public void get_size(out double width, out double height, out double ui_scale);
         public void get_maximum_size(out double width, out double height);
+        public void get_scale_extents(out double minscale, out double maxscale);
         public void set_scroll_center(double x, double y);
         public void set_zoom(double vpixel_size);
         
