@@ -130,4 +130,15 @@
     return self->drawing;
 };
 
+- (double)minimumMagnification {
+    double minscale;
+    [self->internal getScaleExtentsMinimum:&minscale andMaximum:NULL];
+    return minscale;
+};
+- (double)maximumMagnification {
+    double maxscale;
+    [self->internal getScaleExtentsMinimum:NULL andMaximum:&maxscale];
+    return maxscale;
+};
+
 @end
