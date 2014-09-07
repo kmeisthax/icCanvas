@@ -33,6 +33,13 @@ void icCanvasManager::CanvasView::request_tiles(cairo_rectangle_t* rect) {
 
     for (int i = 0; i <= x_tile_count; i++) {
         for (int j = 0; j <= y_tile_count; j++) {
+            //Don't request out-of-bounds tiles.
+            //This is complicated by the fact that C integer behaviors blow chunks.
+            if (INT32_MAX / (int)request_size > i) continue;
+            if (INT32_MAX / (int)request_size > j) continue;
+            if (base_x > INT32_MAX - ((int)request_size * i)) continue;
+            if (base_y > INT32_MAX - ((int)request_size * j)) continue;
+
             renderscheduler->request_tile(this->drawing, base_x + ((int)request_size * i), base_y + ((int)request_size * j), highest_zoom, this->drawing->strokes_count());
         }
     }
