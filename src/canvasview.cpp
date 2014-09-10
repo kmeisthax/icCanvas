@@ -22,7 +22,7 @@ void icCanvasManager::CanvasView::attach_drawing(icCanvasManager::RefPtr<icCanva
 
 void icCanvasManager::CanvasView::request_tiles(cairo_rectangle_t* rect) {
     int highest_zoom = std::ceil(31 - log2(icCanvasManager::TileCache::TILE_SIZE * this->zoom / this->ui_scale));
-    double request_size = (UINT32_MAX >> highest_zoom) + 1;
+    double request_size = (UINT32_MAX >> highest_zoom);
     auto rect_x_scroll = this->x_scroll + (rect->x * this->zoom);
     auto rect_y_scroll = this->y_scroll + (rect->y * this->zoom);
     auto base_x = rect_x_scroll - fmod(rect_x_scroll, request_size) - (request_size / 2);
@@ -31,14 +31,30 @@ void icCanvasManager::CanvasView::request_tiles(cairo_rectangle_t* rect) {
     auto y_tile_count = std::ceil((rect->height * this->zoom) / (float)request_size);
     auto renderscheduler = icCanvasManager::Application::get_instance().get_render_scheduler();
 
+    if (highest_zoom < 0) {
+        highest_zoom = 0;
+    }
+
+    //Special-case for zoom factor 0 because I can't be arsed to deal with overflow crap
+    if (highest_zoom == 0) {
+        renderscheduler->request_tile(this->drawing, 0, 0, 0, this->drawing->strokes_count());
+        return;
+    }
+
+    request_size += 1; //guaranteed not to overflow now
+
     for (int i = 0; i <= x_tile_count; i++) {
         for (int j = 0; j <= y_tile_count; j++) {
             //Don't request out-of-bounds tiles.
             //This is complicated by the fact that C integer behaviors blow chunks.
-            if (INT32_MAX / (int)request_size > i) continue;
-            if (INT32_MAX / (int)request_size > j) continue;
-            if (base_x > INT32_MAX - ((int)request_size * i)) continue;
-            if (base_y > INT32_MAX - ((int)request_size * j)) continue;
+            if ((int)request_size != 0) { //Intel divide-by-zero behavior ALSO blows chunks.
+                if ((INT32_MAX / (int)request_size) < i) continue;
+                if ((INT32_MAX / (int)request_size) < j) continue;
+            }
+            if ((base_x > 0) && (base_x > INT32_MAX - ((int)request_size * i))) continue;
+            if ((base_x < 0) && ((unsigned int)(base_x * -1) + INT32_MAX < UINT32_MAX - ((unsigned int)request_size * i))) continue;
+            if ((base_y > 0) && (base_y > INT32_MAX - ((int)request_size * j))) continue;
+            if ((base_y < 0) && ((unsigned int)(base_y * -1) + INT32_MAX < UINT32_MAX - ((unsigned int)request_size * i))) continue;
 
             renderscheduler->request_tile(this->drawing, base_x + ((int)request_size * i), base_y + ((int)request_size * j), highest_zoom, this->drawing->strokes_count());
         }
