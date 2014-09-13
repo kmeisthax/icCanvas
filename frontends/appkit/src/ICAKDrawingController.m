@@ -51,8 +51,8 @@
         [[self->scv documentView] scrollPoint:newOrigin];
         
         self->scv.allowsMagnification = YES;
-        self->scv.maxMagnification = 8.0;
-        self->scv.minMagnification = 0.125;
+        self->scv.maxMagnification = self->cv.maximumMagnification;
+        self->scv.minMagnification = self->cv.minimumMagnification;
 
         [window setContentView:self->scv];
     }

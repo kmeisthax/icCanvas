@@ -16,4 +16,7 @@
 
 - (void)sizeToFitCanvas;
 
+- (double)minimumMagnification;
+- (double)maximumMagnification;
+
 @end

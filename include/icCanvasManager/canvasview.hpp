@@ -69,11 +69,21 @@ namespace icCanvasManager {
 
         /* Get the currently configured size.
          *
-         * The maximum_size function returns the width or height of the extent
-         * of the entire canvas at the current zoom factor.
+         * The maximum_size function returns the maximum extent of the view.
+         * You may size the view larger, however; space outside the canvas will
+         * be filled with gray emptiness.
          */
         void get_size(double *out_width, double *out_height, double *out_ui_scale);
         void get_maximum_size(double *out_maxwidth, double *out_maxheight);
+
+        /* Get the extents of magnification for the currently configured canvas.
+         *
+         * At scales smaller than minscale, the currently configured size of
+         * the widget will be larger than the resulting canvas. At scales
+         * larger than maxscale, one window-space pixel will exceed the size of
+         * a canvas unit.
+         */
+        void get_scale_extents(double *out_minscale, double *out_maxscale);
 
         /* Set the current center point on the canvas to render from.
          *
