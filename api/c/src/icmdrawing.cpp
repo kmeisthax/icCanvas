@@ -29,6 +29,7 @@ extern "C" {
     icm_brushstroke icm_drawing_stroke_at_time(icm_drawing w, int time) {
         icCanvasManager::Drawing* d = (icCanvasManager::Drawing*)w;
         icCanvasManager::BrushStroke* b = d->stroke_at_time(time);
+        b->ref();
 
         return (icm_brushstroke)b;
     };

@@ -21,6 +21,7 @@ extern "C" {
     icm_renderscheduler icm_application_get_render_scheduler(icm_application w) {
         icCanvasManager::Application *d = (icCanvasManager::Application*)w;
         icCanvasManager::RenderScheduler *rs = d->get_render_scheduler();
+        rs->ref();
 
         return (icm_renderscheduler)rs;
     };
