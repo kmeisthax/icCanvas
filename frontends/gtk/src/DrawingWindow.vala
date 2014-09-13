@@ -1,10 +1,8 @@
-class icCanvasGtk.DrawingWindow : public Gtk.ApplicationWindow {
+class icCanvasGtk.DrawingWindow : Gtk.ApplicationWindow {
     private Gtk.ScrolledWindow scrollwdgt;
     private icCanvasGtk.CanvasWidget canvaswdgt;
     
     public DrawingWindow() {
-        base(Gtk.WindowType.TOPLEVEL);
-        
         this.title = "icCanvas";
         this.window_position = Gtk.WindowPosition.CENTER;
         this.set_default_size(400, 400);
@@ -15,7 +13,7 @@ class icCanvasGtk.DrawingWindow : public Gtk.ApplicationWindow {
         this.canvaswdgt = new icCanvasGtk.CanvasWidget();
         this.scrollwdgt.add(canvaswdgt);
         
-        wnd.show_all();
+        this.show_all();
     }
     
     public icCanvasGtk.Drawing drawing {
@@ -24,7 +22,7 @@ class icCanvasGtk.DrawingWindow : public Gtk.ApplicationWindow {
         }
     }
     
-    public void tile_render_callback() {
+    public void tile_rendered() {
         this.canvaswdgt.queue_draw();
     }
 }

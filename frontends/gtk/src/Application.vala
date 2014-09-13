@@ -9,12 +9,19 @@ class icCanvasGtk.Application : Gtk.Application {
     }
     
     public override void activate() {
-        var wnd = new icCanvasGtk.DrawingWindow();
         var drawing = new icCanvasGtk.Drawing();
-        wnd.drawing = drawing;
-        
-        this.add_window(wnd);
+        drawing.make_windows(this);
         this.add_drawing(drawing);
+        
+        GLib.Idle.add_full(GLib.Priority.DEFAULT_IDLE, this.on_idle);
+    }
+    
+    public bool on_idle() {
+        var app = icCanvasManager.Application.get_instance();
+        
+        app.background_tick();
+        
+        return true;
     }
     
     public void add_drawing(icCanvasGtk.Drawing drawing) {
