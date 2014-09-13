@@ -10,10 +10,11 @@ class icCanvasGtk.Application : Gtk.Application {
     
     public override void activate() {
         var drawing = new icCanvasGtk.Drawing();
-        drawing.make_windows(this);
         this.add_drawing(drawing);
         
         GLib.Idle.add_full(GLib.Priority.DEFAULT_IDLE, this.on_idle);
+        
+        drawing.make_windows(this);
     }
     
     public bool on_idle() {

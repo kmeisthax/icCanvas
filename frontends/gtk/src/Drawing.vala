@@ -13,11 +13,11 @@ class icCanvasGtk.Drawing {
     }
     
     public void make_windows(icCanvasGtk.Application app) {
-        var wnd = new icCanvasGtk.DrawingWindow();
-        wnd.drawing = this;
-        
-        app.add_window(wnd);
+        var wnd = new icCanvasGtk.DrawingWindow(app);
         this.add_window(wnd);
+        
+        wnd.drawing = this;
+        wnd.show_all();
     }
     
     public bool on_idle() {
