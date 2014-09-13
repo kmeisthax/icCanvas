@@ -10,6 +10,8 @@ class icCanvasGtk.Drawing {
     
     public Drawing() {
         GLib.Idle.add_full(GLib.Priority.DEFAULT_IDLE, this.on_idle);
+        
+        this._drawing = new icCanvasManager.Drawing();
     }
     
     public void make_windows(icCanvasGtk.Application app) {
