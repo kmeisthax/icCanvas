@@ -8,6 +8,11 @@ extern "C" {
         return (icm_application)d;
     };
 
+    int icm_application_reference(icm_application wrap) {
+    };
+    int icm_application_dereference(icm_application wrap) {
+    };
+
     void icm_application_background_tick(icm_application w) {
         icCanvasManager::Application *d = (icCanvasManager::Application*)w;
         d->background_tick();
