@@ -24,7 +24,7 @@
  * housekeeping tasks.
  */
 
-interface icCanvasGtk.DockingPort {
+interface icCanvasGtk.DockingPort : GLib.Object {
     public enum PortMode {
         DISINTERESTED,
         SENDING,
@@ -35,4 +35,10 @@ interface icCanvasGtk.DockingPort {
      * mode.
      */
     public signal void mode_changed(icCanvasGtk.DockingPort src, icCanvasGtk.DockingPort.PortMode mode);
+    
+    public abstract icCanvasGtk.DockingPort? parent_port { set; }
+    
+    public abstract icCanvasGtk.Dockable? offered_dockable { get; set; }
+    
+    public abstract void accept_offer(icCanvasGtk.DockingPort foreign_port);
 }

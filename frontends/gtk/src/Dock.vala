@@ -26,6 +26,16 @@ class icCanvasGtk.Dock : Gtk.Box, icCanvasGtk.DockingPort {
         BOTTOM
     }
     
+    public icCanvasGtk.Dockable? offered_dockable { get; set; }
+    public icCanvasGtk.DockingPort? parent_port {
+        set {
+            return;
+        }
+    }
+    
+    public void accept_offer(icCanvasGtk.DockingPort foreign_port) {
+    }
+    
     /* Add a dockable widget to a particular edge of the dock.
      */
     public void add_dockable(icCanvasGtk.Dockable dockwdgt, Edge edge) {
