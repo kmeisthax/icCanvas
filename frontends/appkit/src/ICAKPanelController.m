@@ -66,8 +66,3 @@
 };
 
 @end
-
-/*
-NSRect frameRelativeToWindow = [myView convertRect:myView.bounds toView:nil];
-NSRect frameRelativeToScreen = [myView.window convertRectToScreen:frameInWindow];
- */

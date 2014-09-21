@@ -57,9 +57,22 @@
           dragDistance = sqrt(dX*dX + dY*dY);
     
     if (!self->_in_detach && dragDistance > self->_detach_threshold) {
-        //Detach from window
-        [self->_delegate dockableViewWillDetach:self];
+        if (self.superview.subviews.count > 1) {
+            [self->_delegate dockableViewWillDetach:self];
+        }
+        
         self->_in_detach = YES;
+        
+        //Once detached, starting_pt is reused for a drag
+        self->_starting_pt = NSEvent.mouseLocation;
+    } else {
+        //Drag containing window once detached
+        NSRect winFrame = self.window.frame;
+        winFrame.origin.x = winFrame.origin.x + dX;
+        winFrame.origin.y = winFrame.origin.y + dY;
+        self.window.frame = winFrame;
+        
+        self->_starting_pt = NSEvent.mouseLocation;
     }
 };
 
