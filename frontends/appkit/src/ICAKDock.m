@@ -79,4 +79,6 @@
     //TODO: Actually attach dockable view
 };
 
+- (void)attachDockableView:(ICAKDockableView*)view toEdge:(ICAKDockEdge)edge onRow:(NSInteger)rowsFromEdge atOffset:(NSInteger)offset {
+};
 @end
