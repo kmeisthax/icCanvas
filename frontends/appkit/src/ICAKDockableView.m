@@ -1,11 +1,11 @@
-#include <icCanvasManager.h>
+#import <icCanvasAppKit.h>
 
 @interface ICAKDockableView ()
 - (void)setup;
 @end
 
 @implementation ICAKDockableView {
-    NSBoolean _in_detach;
+    BOOL _in_detach;
     NSPoint _starting_pt;
     CGFloat _detach_threshold;
     
@@ -48,12 +48,12 @@
 
 - (void)mouseDown:(NSEvent*)event {
     self->_in_detach = NO;
-    self->_starting_pt = event.mouseLocation;
+    self->_starting_pt = NSEvent.mouseLocation;
 };
 
 - (void)mouseDragged:(NSEvent*)event {
-    float dX = event.mouseLocation.x - self->_detach_threshold.x,
-          dY = event.mouseLocation.y - self->_detach_threshold.y,
+    float dX = NSEvent.mouseLocation.x - self->_starting_pt.x,
+          dY = NSEvent.mouseLocation.y - self->_starting_pt.y,
           dragDistance = sqrt(dX*dX + dY*dY);
     
     if (!self->_in_detach && dragDistance > self->_detach_threshold) {

@@ -1,5 +1,7 @@
 #include <Cocoa/Cocoa.h>
 
+@class ICAKDock;
+
 @protocol ICAKDockableViewDelegate
 
 /* Fired when the dockable view wants to detach from it's parent.

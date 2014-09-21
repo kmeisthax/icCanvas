@@ -13,11 +13,11 @@
 
 - (void)setupSubviews {
     self->_horiz = [[NSSplitView alloc] initWithFrame:self.bounds];
-    self->_horiz.isVertical = NO;
+    [self->_horiz setVertical:NO];
     self->_horiz.delegate = self;
     
     self->_vert = [[NSSplitView alloc] init];
-    self->_vert.isVertical = YES;
+    [self->_vert setVertical:YES];
     self->_vert.delegate = self;
     
     self->_vert_center_idx = 0;
@@ -51,11 +51,11 @@
 };
 
 - (void)setDocumentView:(NSView*)view {
-    if (self->_center != null) {
+    if (self->_center != nil) {
         [self->_center removeFromSuperview];
     }
     
-    if (view != null) {
+    if (view != nil) {
         NSArray* oldOrder = self->_vert.subviews;
         NSRange cull;
 
@@ -75,6 +75,8 @@
     self->_center = view;
 };
 
-- (void)attachDockableView:(ICAKDockableView*)view toEdge:(ICAKDockEdge)edge;
+- (void)attachDockableView:(ICAKDockableView*)view toEdge:(ICAKDockEdge)edge {
+    //TODO: Actually attach dockable view
+};
 
 @end

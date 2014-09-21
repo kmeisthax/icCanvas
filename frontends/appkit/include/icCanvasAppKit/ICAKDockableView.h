@@ -1,9 +1,6 @@
 #import <Cocoa/Cocoa.h>
 
-typedef NS_ENUM(NSInteger, ICAKDockableViewStyle) {
-    ICAKDockableViewStyleToolbar,
-    ICAKDockableViewStylePanel
-};
+@protocol ICAKDockableViewDelegate;
 
 /* Provides a widget type that allows users to move the view around an ICAKDock,
  * or even to it's own NSPanel.

@@ -34,7 +34,7 @@ static const NSInteger _MARGINS = 15;
 - (void)setup {
     self->_is_reservation_active = NO;
     self->_is_vertical = NO;
-    self->_spacing_constraints = [NSMutableObject arrayWithCapacity:5];
+    self->_spacing_constraints = [NSMutableArray arrayWithCapacity:5];
     self->_empty_constraint = nil;
     self->_bottom_margin_constraint = nil;
 };
@@ -66,7 +66,7 @@ static const NSInteger _MARGINS = 15;
     self->_is_vertical = isVertical;
 };
 
-- (bool)canAcceptDockableView:(ICAKDockableView*)dview {
+- (BOOL)canAcceptDockableView:(ICAKDockableView*)dview {
     if (self.subviews.count == 0) {
         return YES;
     }
@@ -95,7 +95,11 @@ static const NSInteger _MARGINS = 15;
                 return currentPos;
             }
         }
+        
+        currentPos++;
     }
+    
+    return currentPos;
 };
 
 - (void)reserveSpace:(NSRect)rect atPosition:(NSInteger)pos {
@@ -146,8 +150,8 @@ static const NSInteger _MARGINS = 15;
             self->_bottom_margin_constraint.constant = _MARGINS;
         }
         
-        if (pos < self.subviews.count) {
-            [[self->_spacing_constraints objectAtIndex:pos] setConstant:_MARGINS];
+        if (self->_reserved_before < self.subviews.count) {
+            [[self->_spacing_constraints objectAtIndex:self->_reserved_before] setConstant:_MARGINS];
         }
         
         self->_is_reservation_active = NO;
@@ -248,9 +252,9 @@ static const NSInteger _MARGINS = 15;
             stapleConstraint = [self createConstraintTopMarginForView:nextView];
         }
         
-        [self._spacing_constraints replaceObjectAtIndex:pos + 1 withObject:stapleConstraint];
+        [self->_spacing_constraints replaceObjectAtIndex:pos + 1 withObject:stapleConstraint];
     }
     
-    [self._spacing_constraints removeObjectAtIndex:pos];
+    [self->_spacing_constraints removeObjectAtIndex:pos];
 };
 @end
