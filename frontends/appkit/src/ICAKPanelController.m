@@ -1,10 +1,6 @@
 #include <icCanvasAppKit.h>
 
-@interface ICAKPanelController (PrivateAPIs) {
-    - (BOOL)isView
-}
-
-@implementation ICAKPanelController : NSObject {
+@implementation ICAKPanelController {
     NSMutableArray* _panels;
     NSMutableArray* _docks;
 }
