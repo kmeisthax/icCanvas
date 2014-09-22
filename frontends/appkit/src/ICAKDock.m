@@ -11,7 +11,7 @@
     NSView* _center;
     NSInteger _vert_center_idx;
     
-    NSMutableArray* _left_rows, _right_rows, _top_rows, _bottom_rows;
+    NSMutableArray *_left_rows, *_right_rows, *_top_rows, *_bottom_rows;
 }
 
 - (void)setupSubviews {
