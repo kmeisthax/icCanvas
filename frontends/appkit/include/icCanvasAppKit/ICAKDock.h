@@ -12,4 +12,5 @@
 
 - (void)attachDockableView:(ICAKDockableView*)view toEdge:(ICAKDockEdge)edge;
 - (void)attachDockableView:(ICAKDockableView*)view toEdge:(ICAKDockEdge)edge onRow:(NSInteger)rowsFromEdge atOffset:(NSInteger)offset;
+- (void)createNewRowOnEdge:(ICAKDockEdge)edge beforeRow:(NSInteger)rowsFromEdge;
 @end
