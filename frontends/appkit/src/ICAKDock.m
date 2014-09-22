@@ -135,7 +135,7 @@
     switch (edge) {
         case ICAKDockEdgeTop:
             if (self->_top_rows.count == 0) {
-                before_view = this->_horiz;
+                before_view = self->_horiz;
                 break;
             } else if (rowsFromEdge >= self->_top_rows.count) {
                 rowsFromEdge = self->_top_rows.count - 1;
@@ -145,7 +145,7 @@
             break;
         case ICAKDockEdgeLeft:
             if (self->_left_rows.count == 0) {
-                before_view = this->_center;
+                before_view = self->_center;
                 break;
             } else if (rowsFromEdge >= self->_left_rows.count) {
                 rowsFromEdge = self->_left_rows.count - 1;
@@ -156,7 +156,7 @@
         case ICAKDockEdgeBottom:
             relative_dir = NSWindowAbove; //e.g. after
             if (self->_bottom_rows.count == 0) {
-                before_view = this->_horiz;
+                before_view = self->_horiz;
                 break;
             } else if (rowsFromEdge >= self->_bottom_rows.count) {
                 rowsFromEdge = self->_bottom_rows.count - 1;
@@ -166,7 +166,7 @@
         case ICAKDockEdgeRight:
             relative_dir = NSWindowAbove; //e.g. after
             if (self->_right_rows.count == 0) {
-                before_view = this->_center;
+                before_view = self->_center;
                 break;
             } else if (rowsFromEdge >= self->_right_rows.count) {
                 rowsFromEdge = self->_right_rows.count - 1;
