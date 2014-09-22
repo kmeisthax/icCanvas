@@ -122,7 +122,7 @@
             target_view = self->_vert;
         case ICAKDockEdgeTop:
         case ICAKDockEdgeBottom:
-            row.isVertical = YES;
+            row.vertical = YES;
             target_view = self->_horiz;
         default:
             assert(FALSE);
@@ -183,7 +183,7 @@
     if (row == -1) {
         //Special case: no rows
     }
-    [attachDockableView:view toEdge:edge onRow:row atOffset:0];
+    [self attachDockableView:view toEdge:edge onRow:row atOffset:0];
 };
 
 - (void)attachDockableView:(ICAKDockableView*)view toEdge:(ICAKDockEdge)edge onRow:(NSInteger)rowsFromEdge atOffset:(NSInteger)offset {

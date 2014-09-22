@@ -70,7 +70,7 @@
         NSRect winFrame = self.window.frame;
         winFrame.origin.x = winFrame.origin.x + dX;
         winFrame.origin.y = winFrame.origin.y + dY;
-        self.window.frame = winFrame;
+        self.window.frameOrigin = winFrame.origin;
         
         self->_starting_pt = NSEvent.mouseLocation;
     }
