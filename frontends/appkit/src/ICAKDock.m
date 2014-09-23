@@ -136,42 +136,60 @@
         case ICAKDockEdgeTop:
             if (self->_top_rows.count == 0) {
                 before_view = self->_horiz;
+                [self->_top_rows addObject:row];
                 break;
             } else if (rowsFromEdge >= self->_top_rows.count) {
-                rowsFromEdge = self->_top_rows.count - 1;
+                before_view = [self->_top_rows objectAtIndex:self->_top_rows.count - 1];
                 relative_dir = NSWindowAbove; //e.g. after
+                [self->_top_rows addObject:row];
+                break;
+            } else {
+                before_view = [self->_top_rows objectAtIndex:rowsFromEdge];
             }
-            before_view = [self->_top_rows objectAtIndex:rowsFromEdge];
             break;
         case ICAKDockEdgeLeft:
             if (self->_left_rows.count == 0) {
-                before_view = self->_center;
+                before_view = self->_horiz;
+                [self->_left_rows addObject:row];
                 break;
             } else if (rowsFromEdge >= self->_left_rows.count) {
-                rowsFromEdge = self->_left_rows.count - 1;
+                before_view = [self->_left_rows objectAtIndex:self->_left_rows.count - 1];
                 relative_dir = NSWindowAbove; //e.g. after
+                [self->_left_rows addObject:row];
+                break;
+            } else {
+                before_view = [self->_left_rows objectAtIndex:rowsFromEdge];
             }
-            before_view = [self->_left_rows objectAtIndex:rowsFromEdge];
             break;
         case ICAKDockEdgeBottom:
-            relative_dir = NSWindowAbove; //e.g. after
             if (self->_bottom_rows.count == 0) {
+                relative_dir = NSWindowAbove; //e.g. after
                 before_view = self->_horiz;
+                [self->_bottom_rows addObject:row];
                 break;
             } else if (rowsFromEdge >= self->_bottom_rows.count) {
-                rowsFromEdge = self->_bottom_rows.count - 1;
+                before_view = [self->_bottom_rows objectAtIndex:self->_bottom_rows.count - 1];
+                [self->_bottom_rows addObject:row];
+                break;
+            } else {
+                relative_dir = NSWindowAbove; //e.g. after
+                before_view = [self->_bottom_rows objectAtIndex:rowsFromEdge];
             }
-            before_view = [self->_bottom_rows objectAtIndex:rowsFromEdge];
             break;
         case ICAKDockEdgeRight:
-            relative_dir = NSWindowAbove; //e.g. after
             if (self->_right_rows.count == 0) {
-                before_view = self->_center;
+                relative_dir = NSWindowAbove; //e.g. after
+                before_view = self->_horiz;
+                [self->_right_rows addObject:row];
                 break;
             } else if (rowsFromEdge >= self->_right_rows.count) {
-                rowsFromEdge = self->_right_rows.count - 1;
+                before_view = [self->_right_rows objectAtIndex:self->_right_rows.count - 1];
+                [self->_right_rows addObject:row];
+                break;
+            } else {
+                relative_dir = NSWindowAbove; //e.g. after
+                before_view = [self->_right_rows objectAtIndex:rowsFromEdge];
             }
-            before_view = [self->_left_rows objectAtIndex:rowsFromEdge];
             break;
     }
     
@@ -182,6 +200,8 @@
     NSInteger row = [self findValidLocationForDockableView:view atEdge:edge];
     if (row == -1) {
         //Special case: no rows
+        [self createNewRowOnEdge:edge beforeRow:0];
+        row = 0;
     }
     [self attachDockableView:view toEdge:edge onRow:row atOffset:0];
 };
