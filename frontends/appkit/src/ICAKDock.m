@@ -198,8 +198,7 @@
 
 - (void)attachDockableView:(ICAKDockableView*)view toEdge:(ICAKDockEdge)edge {
     NSInteger row = [self findValidLocationForDockableView:view atEdge:edge];
-    if (row == -1) {
-        //Special case: no rows
+    if (row == -1) { //Special case: no accepting rows
         [self createNewRowOnEdge:edge beforeRow:0];
         row = 0;
     }
@@ -207,6 +206,27 @@
 };
 
 - (void)attachDockableView:(ICAKDockableView*)view toEdge:(ICAKDockEdge)edge onRow:(NSInteger)rowsFromEdge atOffset:(NSInteger)offset {
-    //TODO: Actually attach dockable view
+    ICAKDockingRow* dock = nil;
+    
+    switch (edge) {
+        case ICAKDockEdgeTop:
+            dock = [self->_top_rows objectAtIndex:rowsFromEdge];
+            break;
+        case ICAKDockEdgeBottom:
+            dock = [self->_bottom_rows objectAtIndex:rowsFromEdge];
+            break;
+        case ICAKDockEdgeLeft:
+            dock = [self->_left_rows objectAtIndex:rowsFromEdge];
+            break;
+        case ICAKDockEdgeRight:
+            dock = [self->_right_rows objectAtIndex:rowsFromEdge];
+            break;
+    }
+    
+    if (offset >= dock.subviews.count) {
+        [dock addSubview:view positioned:NSWindowAbove relativeTo:[dock.subviews objectAtIndex:dock.subviews.count - 1]];
+    } else {
+        [dock addSubview:view positioned:NSWindowBelow relativeTo:[dock.subviews objectAtIndex:offset]];
+    }
 };
 @end

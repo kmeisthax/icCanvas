@@ -78,10 +78,6 @@ static const NSInteger _MARGINS = 15;
     return NO;
 };
 
-- (void)insertDockableView:(ICAKDockableView*)dview atPosition:(NSInteger)pos {
-    //insert stupid NSArray crap here
-};
-
 - (NSInteger)insertionPositionForPoint:(NSPoint)pt {
     NSInteger currentPos = 0;
     

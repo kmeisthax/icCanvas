@@ -16,8 +16,6 @@
 
 - (BOOL)canAcceptDockableView:(ICAKDockableView*)dview;
 
-- (void)insertDockableView:(ICAKDockableView*)dview atPosition:(NSInteger)pos;
-
 - (NSInteger)insertionPositionForPoint:(NSPoint)pt;
 - (void)reserveSpace:(NSRect)rect atPosition:(NSInteger)pos;
 - (void)removePreviousSpaceReservation;

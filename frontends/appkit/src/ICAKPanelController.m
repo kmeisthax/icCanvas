@@ -44,7 +44,7 @@
         return; //Do nothing, what the eff is this thing
     }
     
-    [contentView insertDockableView:view atPosition:offset];
+    [contentView addSubview:view positioned:NSWindowBelow relativeTo:[[contentView subviews] objectAtIndex:offset]];
 };
 - (void)dockableView:(ICAKDockableView*)view willAttachToDock:(ICAKDock*)dock onEdge:(ICAKDockEdge)edge onRow:(NSInteger)rowsFromEdge atOffset:(NSInteger)offset {
     [dock attachDockableView:view toEdge:edge onRow:rowsFromEdge atOffset:offset];
