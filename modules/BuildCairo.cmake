@@ -10,7 +10,7 @@ ExternalProject_Add(pkg_config
 ExternalProject_Add(Libpng
     DEPENDS pkg_config
     PREFIX ${CMAKE_CURRENT_BINARY_DIR}/ext/libpng
-    URL ftp://ftp.simplesystems.org/pub/libpng/png/src/libpng16/libpng-1.6.12.tar.gz
+    URL ftp://ftp.simplesystems.org/pub/libpng/png/src/libpng16/libpng-1.6.13.tar.gz
     CONFIGURE_COMMAND ${PARENT_PROJECT_DIR}/tools/fakepkgcfg.py ${CMAKE_CURRENT_BINARY_DIR} <SOURCE_DIR>/configure
         --prefix=<INSTALL_DIR> --disable-dependency-tracking
     BUILD_COMMAND ${PARENT_PROJECT_DIR}/tools/fakepkgcfg.py ${CMAKE_CURRENT_BINARY_DIR} make
