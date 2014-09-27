@@ -21,8 +21,10 @@ class icCanvasGtk.DockablePanelTest : Gtk.Bin, Gtk.Orientable, icCanvasGtk.Docka
     public override Gtk.SizeRequestMode get_request_mode () {
         if (this._child != null) {
             return this._child.get_request_mode ();
-        } else {
+        } else if (this.orientation == Gtk.Orientation.VERTICAL) {
             return Gtk.SizeRequestMode.HEIGHT_FOR_WIDTH;
+        } else if (this.orientation == Gtk.Orientation.HORIZONTAL) {
+            return Gtk.SizeRequestMode.WIDTH_FOR_HEIGHT;
         }
     }
     
@@ -71,7 +73,7 @@ class icCanvasGtk.DockablePanelTest : Gtk.Bin, Gtk.Orientable, icCanvasGtk.Docka
         
         label_alloc.x = 15;
         label_alloc.y = 15;
-        label_alloc.width = allocation.width - 30;
+        label_alloc.width = int.max(allocation.width - 30, 0);
         this._label.get_preferred_height_for_width(label_alloc.width, out label_alloc.height, out bitbucket);
         
         panel_alloc.x = label_alloc.x;
