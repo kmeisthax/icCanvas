@@ -132,8 +132,8 @@ class icCanvasGtk.Dock : Gtk.Box, icCanvasGtk.DockingPort {
         
         list = list.nth(offsetFromEdge);
         dockrow = list.data as icCanvasGtk.DockingBox;
-        dockrow.pack_start(dockwdgt, false, false, 0);
-        dockrow.reorder_child(dockwdgt, pos);
+        dockrow.pack_start(dockwdgt as Gtk.Widget, false, false, 0);
+        dockrow.reorder_child(dockwdgt as Gtk.Widget, pos);
     }
     
     /* Set the center widget.
