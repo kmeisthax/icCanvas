@@ -1,7 +1,7 @@
 /* A Dock is responsible for managing Dockable widgets which users and program
  * code may place along the margins of a single main widget.
  */
-class icCanvasGtk.Dock : Gtk.Box, icCanvasGtk.DockingPort {
+class icCanvasGtk.Dock : Gtk.Box {
     private Gtk.Box _hbox; //For vertical DockingPorts.
     private Gtk.Widget? _center;
     
@@ -27,14 +27,6 @@ class icCanvasGtk.Dock : Gtk.Box, icCanvasGtk.DockingPort {
     }
     
     public icCanvasGtk.Dockable? offered_dockable { get; set; }
-    public icCanvasGtk.DockingPort? parent_port {
-        set {
-            return;
-        }
-    }
-    
-    public void accept_offer(icCanvasGtk.DockingPort foreign_port) {
-    }
     
     private int get_best_edge_box(icCanvasGtk.Dockable dockwdgt, Edge edge) {
         List<Gtk.Widget> owned_tgt = this.get_children();
