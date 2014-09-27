@@ -1,4 +1,4 @@
-class icCanvasGtk.DockablePanelTest : Gtk.Bin, icCanvasGtk.Dockable, Gtk.Orientable {
+class icCanvasGtk.DockablePanelTest : Gtk.Bin, Gtk.Orientable, icCanvasGtk.Dockable {
     private Gtk.Widget? _child;
     private Gtk.Label _label;
     
@@ -15,6 +15,8 @@ class icCanvasGtk.DockablePanelTest : Gtk.Bin, icCanvasGtk.Dockable, Gtk.Orienta
             //Do nothing.
         }
     }
+    
+    public Gtk.Orientation orientation { set; get; }
     
     public override Gtk.SizeRequestMode get_request_mode () {
         if (this._child != null) {
