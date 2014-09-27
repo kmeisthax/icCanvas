@@ -78,14 +78,14 @@ class icCanvasGtk.Dock : Gtk.Box {
     }
     
     public void insert_new_row(Edge edge, uint before_row) {
-        var new_row = new icCanvasGtk.DockingBox();
+        icCanvasGtk.DockingBox new_row;
         Gtk.Box tgt = this;
         
         if (edge == Edge.LEFT || edge == Edge.RIGHT) {
+            new_row = new icCanvasGtk.DockingBox(Gtk.Orientation.VERTICAL);
             tgt = this._hbox;
-            new_row.orientation = Gtk.Orientation.VERTICAL;
         } else {
-            new_row.orientation = Gtk.Orientation.HORIZONTAL;
+            new_row = new icCanvasGtk.DockingBox(Gtk.Orientation.HORIZONTAL);
         }
         
         if (edge == Edge.BOTTOM || edge == Edge.RIGHT) {
@@ -108,24 +108,25 @@ class icCanvasGtk.Dock : Gtk.Box {
     }
     
     public void add_dockable_positioned(icCanvasGtk.Dockable dockwdgt, Edge edge, uint offsetFromEdge, int pos) {
-        icCanvasGtk.DockingBox dockrow;
         Gtk.Box tgt = this;
         
         if (edge == Edge.LEFT || edge == Edge.RIGHT) {
             tgt = this._hbox;
         }
         
-        List<Gtk.Widget> owned_list = tgt.get_children();
-        unowned List<Gtk.Widget> list = owned_list;
+        List<weak Gtk.Widget> owned_list = tgt.get_children();
+        unowned List<weak Gtk.Widget> list = owned_list;
         
         if (edge == Edge.BOTTOM || edge == Edge.RIGHT) {
             offsetFromEdge = owned_list.length() - offsetFromEdge;
         }
         
         list = list.nth(offsetFromEdge);
-        dockrow = list.data as icCanvasGtk.DockingBox;
-        dockrow.pack_start(dockwdgt as Gtk.Widget, false, false, 0);
-        dockrow.reorder_child(dockwdgt as Gtk.Widget, pos);
+        if (list.data is icCanvasGtk.DockingBox) {
+            var dockrow = list.data as icCanvasGtk.DockingBox;
+            dockrow.pack_start(dockwdgt as Gtk.Widget, false, false, 0);
+            dockrow.reorder_child(dockwdgt as Gtk.Widget, pos);
+        }
     }
     
     /* Set the center widget.

@@ -9,27 +9,16 @@
  * and may extend beyond the major length of the Dock. The containing Dock is
  * expected to place the DockingBox within a ScrollingWindow.
  */
-class icCanvasGtk.DockingBox : Gtk.Box, Gtk.Orientable {
-    public DockingBox() {
-        this.add_events(Gdk.EventMask.BUTTON_RELEASE_MASK);
-        this.set_has_window(true);
+class icCanvasGtk.DockingBox : Gtk.Box {
+    public DockingBox(Gtk.Orientation orient) {
+        Object(orientation: orient, spacing: 0);
         
-        this._evt_window = null;
-        
-        this._orient = Gtk.Orientation.HORIZONTAL;
         this._current_style = icCanvasGtk.DockingStyle.TOOLBAR;
         this._dockable_count = 0;
-        
-        this.offered_dockable = null;
     }
     
-    private Gdk.Window? _evt_window;
-    
-    private Gtk.Orientation _orient;
     private icCanvasGtk.DockingStyle _current_style;
     private int _dockable_count;
-    
-    public icCanvasGtk.Dockable? offered_dockable { get; set; }
     
     public bool is_dockable_compatible(icCanvasGtk.Dockable dockable) {
         if (this._dockable_count == 0) {
@@ -43,49 +32,19 @@ class icCanvasGtk.DockingBox : Gtk.Box, Gtk.Orientable {
         return false;
     }
     
-    public Gtk.Orientation orientation {
-        get {
-            return this._orient;
-        }
-        set {
-            base.orientation = value;
-            this._orient = value;
-        }
-    }
-    
-    //Low-level event machinery
-    public override void realize() {
-        this.set_realized(true);
-
-        if (this._evt_window == null) {
-            var attributes = Gdk.WindowAttr();
-            
-            Gtk.Allocation allocation;
-            this.get_allocation(out allocation);
-            
-            attributes.x = allocation.x;
-            attributes.y = allocation.y;
-            attributes.width = allocation.width;
-            attributes.height = allocation.height;
-            
-            attributes.event_mask = this.get_events();
-            attributes.window_type = Gdk.WindowType.CHILD;
-            attributes.wclass = Gdk.WindowWindowClass.INPUT_ONLY;
-            
-            this._evt_window = new Gdk.Window(this.get_parent_window(), attributes, Gdk.WindowAttributesType.X | Gdk.WindowAttributesType.Y);
-            this.set_window(this._evt_window);
-            
-            this._evt_window.set_user_data(this);
-        }
-    }
-    
-    public override void unrealize() {
-        this._evt_window = null;
-        base.unrealize();
-    }
-    
-    public override bool button_release_event(Gdk.EventButton evt) {
+    public override void add (Gtk.Widget widget) {
+        var dockable = widget as icCanvasGtk.Dockable;
         
-        return true;
+        if (dockable != null && is_dockable_compatible(dockable)) {
+            base.add(widget);
+            
+            this._dockable_count++;
+            this._current_style = dockable.docking_style;
+        }
+    }
+    
+    public override void remove (Gtk.Widget widget) {
+        base.remove(widget);
+        this._dockable_count--;
     }
 }
