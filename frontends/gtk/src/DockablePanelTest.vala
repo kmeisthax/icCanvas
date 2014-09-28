@@ -5,6 +5,7 @@ class icCanvasGtk.DockablePanelTest : Gtk.Bin, Gtk.Orientable, icCanvasGtk.Docka
     public DockablePanelTest() {
         this._label = new Gtk.Label("Panel Test");
         this._label.set_parent(this);
+        this._label.show();
     }
     
     public icCanvasGtk.DockingStyle docking_style {
@@ -23,9 +24,10 @@ class icCanvasGtk.DockablePanelTest : Gtk.Bin, Gtk.Orientable, icCanvasGtk.Docka
             return this._child.get_request_mode ();
         } else if (this.orientation == Gtk.Orientation.VERTICAL) {
             return Gtk.SizeRequestMode.HEIGHT_FOR_WIDTH;
-        } else if (this.orientation == Gtk.Orientation.HORIZONTAL) {
-            return Gtk.SizeRequestMode.WIDTH_FOR_HEIGHT;
         }
+        
+        //this.orientation == Gtk.Orientation.HORIZONTAL
+        return Gtk.SizeRequestMode.WIDTH_FOR_HEIGHT;
     }
     
     public override void get_preferred_width (out int minimum_width, out int natural_width) {
@@ -50,8 +52,8 @@ class icCanvasGtk.DockablePanelTest : Gtk.Bin, Gtk.Orientable, icCanvasGtk.Docka
         if (this._child != null) {
             this._child.get_preferred_width_for_height (height, out minimum_width, out natural_width);
         } else {
-            minimum_width = 15;
-            natural_width = 15;
+            minimum_width = 240;
+            natural_width = 320;
         }
     }
     
@@ -59,8 +61,8 @@ class icCanvasGtk.DockablePanelTest : Gtk.Bin, Gtk.Orientable, icCanvasGtk.Docka
         if (this._child != null) {
             this._child.get_preferred_height_for_width (width, out minimum_height, out natural_height);
         } else {
-            minimum_height = 15;
-            natural_height = 15;
+            minimum_height = 240;
+            natural_height = 320;
         }
     }
     
@@ -75,6 +77,7 @@ class icCanvasGtk.DockablePanelTest : Gtk.Bin, Gtk.Orientable, icCanvasGtk.Docka
         label_alloc.y = 15;
         label_alloc.width = int.max(allocation.width - 30, 0);
         this._label.get_preferred_height_for_width(label_alloc.width, out label_alloc.height, out bitbucket);
+        label_alloc.height = int.max(label_alloc.height, 15);
         
         panel_alloc.x = label_alloc.x;
         panel_alloc.y = label_alloc.y + label_alloc.height + label_alloc.y;
@@ -82,6 +85,9 @@ class icCanvasGtk.DockablePanelTest : Gtk.Bin, Gtk.Orientable, icCanvasGtk.Docka
         panel_alloc.height = allocation.height - panel_alloc.y - label_alloc.y;
         
         this._label.size_allocate(label_alloc);
+        if (this._child != null) {
+            this._child.size_allocate(panel_alloc);
+        }
     }
     
     public override void forall_internal (bool include_internals, Gtk.Callback callback) {
@@ -110,5 +116,15 @@ class icCanvasGtk.DockablePanelTest : Gtk.Bin, Gtk.Orientable, icCanvasGtk.Docka
                 this.queue_resize_no_redraw();
             }
         }
+    }
+    
+    public override bool draw(Cairo.Context cr) {
+        this.propagate_draw(this._label, cr);
+        
+        if (this._child != null) {
+            this.propagate_draw(this._child, cr);
+        }
+        
+        return false;
     }
 }
