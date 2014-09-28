@@ -19,7 +19,7 @@ class icCanvasGtk.DrawingWindow : Gtk.ApplicationWindow {
         this.canvaswdgt = new icCanvasGtk.CanvasWidget();
         this.scrollwdgt.add(canvaswdgt);
         
-        icCanvasGtk.DockablePanelTest dt = new icCanvasGtk.DockablePanelTest();
+        icCanvasGtk.DockablePanel dt = new icCanvasGtk.DockablePanel();
         this.dock.add_dockable(dt, icCanvasGtk.Dock.Edge.LEFT);
     }
     

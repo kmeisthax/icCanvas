@@ -1,4 +1,4 @@
-class icCanvasGtk.DockablePanelTest : Gtk.Bin, Gtk.Orientable, icCanvasGtk.Dockable {
+class icCanvasGtk.DockablePanel : Gtk.Bin, Gtk.Orientable, icCanvasGtk.Dockable {
     private Gtk.Widget? _child;
     private Gtk.Label _label;
     
