@@ -20,6 +20,7 @@ class icCanvasGtk.DrawingWindow : Gtk.ApplicationWindow {
         this.scrollwdgt.add(canvaswdgt);
         
         icCanvasGtk.DockablePanel dt = new icCanvasGtk.DockablePanel();
+        dt.label = "I am wearing pants";
         this.dock.add_dockable(dt, icCanvasGtk.Dock.Edge.LEFT);
     }
     

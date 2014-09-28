@@ -20,6 +20,16 @@ class icCanvasGtk.DockablePanel : Gtk.Bin, Gtk.Orientable, icCanvasGtk.Dockable 
     
     public Gtk.Orientation orientation { set; get; }
     
+    public string label {
+        get {
+            return this._label.label;
+        }
+        
+        set {
+            this._label.label = value;
+        }
+    }
+    
     public override Gtk.SizeRequestMode get_request_mode () {
         if (this._child != null) {
             return this._child.get_request_mode ();
