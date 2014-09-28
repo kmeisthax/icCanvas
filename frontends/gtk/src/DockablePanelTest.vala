@@ -4,6 +4,7 @@ class icCanvasGtk.DockablePanelTest : Gtk.Bin, Gtk.Orientable, icCanvasGtk.Docka
     
     public DockablePanelTest() {
         this._label = new Gtk.Label("Panel Test");
+        this._label.halign = Gtk.Align.START;
         this._label.set_parent(this);
         this._label.show();
     }
