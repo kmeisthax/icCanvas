@@ -9,29 +9,36 @@
     NSSplitView* _horiz;
     NSSplitView* _vert;
     NSView* _center;
-    NSInteger _vert_center_idx;
+    NSInteger _horiz_center_idx;
     
     NSMutableArray *_left_rows, *_right_rows, *_top_rows, *_bottom_rows;
 }
 
 - (void)setupSubviews {
-    self->_horiz = [[NSSplitView alloc] initWithFrame:self.bounds];
-    [self->_horiz setVertical:NO];
+    self->_horiz = [[NSSplitView alloc] init];
+    [self->_horiz setVertical:YES];
     self->_horiz.delegate = self;
     
-    self->_vert = [[NSSplitView alloc] init];
-    [self->_vert setVertical:YES];
+    self->_vert = [[NSSplitView alloc] initWithFrame:self.bounds];
+    [self->_vert setVertical:NO];
     self->_vert.delegate = self;
     
-    self->_vert_center_idx = 0;
+    self->_horiz_center_idx = 0;
     
-    [self addSubview:self->_horiz];
-    [self->_horiz addSubview:self->_vert];
+    [self addSubview:self->_vert];
+    [self->_vert addSubview:self->_horiz];
     
     self->_left_rows = [NSMutableArray arrayWithCapacity:5];
     self->_right_rows = [NSMutableArray arrayWithCapacity:5];
     self->_top_rows = [NSMutableArray arrayWithCapacity:5];
     self->_bottom_rows = [NSMutableArray arrayWithCapacity:5];
+    
+    [self createNewRowOnEdge:ICAKDockEdgeLeft beforeRow:0];
+    [self createNewRowOnEdge:ICAKDockEdgeRight beforeRow:0];
+    [self createNewRowOnEdge:ICAKDockEdgeTop beforeRow:0];
+    [self createNewRowOnEdge:ICAKDockEdgeBottom beforeRow:0];
+    
+    self.translatesAutoresizingMaskIntoConstraints = NO;
 };
 
 - (id)init {
@@ -58,26 +65,26 @@
     return self->_center;
 };
 
+- (void)setFrame:(NSRect)rekt {
+    [self->_vert setFrame:rekt];
+    [super setFrame:rekt];
+};
+
 - (void)setDocumentView:(NSView*)view {
     if (self->_center != nil) {
         [self->_center removeFromSuperview];
     }
     
     if (view != nil) {
-        NSArray* oldOrder = self->_vert.subviews;
-        NSRange cull;
-
-        cull.location = 0;
-        cull.length = self->_vert_center_idx;
-
-        NSArray* newOrder = [oldOrder subarrayWithRange:cull];
-        newOrder = [newOrder arrayByAddingObject:view];
-
-        cull.location = self->_vert_center_idx;
-        cull.length = oldOrder.count - self->_vert_center_idx;
-        newOrder = [newOrder arrayByAddingObjectsFromArray:[oldOrder subarrayWithRange:cull]];
-
-        self->_vert.subviews = newOrder;
+        NSView* relative_to = nil;
+        NSWindowOrderingMode positioned = NSWindowAbove;
+        
+        if (self->_horiz_center_idx < self->_horiz.subviews.count) {
+            relative_to = [self->_horiz.subviews objectAtIndex:self->_horiz_center_idx];
+            positioned = NSWindowBelow;
+        }
+        
+        [self->_horiz addSubview:view positioned:positioned relativeTo:relative_to];
     }
     
     self->_center = view;
@@ -117,13 +124,15 @@
     NSView* target_view = nil;
     
     switch (edge) {
-        case ICAKDockEdgeLeft:
-        case ICAKDockEdgeRight:
-            target_view = self->_vert;
         case ICAKDockEdgeTop:
         case ICAKDockEdgeBottom:
+            target_view = self->_vert;
+            break;
+        case ICAKDockEdgeLeft:
+        case ICAKDockEdgeRight:
             row.vertical = YES;
             target_view = self->_horiz;
+            break;
         default:
             assert(FALSE);
             return; //just in case? lol
@@ -148,8 +157,9 @@
             }
             break;
         case ICAKDockEdgeLeft:
+            self->_horiz_center_idx++;
             if (self->_left_rows.count == 0) {
-                before_view = self->_horiz;
+                before_view = nil;
                 [self->_left_rows addObject:row];
                 break;
             } else if (rowsFromEdge >= self->_left_rows.count) {
@@ -179,7 +189,7 @@
         case ICAKDockEdgeRight:
             if (self->_right_rows.count == 0) {
                 relative_dir = NSWindowAbove; //e.g. after
-                before_view = self->_horiz;
+                before_view = nil;
                 [self->_right_rows addObject:row];
                 break;
             } else if (rowsFromEdge >= self->_right_rows.count) {
