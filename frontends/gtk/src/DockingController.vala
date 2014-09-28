@@ -14,9 +14,11 @@ class icCanvasGtk.DockingController : GLib.Object {
     }
     
     private bool should_attach_to_row(icCanvasGtk.Dockable src, icCanvasGtk.DockingBox row) {
+        return true;
     }
     
     private bool should_attach_to_dock(icCanvasGtk.Dockable src, icCanvasGtk.Dock dock) {
+        return true;
     }
     
     private void attach_to_row(icCanvasGtk.Dockable src, icCanvasGtk.DockingBox row, int offset) {
