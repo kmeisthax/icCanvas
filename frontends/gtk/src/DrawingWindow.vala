@@ -21,6 +21,10 @@ class icCanvasGtk.DrawingWindow : Gtk.ApplicationWindow {
         
         icCanvasGtk.DockablePanel dt = new icCanvasGtk.DockablePanel();
         dt.label = "I am wearing pants";
+        
+        Gtk.Button btn = new Gtk.Button.with_label("Do something funny");
+        dt.add(btn);
+        
         this.dock.add_dockable(dt, icCanvasGtk.Dock.Edge.LEFT);
     }
     
