@@ -34,6 +34,10 @@ class icCanvasGtk.DockablePanel : Gtk.Bin, Gtk.Orientable, icCanvasGtk.Dockable 
         }
     }
     
+    private const int OUTER_PADDING = 1;
+    private const int LABEL_PADDING = 5;
+    private const int CHILD_MARGIN = 2;
+    
     public override Gtk.SizeRequestMode get_request_mode () {
         if (this._child != null) {
             return this._child.get_request_mode ();
@@ -49,8 +53,8 @@ class icCanvasGtk.DockablePanel : Gtk.Bin, Gtk.Orientable, icCanvasGtk.Dockable 
         if (this._child != null) {
             this._child.get_preferred_width (out minimum_width, out natural_width);
             
-            minimum_width += 30;
-            natural_width += 30;
+            minimum_width += icCanvasGtk.DockablePanel.OUTER_PADDING * 2 + icCanvasGtk.DockablePanel.LABEL_PADDING * 2;
+            natural_width += icCanvasGtk.DockablePanel.OUTER_PADDING * 2 + icCanvasGtk.DockablePanel.LABEL_PADDING * 2;
         } else {
             minimum_width = 240;
             natural_width = 320;
@@ -64,11 +68,11 @@ class icCanvasGtk.DockablePanel : Gtk.Bin, Gtk.Orientable, icCanvasGtk.Dockable 
         if (this._child != null) {
             this._child.get_preferred_height (out minimum_height, out natural_height);
             
-            minimum_height += 30 + label_mh;
-            natural_height += 30 + label_nh;
+            minimum_height += icCanvasGtk.DockablePanel.OUTER_PADDING * 2 + icCanvasGtk.DockablePanel.LABEL_PADDING * 2 + icCanvasGtk.DockablePanel.CHILD_MARGIN + label_mh;
+            natural_height += icCanvasGtk.DockablePanel.OUTER_PADDING * 2 + icCanvasGtk.DockablePanel.LABEL_PADDING * 2 + icCanvasGtk.DockablePanel.CHILD_MARGIN + label_nh;
         } else {
-            minimum_height = 30 + label_mh;
-            natural_height = 30 + label_nh;
+            minimum_height = icCanvasGtk.DockablePanel.OUTER_PADDING * 2 + label_mh;
+            natural_height = icCanvasGtk.DockablePanel.OUTER_PADDING * 2 + label_nh;
         }
     }
     
@@ -88,11 +92,11 @@ class icCanvasGtk.DockablePanel : Gtk.Bin, Gtk.Orientable, icCanvasGtk.Dockable 
         if (this._child != null) {
             this._child.get_preferred_height_for_width (width, out minimum_height, out natural_height);
             
-            minimum_height += 30 + label_mh;
-            natural_height += 30 + label_nh;
+            minimum_height += icCanvasGtk.DockablePanel.OUTER_PADDING * 2 + icCanvasGtk.DockablePanel.LABEL_PADDING * 2 + icCanvasGtk.DockablePanel.CHILD_MARGIN + label_mh;
+            natural_height += icCanvasGtk.DockablePanel.OUTER_PADDING * 2 + icCanvasGtk.DockablePanel.LABEL_PADDING * 2 + icCanvasGtk.DockablePanel.CHILD_MARGIN + label_nh;
         } else {
-            minimum_height = 30 + label_mh;
-            natural_height = 30 + label_nh;
+            minimum_height = 2 + label_mh;
+            natural_height = 2 + label_nh;
         }
     }
     
@@ -103,16 +107,16 @@ class icCanvasGtk.DockablePanel : Gtk.Bin, Gtk.Orientable, icCanvasGtk.Dockable 
         Gtk.Allocation panel_alloc = Gtk.Allocation();
         int bitbucket;
         
-        label_alloc.x = allocation.x + 15;
-        label_alloc.y = allocation.y + 15;
-        label_alloc.width = int.max(allocation.width - 30, 0);
+        label_alloc.x = allocation.x + icCanvasGtk.DockablePanel.OUTER_PADDING + icCanvasGtk.DockablePanel.LABEL_PADDING;
+        label_alloc.y = allocation.y + icCanvasGtk.DockablePanel.OUTER_PADDING + icCanvasGtk.DockablePanel.LABEL_PADDING;
+        label_alloc.width = int.max(allocation.width - icCanvasGtk.DockablePanel.OUTER_PADDING * 2 - icCanvasGtk.DockablePanel.LABEL_PADDING * 2, 0);
         this._label.get_preferred_height_for_width(label_alloc.width, out label_alloc.height, out bitbucket);
         label_alloc.height = int.max(label_alloc.height, 15);
         
-        panel_alloc.x = label_alloc.x;
-        panel_alloc.y = allocation.y + label_alloc.height + 30;
-        panel_alloc.width = label_alloc.width;
-        panel_alloc.height = allocation.height - label_alloc.height - 30;
+        panel_alloc.x = allocation.x + icCanvasGtk.DockablePanel.OUTER_PADDING;
+        panel_alloc.y = allocation.y + icCanvasGtk.DockablePanel.OUTER_PADDING + icCanvasGtk.DockablePanel.LABEL_PADDING * 2 + label_alloc.height + icCanvasGtk.DockablePanel.CHILD_MARGIN;
+        panel_alloc.width = int.max(allocation.width - icCanvasGtk.DockablePanel.OUTER_PADDING * 2, 0);
+        panel_alloc.height = allocation.height - icCanvasGtk.DockablePanel.OUTER_PADDING * 2 - icCanvasGtk.DockablePanel.LABEL_PADDING * 2 - icCanvasGtk.DockablePanel.CHILD_MARGIN - label_alloc.height;
         
         this._label.size_allocate(label_alloc);
         if (this._child != null) {
@@ -172,6 +176,17 @@ class icCanvasGtk.DockablePanel : Gtk.Bin, Gtk.Orientable, icCanvasGtk.Dockable 
     }
     
     public override bool draw(Cairo.Context cr) {
+        Gtk.Allocation myalloc, lalloc;
+        
+        this.get_allocation(out myalloc);
+        this._label.get_allocation(out lalloc);
+        
+        cr.save();
+        cr.set_source_rgb(0.7, 0.7, 0.7);
+        cr.rectangle(icCanvasGtk.DockablePanel.OUTER_PADDING, icCanvasGtk.DockablePanel.OUTER_PADDING, myalloc.width - icCanvasGtk.DockablePanel.OUTER_PADDING * 2, lalloc.height + icCanvasGtk.DockablePanel.LABEL_PADDING * 2);
+        cr.fill();
+        cr.restore();
+        
         this.propagate_draw(this._label, cr);
         
         if (this._child != null) {
