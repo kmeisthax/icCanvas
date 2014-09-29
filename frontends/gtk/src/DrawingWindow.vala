@@ -36,6 +36,13 @@ class icCanvasGtk.DrawingWindow : Gtk.ApplicationWindow {
         
         this.dock.add_dockable(dt, icCanvasGtk.Dock.Edge.LEFT);
         this.dock.add_dockable(dt2, icCanvasGtk.Dock.Edge.LEFT);
+        
+        dt.detach.connect(this.on_detach);
+        dt2.detach.connect(this.on_detach);
+    }
+    
+    public void on_detach() {
+        Posix.printf("detached\n");
     }
     
     public icCanvasGtk.Drawing drawing {
