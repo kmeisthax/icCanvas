@@ -16,6 +16,8 @@
 }
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification {
+    [NSUserDefaults.standardUserDefaults setBool:NO forKey:@"NSConstraintBasedLayoutVisualizeMutuallyExclusiveConstraints"];
+
     //Attach ICMApplication background tasks
     NSInvocation* appInvoke = [NSInvocation invocationWithMethodSignature:[self->coreApp methodSignatureForSelector:@selector(backgroundTick)]];
     [appInvoke setSelector:@selector(backgroundTick)];

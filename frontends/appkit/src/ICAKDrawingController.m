@@ -3,6 +3,7 @@
 @implementation ICAKDrawingController {
     ICAKCanvasView *cv;
     NSScrollView *scv;
+    ICAKDock *dk;
 }
 
 - (id)init {
@@ -21,6 +22,8 @@
 
         self->cv = [[ICAKCanvasView alloc] initWithDrawing: drawing];
         self->scv = [[NSScrollView alloc] initWithFrame: [[self.window contentView] frame]];
+        self->dk = [[ICAKDock alloc] init];
+        
         [self->cv sizeToFitCanvas];
 
         [self->scv setHasVerticalScroller:YES];
@@ -32,6 +35,8 @@
         [self->scv setHasVerticalRuler:YES];
         [self->scv setRulersVisible:YES];
         [self->scv setDrawsBackground:NO];
+        
+        [self->dk setDocumentView:self->scv];
         
         const CGFloat midX = NSMidX([[self->scv documentView] bounds]);
         const CGFloat midY = NSMidY([[self->scv documentView] bounds]);
@@ -54,7 +59,7 @@
         self->scv.maxMagnification = self->cv.maximumMagnification;
         self->scv.minMagnification = self->cv.minimumMagnification;
 
-        [window setContentView:self->scv];
+        [window setContentView:self->dk];
     }
     
     return self;
