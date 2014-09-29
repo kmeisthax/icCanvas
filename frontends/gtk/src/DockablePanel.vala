@@ -1,5 +1,5 @@
 class icCanvasGtk.DockablePanel : Gtk.Bin, Gtk.Orientable, icCanvasGtk.Dockable {
-    private Gtk.Widget? _child;
+    private Gtk.Revealer _child;
     private Gtk.Label _label;
     
     public DockablePanel() {
@@ -7,6 +7,9 @@ class icCanvasGtk.DockablePanel : Gtk.Bin, Gtk.Orientable, icCanvasGtk.Dockable 
         this._label.halign = Gtk.Align.START;
         this._label.set_parent(this);
         this._label.show();
+        
+        this._child = new Gtk.Revealer();
+        this._child.set_parent(this);
     }
     
     public icCanvasGtk.DockingStyle docking_style {
@@ -127,20 +130,43 @@ class icCanvasGtk.DockablePanel : Gtk.Bin, Gtk.Orientable, icCanvasGtk.Dockable 
     }
     
     public override void add (Gtk.Widget widget) {
-        if (this._child == null) {
-            widget.set_parent(this);
-            this._child = widget;
-        }
+        this._child.add(widget);
     }
     
     public override void remove (Gtk.Widget widget) {
-        if (this._child == widget) {
-            widget.unparent();
-            this._child = null;
-            
-            if (this.get_visible() && widget.get_visible()) {
-                this.queue_resize_no_redraw();
-            }
+        this._child.remove(widget);
+    }
+    
+    public bool child_revealed {
+        get {
+            return this._child.child_revealed;
+        }
+    }
+    
+    public bool reveal_child {
+        set {
+            this._child.reveal_child = value;
+        }
+        get {
+            return this._child.reveal_child;
+        }
+    }
+    
+    public uint transition_duration {
+        set {
+            this._child.transition_duration = value;
+        }
+        get {
+            return this._child.transition_duration;
+        }
+    }
+    
+    public Gtk.RevealerTransitionType transition_type {
+        set {
+            this._child.transition_type = value;
+        }
+        get {
+            return this._child.transition_type;
         }
     }
     
