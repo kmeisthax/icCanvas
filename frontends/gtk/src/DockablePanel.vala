@@ -10,6 +10,7 @@ class icCanvasGtk.DockablePanel : Gtk.Bin, Gtk.Orientable, icCanvasGtk.Dockable 
         
         this._child = new Gtk.Revealer();
         this._child.set_parent(this);
+        this._child.reveal_child = true;
     }
     
     public icCanvasGtk.DockingStyle docking_style {
