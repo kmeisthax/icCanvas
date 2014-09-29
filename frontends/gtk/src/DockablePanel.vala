@@ -4,7 +4,7 @@ class icCanvasGtk.DockablePanel : Gtk.Bin, Gtk.Orientable, icCanvasGtk.Dockable 
     private Gdk.Window? _evtwnd;
     
     private bool _in_drag;
-    private book _detached;
+    private bool _detached;
     private double _x_start_drag;
     private double _y_start_drag;
     
@@ -262,7 +262,7 @@ class icCanvasGtk.DockablePanel : Gtk.Bin, Gtk.Orientable, icCanvasGtk.Dockable 
     
     public override bool motion_notify_event(Gdk.EventMotion evt) {
         if (this._in_drag) {
-            var dist = GLib.Math.sqrt(GLib.Math.pow(evt.x - this._x_start_drag, 2) + GLib.Math.pow(evt.y - this._y_start_drag, 2))
+            var dist = GLib.Math.sqrt(GLib.Math.pow(evt.x - this._x_start_drag, 2) + GLib.Math.pow(evt.y - this._y_start_drag, 2));
             
             if (!this._detached && dist > icCanvasGtk.DockablePanel.DRAG_THRESHOLD) {
                 this._detached = true;
