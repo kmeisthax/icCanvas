@@ -104,7 +104,7 @@ class icCanvasGtk.Dock : Gtk.Box {
             recommended_offset = 0;
         }
         
-        this.add_dockable_positioned(dockwdgt, edge, recommended_offset, 0);
+        this.add_dockable_positioned(dockwdgt, edge, recommended_offset, -1);
     }
     
     public void add_dockable_positioned(icCanvasGtk.Dockable dockwdgt, Edge edge, uint offsetFromEdge, int pos) {
@@ -124,7 +124,7 @@ class icCanvasGtk.Dock : Gtk.Box {
         list = list.nth(offsetFromEdge);
         if (list.data is icCanvasGtk.DockingBox) {
             var dockrow = list.data as icCanvasGtk.DockingBox;
-            dockrow.pack_start(dockwdgt as Gtk.Widget, false, false, 0);
+            dockrow.add(dockwdgt as Gtk.Widget);
             dockrow.reorder_child(dockwdgt as Gtk.Widget, pos);
         }
     }

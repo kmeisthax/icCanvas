@@ -99,16 +99,16 @@ class icCanvasGtk.DockablePanel : Gtk.Bin, Gtk.Orientable, icCanvasGtk.Dockable 
         Gtk.Allocation panel_alloc = Gtk.Allocation();
         int bitbucket;
         
-        label_alloc.x = 15;
-        label_alloc.y = 15;
+        label_alloc.x = allocation.x + 15;
+        label_alloc.y = allocation.y + 15;
         label_alloc.width = int.max(allocation.width - 30, 0);
         this._label.get_preferred_height_for_width(label_alloc.width, out label_alloc.height, out bitbucket);
         label_alloc.height = int.max(label_alloc.height, 15);
         
         panel_alloc.x = label_alloc.x;
-        panel_alloc.y = label_alloc.y + label_alloc.height + label_alloc.y;
+        panel_alloc.y = allocation.y + label_alloc.height + 30;
         panel_alloc.width = label_alloc.width;
-        panel_alloc.height = allocation.height - panel_alloc.y - label_alloc.y;
+        panel_alloc.height = allocation.height - label_alloc.height - 30;
         
         this._label.size_allocate(label_alloc);
         if (this._child != null) {
