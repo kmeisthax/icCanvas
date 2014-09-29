@@ -1,8 +1,25 @@
 class icCanvasGtk.DockablePanel : Gtk.Bin, Gtk.Orientable, icCanvasGtk.Dockable {
     private Gtk.Revealer _child;
     private Gtk.Label _label;
+    private Gdk.Window? _evtwnd;
+    
+    private bool _in_drag;
+    private book _detached;
+    private double _x_start_drag;
+    private double _y_start_drag;
+    
+    private const double DRAG_THRESHOLD = 20.0;
     
     public DockablePanel() {
+        this.add_events(Gdk.EventMask.BUTTON_MOTION_MASK | Gdk.EventMask.BUTTON_PRESS_MASK | Gdk.EventMask.BUTTON_RELEASE_MASK);
+        this.set_has_window(true);
+        this._evtwnd = null;
+        
+        this._in_drag = false;
+        this._detached = false;
+        this._x_start_drag = 0;
+        this._y_start_drag = 0;
+        
         this._label = new Gtk.Label("Panel Test");
         this._label.halign = Gtk.Align.START;
         this._label.set_parent(this);
@@ -122,6 +139,10 @@ class icCanvasGtk.DockablePanel : Gtk.Bin, Gtk.Orientable, icCanvasGtk.Dockable 
         if (this._child != null) {
             this._child.size_allocate(panel_alloc);
         }
+        
+        if (this.get_realized()) {
+            this._evtwnd.move_resize(allocation.x, allocation.y, allocation.width, allocation.height);
+        }
     }
     
     public override void forall_internal (bool include_internals, Gtk.Callback callback) {
@@ -194,5 +215,72 @@ class icCanvasGtk.DockablePanel : Gtk.Bin, Gtk.Orientable, icCanvasGtk.Dockable 
         }
         
         return false;
+    }
+    
+    public override void realize() {
+        this.set_realized(true);
+
+        if (this._evtwnd == null) {
+            var attributes = Gdk.WindowAttr();
+            
+            Gtk.Allocation allocation;
+            this.get_allocation(out allocation);
+            
+            attributes.x = allocation.x;
+            attributes.y = allocation.y;
+            attributes.width = allocation.width;
+            attributes.height = allocation.height;
+            
+            attributes.event_mask = this.get_events() | Gdk.EventMask.EXPOSURE_MASK;
+            attributes.window_type = Gdk.WindowType.CHILD;
+            attributes.wclass = Gdk.WindowWindowClass.INPUT_OUTPUT;
+            
+            this._evtwnd = new Gdk.Window(this.get_parent_window(), attributes, Gdk.WindowAttributesType.X | Gdk.WindowAttributesType.Y);
+            this.set_window(this._evtwnd);
+
+            this._evtwnd.set_user_data(this);
+        }
+    }
+    
+    public override void unrealize() {
+        this._evtwnd = null;
+        base.unrealize();
+    }
+    
+    public override bool button_press_event(Gdk.EventButton evt) {
+        if (evt.type == Gdk.EventType.BUTTON_PRESS) {
+            if (!this._in_drag) {
+                this._in_drag = true;
+                this._detached = false;
+                this._x_start_drag = evt.x;
+                this._y_start_drag = evt.y;
+            }
+        }
+        
+        return true;
+    }
+    
+    public override bool motion_notify_event(Gdk.EventMotion evt) {
+        if (this._in_drag) {
+            var dist = GLib.Math.sqrt(GLib.Math.pow(evt.x - this._x_start_drag, 2) + GLib.Math.pow(evt.y - this._y_start_drag, 2))
+            
+            if (dist > icCanvasGtk.DockablePanel.DRAG_THRESHOLD) {
+                this._detached = true;
+                this.detach();
+            }
+        }
+        
+        return true;
+    }
+    
+    public override bool button_release_event(Gdk.EventButton evt) {
+        if (evt.type == Gdk.EventType.BUTTON_RELEASE) {
+            this._in_drag = false;
+            this._detached = false;
+            this._x_start_drag = 0;
+            this._y_start_drag = 0;
+        }
+
+        return true;
     }
 }
