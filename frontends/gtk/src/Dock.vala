@@ -29,8 +29,8 @@ class icCanvasGtk.Dock : Gtk.Box {
     public icCanvasGtk.Dockable? offered_dockable { get; set; }
     
     private int get_best_edge_box(icCanvasGtk.Dockable dockwdgt, Edge edge) {
-        List<Gtk.Widget> owned_tgt = this.get_children();
-        unowned List<Gtk.Widget> tgt = owned_tgt;
+        List<weak Gtk.Widget> owned_tgt = this.get_children();
+        unowned List<weak Gtk.Widget> tgt = owned_tgt;
         Gtk.Widget stop = this._hbox;
         var go_fwd = true;
         var rval = 0;
