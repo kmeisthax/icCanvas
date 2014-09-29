@@ -264,7 +264,7 @@ class icCanvasGtk.DockablePanel : Gtk.Bin, Gtk.Orientable, icCanvasGtk.Dockable 
         if (this._in_drag) {
             var dist = GLib.Math.sqrt(GLib.Math.pow(evt.x - this._x_start_drag, 2) + GLib.Math.pow(evt.y - this._y_start_drag, 2))
             
-            if (dist > icCanvasGtk.DockablePanel.DRAG_THRESHOLD) {
+            if (!this._detached && dist > icCanvasGtk.DockablePanel.DRAG_THRESHOLD) {
                 this._detached = true;
                 this.detach();
             }
