@@ -27,13 +27,13 @@ include_directories(${GTK_INCLUDE_DIRS})
 file(GLOB ICGTK_SRC_VALA RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} src/*.vala)
 include_directories(include)
 
-set(ICGTK_VALA_PACKAGES gtk+-3.0 glib-2.0)
+set(ICGTK_VALA_PACKAGES gtk+-3.0 glib-2.0 posix)
 
 vala_precompile(ICGTK_SRC ${ICGTK_SRC_VALA} PACKAGES ${ICGTK_VALA_PACKAGES} OPTIONS --thread CUSTOM_VAPIS ${CORELIB_VAPI})
 
 add_executable(icCanvasGtk ${ICGTK_SRC})
 
-target_link_libraries(icCanvasGtk ${GTK_LIBRARIES} gthread-2.0)
+target_link_libraries(icCanvasGtk ${GTK_LIBRARIES} gthread-2.0 m)
 target_link_libraries(icCanvasGtk icCanvasManager)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
