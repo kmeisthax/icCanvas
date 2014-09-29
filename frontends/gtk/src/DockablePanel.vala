@@ -124,14 +124,14 @@ class icCanvasGtk.DockablePanel : Gtk.Bin, Gtk.Orientable, icCanvasGtk.Dockable 
         Gtk.Allocation panel_alloc = Gtk.Allocation();
         int bitbucket;
         
-        label_alloc.x = allocation.x + icCanvasGtk.DockablePanel.OUTER_PADDING + icCanvasGtk.DockablePanel.LABEL_PADDING;
-        label_alloc.y = allocation.y + icCanvasGtk.DockablePanel.OUTER_PADDING + icCanvasGtk.DockablePanel.LABEL_PADDING;
+        label_alloc.x = icCanvasGtk.DockablePanel.OUTER_PADDING + icCanvasGtk.DockablePanel.LABEL_PADDING;
+        label_alloc.y = icCanvasGtk.DockablePanel.OUTER_PADDING + icCanvasGtk.DockablePanel.LABEL_PADDING;
         label_alloc.width = int.max(allocation.width - icCanvasGtk.DockablePanel.OUTER_PADDING * 2 - icCanvasGtk.DockablePanel.LABEL_PADDING * 2, 0);
         this._label.get_preferred_height_for_width(label_alloc.width, out label_alloc.height, out bitbucket);
         label_alloc.height = int.max(label_alloc.height, 15);
         
-        panel_alloc.x = allocation.x + icCanvasGtk.DockablePanel.OUTER_PADDING;
-        panel_alloc.y = allocation.y + icCanvasGtk.DockablePanel.OUTER_PADDING + icCanvasGtk.DockablePanel.LABEL_PADDING * 2 + label_alloc.height + icCanvasGtk.DockablePanel.CHILD_MARGIN;
+        panel_alloc.x = icCanvasGtk.DockablePanel.OUTER_PADDING;
+        panel_alloc.y = icCanvasGtk.DockablePanel.OUTER_PADDING + icCanvasGtk.DockablePanel.LABEL_PADDING * 2 + label_alloc.height + icCanvasGtk.DockablePanel.CHILD_MARGIN;
         panel_alloc.width = int.max(allocation.width - icCanvasGtk.DockablePanel.OUTER_PADDING * 2, 0);
         panel_alloc.height = allocation.height - icCanvasGtk.DockablePanel.OUTER_PADDING * 2 - icCanvasGtk.DockablePanel.LABEL_PADDING * 2 - icCanvasGtk.DockablePanel.CHILD_MARGIN - label_alloc.height;
         
