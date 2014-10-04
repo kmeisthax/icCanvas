@@ -4,6 +4,8 @@
     ICAKCanvasView *cv;
     NSScrollView *scv;
     ICAKDock *dk;
+    
+    ICAKDockablePanel *panel1;
 }
 
 - (id)init {
@@ -60,6 +62,11 @@
         self->scv.minMagnification = self->cv.minimumMagnification;
 
         [window setContentView:self->dk];
+        
+        self->panel1 = [[ICAKDockablePanel alloc] init];
+        self->panel1.label = @"Panel test";
+        
+        [self->dk attachDockableView:self->panel1 toEdge:ICAKDockEdgeLeft];
     }
     
     return self;
