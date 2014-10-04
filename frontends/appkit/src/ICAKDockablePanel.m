@@ -67,7 +67,7 @@ static const NSInteger _MARGINS_LABEL_BOTTOM = 15;
 };
 
 - (void)setLabel:(NSString*)lbl {
-    self->_label.textStorage.string = label;
+    self->_label.textStorage.mutableString.string = lbl;
 };
 
 @end
