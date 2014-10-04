@@ -1,4 +1,5 @@
 #import <icCanvasAppKit.h>
+#import <QuartzCore/QuartzCore.h>
 
 static const NSInteger _MARGINS = 15;
 
@@ -37,6 +38,16 @@ static const NSInteger _MARGINS = 15;
     self->_spacing_constraints = [NSMutableArray arrayWithCapacity:5];
     self->_empty_constraint = nil;
     self->_bottom_margin_constraint = nil;
+    
+    NSColor *color = [NSColor colorWithCatalogName:@"System" colorName:@"_sourceListBackgroundColor"];
+    if (color == nil) {
+        NSTableView *tableView = [[[NSTableView alloc] initWithFrame:NSZeroRect] autorelease];
+        [tableView setSelectionHighlightStyle:NSTableViewSelectionHighlightStyleSourceList];
+        color = [tableView backgroundColor];
+    }
+    
+    self.wantsLayer = YES;
+    self.layer.backgroundColor = color;
 };
 
 - (id)init {
