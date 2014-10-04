@@ -14,6 +14,8 @@ static const NSInteger _MARGINS_LABEL_BOTTOM = 15;
 }
 
 - (void)dockablePanelSetupSubviews {
+    [self addConstraint:[NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationGreaterThanOrEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0 constant:240]];
+    
     self->_label = [[NSTextView alloc] init];
     [self addSubview:self->_label];
     
