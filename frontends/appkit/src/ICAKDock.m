@@ -15,6 +15,8 @@
 }
 
 - (void)setupSubviews {
+    self.translatesAutoresizingMaskIntoConstraints = NO;
+    
     self->_horiz = [[NSSplitView alloc] init];
     [self->_horiz setVertical:YES];
     self->_horiz.delegate = self;

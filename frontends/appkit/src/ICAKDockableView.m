@@ -14,6 +14,7 @@
 }
 
 - (void)setup {
+    self.translatesAutoresizingMaskIntoConstraints = NO;
     self->_in_detach = NO;
     self->_detach_threshold = 20.0;
     self->_delegate = NULL;

@@ -13,7 +13,12 @@ static const NSInteger _MARGINS_LABEL_BOTTOM = 15;
     NSView* _content;
 }
 
++ (BOOL)requiresConstraintBasedLayout {
+    return YES;
+};
+
 - (void)dockablePanelSetupSubviews {
+    self.translatesAutoresizingMaskIntoConstraints = NO;
     [self addConstraint:[NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationGreaterThanOrEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0 constant:240]];
     
     self->_label = [[NSTextView alloc] init];
@@ -22,6 +27,7 @@ static const NSInteger _MARGINS_LABEL_BOTTOM = 15;
     self->_label.editable = NO;
     self->_label.selectable = NO;
     self->_label.drawsBackground = NO;
+    self->_label.translatesAutoresizingMaskIntoConstraints = NO;
     
     [self addConstraint:[NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:self->_label attribute:NSLayoutAttributeLeft multiplier:1.0 constant:0]];
     [self addConstraint:[NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:self->_label attribute:NSLayoutAttributeRight multiplier:1.0 constant:0]];

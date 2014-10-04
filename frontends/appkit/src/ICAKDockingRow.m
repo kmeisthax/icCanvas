@@ -192,10 +192,12 @@ static const NSInteger _MARGINS = 15;
 }
 
 - (void)didAddSubview:(NSView*)subview {
-    //why do I gotta DO THIS
-    NSUInteger pos = [self.subviews indexOfObject:subview];
-    NSView* previousView = [self.subviews objectAtIndex:pos - 1];
     NSLayoutConstraint* newStapleConstraint;
+    NSUInteger pos = [self.subviews indexOfObject:subview]; //why do I gotta DO THIS
+    NSView* previousView = nil;
+    if (pos != 0) { //oh that's why
+        [self.subviews objectAtIndex:pos - 1];
+    }
     
     [self removePreviousSpaceReservation];
     [self addMarginConstraintsForView:subview];
@@ -208,12 +210,12 @@ static const NSInteger _MARGINS = 15;
         [self->_spacing_constraints replaceObjectAtIndex:pos withObject:newStapleConstraint];
     }
     
-    if (pos == 0) {
+    if (previousView == nil) {
         newStapleConstraint = [self createConstraintTopMarginForView:subview];
     } else {
         newStapleConstraint = [self createConstraintStapleView:subview toView:previousView];
     }
-        
+    
     [self addConstraint:newStapleConstraint];
     
     if (pos < self.subviews.count - 1) {
