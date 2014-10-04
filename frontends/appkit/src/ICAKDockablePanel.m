@@ -21,6 +21,10 @@ static const NSInteger _MARGINS_LABEL_BOTTOM = 15;
     self->_label.selectable = NO;
     self->_label.drawsBackground = NO;
     
+    [self addConstraint:[NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:self->_label attribute:NSLayoutAttributeLeft multiplier:1.0 constant:0]];
+    [self addConstraint:[NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:self->_label attribute:NSLayoutAttributeRight multiplier:1.0 constant:0]];
+    [self addConstraint:[NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self->_label attribute:NSLayoutAttributeTop multiplier:1.0 constant:0]];
+    
     self->_content = nil;
 };
 
