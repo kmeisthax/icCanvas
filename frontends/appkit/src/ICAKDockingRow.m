@@ -37,6 +37,8 @@ static const NSInteger _MARGINS = 15;
     self->_spacing_constraints = [NSMutableArray arrayWithCapacity:5];
     self->_empty_constraint = nil;
     self->_bottom_margin_constraint = nil;
+    
+    self.translatesAutoresizingMaskIntoConstraints = NO;
 };
 
 - (id)init {
