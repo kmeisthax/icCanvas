@@ -43,13 +43,13 @@ static const NSInteger _MARGINS = 15;
     
     NSColor *color = [NSColor colorWithCatalogName:@"System" colorName:@"_sourceListBackgroundColor"];
     if (color == nil) {
-        NSTableView *tableView = [[[NSTableView alloc] initWithFrame:NSZeroRect] autorelease];
+        NSTableView *tableView = [[NSTableView alloc] initWithFrame:NSZeroRect];
         [tableView setSelectionHighlightStyle:NSTableViewSelectionHighlightStyleSourceList];
         color = [tableView backgroundColor];
     }
     
     self.wantsLayer = YES;
-    self.layer.backgroundColor = color;
+    self.layer.backgroundColor = (__bridge CGColorRef)color;
 };
 
 - (id)init {
