@@ -166,7 +166,7 @@ static const NSInteger _MARGINS = 15;
     }
     
     [self addConstraint:[NSLayoutConstraint constraintWithItem:subview attribute:attr1 relatedBy:NSLayoutRelationEqual toItem:self attribute:attr1 multiplier:1.0 constant:_MARGINS]];
-    [self addConstraint:[NSLayoutConstraint constraintWithItem:subview attribute:attr2 relatedBy:NSLayoutRelationEqual toItem:self attribute:attr2 multiplier:1.0 constant:_MARGINS * -1]];
+    [self addConstraint:[NSLayoutConstraint constraintWithItem:subview attribute:attr2 relatedBy:NSLayoutRelationEqual toItem:self attribute:attr2 multiplier:1.0 constant:_MARGINS]];
 };
 
 - (NSLayoutConstraint*)createConstraintStapleView:(NSView*)view1 toView:(NSView*)view2 {
