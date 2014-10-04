@@ -29,8 +29,8 @@ class icCanvasGtk.Dock : Gtk.Box {
     public icCanvasGtk.Dockable? offered_dockable { get; set; }
     
     private int get_best_edge_box(icCanvasGtk.Dockable dockwdgt, Edge edge) {
-        List<Gtk.Widget> owned_tgt = this.get_children();
-        unowned List<Gtk.Widget> tgt = owned_tgt;
+        List<weak Gtk.Widget> owned_tgt = this.get_children();
+        unowned List<weak Gtk.Widget> tgt = owned_tgt;
         Gtk.Widget stop = this._hbox;
         var go_fwd = true;
         var rval = 0;
@@ -104,7 +104,7 @@ class icCanvasGtk.Dock : Gtk.Box {
             recommended_offset = 0;
         }
         
-        this.add_dockable_positioned(dockwdgt, edge, recommended_offset, 0);
+        this.add_dockable_positioned(dockwdgt, edge, recommended_offset, -1);
     }
     
     public void add_dockable_positioned(icCanvasGtk.Dockable dockwdgt, Edge edge, uint offsetFromEdge, int pos) {
@@ -124,7 +124,7 @@ class icCanvasGtk.Dock : Gtk.Box {
         list = list.nth(offsetFromEdge);
         if (list.data is icCanvasGtk.DockingBox) {
             var dockrow = list.data as icCanvasGtk.DockingBox;
-            dockrow.pack_start(dockwdgt as Gtk.Widget, false, false, 0);
+            dockrow.add(dockwdgt as Gtk.Widget);
             dockrow.reorder_child(dockwdgt as Gtk.Widget, pos);
         }
     }

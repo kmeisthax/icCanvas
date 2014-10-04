@@ -25,7 +25,24 @@ class icCanvasGtk.DrawingWindow : Gtk.ApplicationWindow {
         Gtk.Button btn = new Gtk.Button.with_label("Do something funny");
         dt.add(btn);
         
+        icCanvasGtk.DockablePanel dt2 = new icCanvasGtk.DockablePanel();
+        dt2.label = "Box packing test";
+        
+        Gtk.Box bx = new Gtk.Box(Gtk.Orientation.VERTICAL, 5);
+        bx.pack_start(new Gtk.Button.with_label("Button 1"));
+        bx.pack_start(new Gtk.Button.with_label("Button 2"));
+        bx.pack_start(new Gtk.Button.with_label("Button 3"));
+        dt2.add(bx);
+        
         this.dock.add_dockable(dt, icCanvasGtk.Dock.Edge.LEFT);
+        this.dock.add_dockable(dt2, icCanvasGtk.Dock.Edge.LEFT);
+        
+        dt.detach.connect(this.on_detach);
+        dt2.detach.connect(this.on_detach);
+    }
+    
+    public void on_detach() {
+        Posix.printf("detached\n");
     }
     
     public icCanvasGtk.Drawing drawing {
