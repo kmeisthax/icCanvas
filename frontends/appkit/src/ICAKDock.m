@@ -20,10 +20,12 @@
     self->_horiz = [[NSSplitView alloc] init];
     [self->_horiz setVertical:YES];
     self->_horiz.delegate = self;
+    self->_horiz.dividerStyle = NSSplitViewDividerStyleThin;
     
     self->_vert = [[NSSplitView alloc] initWithFrame:self.bounds];
     [self->_vert setVertical:NO];
     self->_vert.delegate = self;
+    self->_vert.dividerStyle = NSSplitViewDividerStyleThin;
     
     self->_horiz_center_idx = 0;
     
