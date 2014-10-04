@@ -37,11 +37,6 @@
     self->_top_rows = [NSMutableArray arrayWithCapacity:5];
     self->_bottom_rows = [NSMutableArray arrayWithCapacity:5];
     
-    [self createNewRowOnEdge:ICAKDockEdgeLeft beforeRow:0];
-    [self createNewRowOnEdge:ICAKDockEdgeRight beforeRow:0];
-    [self createNewRowOnEdge:ICAKDockEdgeTop beforeRow:0];
-    [self createNewRowOnEdge:ICAKDockEdgeBottom beforeRow:0];
-    
     self.translatesAutoresizingMaskIntoConstraints = NO;
 };
 
