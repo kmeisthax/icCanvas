@@ -276,10 +276,20 @@ class icCanvasGtk.DockablePanel : Gtk.Bin, Gtk.Orientable, icCanvasGtk.Dockable 
     public override bool button_press_event(Gdk.EventButton evt) {
         if (evt.type == Gdk.EventType.BUTTON_PRESS) {
             if (!this._in_drag) {
-                this._in_drag = true;
-                this._detached = false;
-                this._x_start_drag = evt.x;
-                this._y_start_drag = evt.y;
+                Gtk.Allocation myalloc, lalloc;
+
+                this.get_allocation(out myalloc);
+                this._label.get_allocation(out lalloc);
+
+                if (evt.x > icCanvasGtk.DockablePanel.OUTER_PADDING &&
+                    evt.x <= icCanvasGtk.DockablePanel.OUTER_PADDING + myalloc.width &&
+                    evt.y > icCanvasGtk.DockablePanel.OUTER_PADDING &&
+                    evt.y <= icCanvasGtk.DockablePanel.OUTER_PADDING + icCanvasGtk.DockablePanel.LABEL_PADDING * 2 + lalloc.height) {
+                    this._in_drag = true;
+                    this._detached = false;
+                    this._x_start_drag = evt.x;
+                    this._y_start_drag = evt.y;
+                }
             }
         }
         
