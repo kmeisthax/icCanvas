@@ -24,6 +24,11 @@ link_libraries(${GTK_LIBRARIES})
 link_directories(${GTK_LIBRARY_DIRS})
 include_directories(${GTK_INCLUDE_DIRS})
 
+pkg_check_modules(GEE gee-1.0)
+link_libraries(${GEE_LIBRARIES})
+link_directories(${GEE_LIBRARY_DIRS})
+include_directories(${GEE_INCLUDE_DIRS})
+
 file(GLOB ICGTK_SRC_VALA RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} src/*.vala)
 include_directories(include)
 
