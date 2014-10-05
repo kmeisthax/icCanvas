@@ -11,7 +11,7 @@ class icCanvasGtk.DockablePanel : Gtk.Bin, Gtk.Orientable, icCanvasGtk.Dockable 
     private const double DRAG_THRESHOLD = 20.0;
     
     public DockablePanel() {
-        this.add_events(Gdk.EventMask.BUTTON_MOTION_MASK | Gdk.EventMask.BUTTON_PRESS_MASK | Gdk.EventMask.BUTTON_RELEASE_MASK);
+        this.add_events(Gdk.EventMask.POINTER_MOTION_MASK | Gdk.EventMask.BUTTON_PRESS_MASK | Gdk.EventMask.BUTTON_RELEASE_MASK);
         this.set_has_window(true);
         this._evtwnd = null;
         
@@ -236,6 +236,7 @@ class icCanvasGtk.DockablePanel : Gtk.Bin, Gtk.Orientable, icCanvasGtk.Dockable 
             attributes.wclass = Gdk.WindowWindowClass.INPUT_OUTPUT;
             
             this._evtwnd = new Gdk.Window(this.get_parent_window(), attributes, Gdk.WindowAttributesType.X | Gdk.WindowAttributesType.Y);
+            this._evtwnd.set_cursor(new Gdk.Cursor.for_display(this._evtwnd.get_display(), Gdk.CursorType.ARROW));
             this.set_window(this._evtwnd);
 
             this._evtwnd.set_user_data(this);
@@ -247,6 +248,31 @@ class icCanvasGtk.DockablePanel : Gtk.Bin, Gtk.Orientable, icCanvasGtk.Dockable 
         base.unrealize();
     }
     
+    /* Okay, get this?
+     * In GDK, the draggability indicator cursor is called HAND2.
+     * The one for when you are dragging is FLEUR.
+     */
+    private void update_cursor(double x, double y) {
+        if (this._in_drag) {
+            this._evtwnd.set_cursor(new Gdk.Cursor.for_display(this._evtwnd.get_display(), Gdk.CursorType.FLEUR));
+        } else {
+            Gtk.Allocation myalloc, lalloc;
+
+            this.get_allocation(out myalloc);
+            this._label.get_allocation(out lalloc);
+            
+            if (x > icCanvasGtk.DockablePanel.OUTER_PADDING &&
+                x <= icCanvasGtk.DockablePanel.OUTER_PADDING + myalloc.width &&
+                y > icCanvasGtk.DockablePanel.OUTER_PADDING &&
+                y <= icCanvasGtk.DockablePanel.OUTER_PADDING + icCanvasGtk.DockablePanel.LABEL_PADDING * 2 + lalloc.height) {
+                
+                this._evtwnd.set_cursor(new Gdk.Cursor.for_display(this._evtwnd.get_display(), Gdk.CursorType.HAND2));
+            } else {
+                this._evtwnd.set_cursor(new Gdk.Cursor.for_display(this._evtwnd.get_display(), Gdk.CursorType.ARROW));
+            }
+        }
+    }
+    
     public override bool button_press_event(Gdk.EventButton evt) {
         if (evt.type == Gdk.EventType.BUTTON_PRESS) {
             if (!this._in_drag) {
@@ -256,6 +282,8 @@ class icCanvasGtk.DockablePanel : Gtk.Bin, Gtk.Orientable, icCanvasGtk.Dockable 
                 this._y_start_drag = evt.y;
             }
         }
+        
+        this.update_cursor(evt.x, evt.y);
         
         return true;
     }
@@ -270,6 +298,8 @@ class icCanvasGtk.DockablePanel : Gtk.Bin, Gtk.Orientable, icCanvasGtk.Dockable 
             }
         }
         
+        this.update_cursor(evt.x, evt.y);
+        
         return true;
     }
     
@@ -280,6 +310,8 @@ class icCanvasGtk.DockablePanel : Gtk.Bin, Gtk.Orientable, icCanvasGtk.Dockable 
             this._x_start_drag = 0;
             this._y_start_drag = 0;
         }
+        
+        this.update_cursor(evt.x, evt.y);
 
         return true;
     }
