@@ -1,7 +1,7 @@
 class icCanvasGtk.DrawingWindow : Gtk.ApplicationWindow {
     private Gtk.ScrolledWindow scrollwdgt;
     private icCanvasGtk.CanvasWidget canvaswdgt;
-    private icCanvasGtk.Dock dock;
+    private icCanvasGtk.WindowDock dock;
     
     public DrawingWindow(icCanvasGtk.Application app) {
         Object(application: app);
@@ -10,7 +10,7 @@ class icCanvasGtk.DrawingWindow : Gtk.ApplicationWindow {
         this.window_position = Gtk.WindowPosition.CENTER;
         this.set_default_size(400, 400);
         
-        this.dock = new icCanvasGtk.Dock();
+        this.dock = new icCanvasGtk.WindowDock();
         this.add(dock);
         
         app.docking_ctrl.add_dock(this.dock);
