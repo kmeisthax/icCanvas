@@ -23,6 +23,7 @@ namespace icCanvasManager {
 
         //During spline fitting only.
         RefPtr<BrushStroke> built_stroke;
+        bool is_fitting;
 
         //Convert window-space coordinates to canvas coordinates and back.
         void windowToCoordspace(const int32_t x, const int32_t y, int32_t* out_tx, int32_t* out_ty);
