@@ -30,7 +30,7 @@ class icCanvasGtk.DockingController : GLib.Object {
         if (this._data.has_key(dockable as Gtk.Widget)) {
             dat = this._data.@get(dockable as Gtk.Widget);
         } else {
-            dat = new DockingData();
+            dat = DockingData();
         }
         
         dat.dockable = dockable;
