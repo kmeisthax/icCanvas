@@ -14,7 +14,7 @@ class icCanvasGtk.DockablePanel : Gtk.Bin, Gtk.Orientable, icCanvasGtk.Dockable 
     private const double DRAG_THRESHOLD = 20.0;
     
     public DockablePanel() {
-        this.add_events(Gdk.EventMask.POINTER_MOTION_MASK | Gdk.EventMask.BUTTON_PRESS_MASK | Gdk.EventMask.BUTTON_RELEASE_MASK);
+        this.add_events(Gdk.EventMask.POINTER_MOTION_MASK | Gdk.EventMask.BUTTON_PRESS_MASK | Gdk.EventMask.BUTTON_RELEASE_MASK | Gdk.EventMask.LEAVE_NOTIFY_MASK);
         this.set_has_window(true);
         this._evtwnd = null;
         
@@ -327,6 +327,23 @@ class icCanvasGtk.DockablePanel : Gtk.Bin, Gtk.Orientable, icCanvasGtk.Dockable 
         
         this.update_cursor(evt.x, evt.y);
 
+        return true;
+    }
+    
+    public override bool leave_notify_event (Gdk.EventCrossing evt) {
+        if (this._in_drag && this._detached) {
+            Gtk.Window wnd = this.get_toplevel() as Gtk.Window;
+            int wnd_rx, wnd_ry;
+            wnd.get_position(out wnd_rx, out wnd_ry);
+
+            wnd_rx += (int)GLib.Math.rint(evt.x - this._x_target_mouse);
+            wnd_ry += (int)GLib.Math.rint(evt.y - this._y_target_mouse);
+
+            wnd.move(wnd_rx, wnd_ry);
+        }
+        
+        this.update_cursor(evt.x, evt.y);
+        
         return true;
     }
 }
