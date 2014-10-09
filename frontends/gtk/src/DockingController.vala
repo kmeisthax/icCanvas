@@ -55,7 +55,16 @@ class icCanvasGtk.DockingController : GLib.Object {
             dat.row.get_children().length() > 1)) {
             
             //Detaching time
+            int wx, wy, rx, ry;
+            Gtk.Window wnd = (src as Gtk.Widget).get_toplevel() as Gtk.Window;
+            (src as Gtk.Widget).translate_coordinates(wnd, 0, 0, out wx, out wy);
+            wnd.get_position(out rx, out ry);
+            
+            wx += rx;
+            wy += ry;
+            
             icCanvasGtk.FloatingPanelDock flPanel = new icCanvasGtk.FloatingPanelDock();
+            flPanel.set_position(Gtk.WindowPosition.MOUSE);
             this.add_panel(flPanel);
             
             src.@ref();
@@ -64,6 +73,7 @@ class icCanvasGtk.DockingController : GLib.Object {
             src.unref();
             
             flPanel.show_all();
+            flPanel.move(wx, wy);
         }
     }
     

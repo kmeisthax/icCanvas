@@ -8,6 +8,9 @@ class icCanvasGtk.DockablePanel : Gtk.Bin, Gtk.Orientable, icCanvasGtk.Dockable 
     private double _x_start_drag;
     private double _y_start_drag;
     
+    private double _x_target_mouse;
+    private double _y_target_mouse;
+    
     private const double DRAG_THRESHOLD = 20.0;
     
     public DockablePanel() {
@@ -290,6 +293,18 @@ class icCanvasGtk.DockablePanel : Gtk.Bin, Gtk.Orientable, icCanvasGtk.Dockable 
             if (!this._detached && dist > icCanvasGtk.DockablePanel.DRAG_THRESHOLD) {
                 this._detached = true;
                 this.detach();
+                
+                this._x_target_mouse = evt.x;
+                this._y_target_mouse = evt.y;
+            } else if (this._detached) {
+                Gtk.Window wnd = this.get_toplevel() as Gtk.Window;
+                int wnd_rx, wnd_ry;
+                wnd.get_position(out wnd_rx, out wnd_ry);
+                
+                wnd_rx += (int)GLib.Math.rint(evt.x - this._x_target_mouse);
+                wnd_ry += (int)GLib.Math.rint(evt.y - this._y_target_mouse);
+                
+                wnd.move(wnd_rx, wnd_ry);
             }
         }
         
