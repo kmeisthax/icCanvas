@@ -1,6 +1,6 @@
 class icCanvasGtk.DockingController : GLib.Object {
-    private GLib.List<Gtk.Window> _loose_panels;
-    private GLib.List<icCanvasGtk.Dock> _docks;
+    private GLib.List<icCanvasGtk.FloatingPanelDock> _loose_panels;
+    private GLib.List<icCanvasGtk.WindowDock> _docks;
     
     private struct DockingData {
         public weak icCanvasGtk.Dockable dockable;
@@ -12,15 +12,16 @@ class icCanvasGtk.DockingController : GLib.Object {
     
     public DockingController() {
         this._data = new Gee.HashMap<weak Gtk.Widget, DockingData?>();
-        this._loose_panels = new GLib.List<Gtk.Window>();
-        this._docks = new GLib.List<icCanvasGtk.Dock>();
+        this._loose_panels = new GLib.List<icCanvasGtk.FloatingPanelDock>();
+        this._docks = new GLib.List<icCanvasGtk.WindowDock>();
     }
     
-    public void add_panel(Gtk.Window panel) {
+    public void add_panel(icCanvasGtk.FloatingPanelDock panel) {
         this._loose_panels.append(panel);
+        panel.added_dockable.connect(this.add_dockable);
     }
     
-    public void add_dock(icCanvasGtk.Dock dock) {
+    public void add_dock(icCanvasGtk.WindowDock dock) {
         this._docks.append(dock);
         dock.added_dockable.connect(this.add_dockable);
     }
@@ -39,7 +40,7 @@ class icCanvasGtk.DockingController : GLib.Object {
         
         this._data.@set(dockable as Gtk.Widget, dat);
         
-        dockable.detach.connect(this.detach);
+        this.attach_signals(dockable);
     }
     
     private void detach(icCanvasGtk.Dockable src) {
@@ -49,8 +50,21 @@ class icCanvasGtk.DockingController : GLib.Object {
             return;
         }
         
-        bool should_detach = false;
-        
+        if (dat.dock is icCanvasGtk.WindowDock ||
+           (dat.dock is icCanvasGtk.FloatingPanelDock &&
+            dat.row.get_children().length() > 1)) {
+            
+            //Detaching time
+            icCanvasGtk.FloatingPanelDock flPanel = new icCanvasGtk.FloatingPanelDock();
+            this.add_panel(flPanel);
+            
+            src.@ref();
+            dat.row.remove(src as Gtk.Widget);
+            flPanel.add_dockable(src, icCanvasGtk.Dock.Edge.LEFT);
+            src.unref();
+            
+            flPanel.show_all();
+        }
     }
     
     private bool should_attach_to_row(icCanvasGtk.Dockable src, icCanvasGtk.DockingBox row) {

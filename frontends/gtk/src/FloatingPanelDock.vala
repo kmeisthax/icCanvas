@@ -3,7 +3,10 @@ class icCanvasGtk.FloatingPanelDock : Gtk.Window, icCanvasGtk.Dock {
     private icCanvasGtk.DockingBox _wdgt_box;
     
     public FloatingPanelDock() {
+        this.title = "";
+        
         this._wdgt_box = new icCanvasGtk.DockingBox(Gtk.Orientation.VERTICAL);
+        this.add(this._wdgt_box);
     }
     
     /* Does nothing, since this Dock does not have configurable rows.
