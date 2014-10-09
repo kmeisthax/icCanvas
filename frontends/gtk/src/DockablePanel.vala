@@ -162,6 +162,7 @@ class icCanvasGtk.DockablePanel : Gtk.Bin, Gtk.Orientable, icCanvasGtk.Dockable 
     }
     
     public override void remove (Gtk.Widget widget) {
+        if (widget == this._child || widget == this._label) return;
         this._child.remove(widget);
     }
     
