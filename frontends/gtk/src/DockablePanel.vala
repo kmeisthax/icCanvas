@@ -28,6 +28,8 @@ class icCanvasGtk.DockablePanel : Gtk.Bin, Gtk.Orientable, icCanvasGtk.Dockable 
         this._child = new Gtk.Revealer();
         this._child.set_parent(this);
         this._child.reveal_child = true;
+        this._child.transition_type = Gtk.RevealerTransitionType.SLIDE_UP;
+        this._child.transition_duration = 200; //ms
     }
     
     public icCanvasGtk.DockingStyle docking_style {
@@ -178,24 +180,6 @@ class icCanvasGtk.DockablePanel : Gtk.Bin, Gtk.Orientable, icCanvasGtk.Dockable 
         }
     }
     
-    public uint transition_duration {
-        set {
-            this._child.transition_duration = value;
-        }
-        get {
-            return this._child.transition_duration;
-        }
-    }
-    
-    public Gtk.RevealerTransitionType transition_type {
-        set {
-            this._child.transition_type = value;
-        }
-        get {
-            return this._child.transition_type;
-        }
-    }
-    
     public override bool draw(Cairo.Context cr) {
         Gtk.Allocation myalloc, lalloc;
         
@@ -315,6 +299,10 @@ class icCanvasGtk.DockablePanel : Gtk.Bin, Gtk.Orientable, icCanvasGtk.Dockable 
     
     public override bool button_release_event(Gdk.EventButton evt) {
         if (evt.type == Gdk.EventType.BUTTON_RELEASE) {
+            if (this._in_drag && !this._detached) {
+                this.reveal_child = !this.reveal_child;
+            }
+            
             this._in_drag = false;
             this._detached = false;
             this._x_start_drag = 0;
