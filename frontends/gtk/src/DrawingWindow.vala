@@ -13,6 +13,8 @@ class icCanvasGtk.DrawingWindow : Gtk.ApplicationWindow {
         this.dock = new icCanvasGtk.Dock();
         this.add(dock);
         
+        app.docking_ctrl.add_dock(this.dock);
+        
         this.scrollwdgt = new Gtk.ScrolledWindow(null, null);
         this.dock.center = scrollwdgt;
         
@@ -36,13 +38,6 @@ class icCanvasGtk.DrawingWindow : Gtk.ApplicationWindow {
         
         this.dock.add_dockable(dt, icCanvasGtk.Dock.Edge.LEFT);
         this.dock.add_dockable(dt2, icCanvasGtk.Dock.Edge.LEFT);
-        
-        dt.detach.connect(this.on_detach);
-        dt2.detach.connect(this.on_detach);
-    }
-    
-    public void on_detach() {
-        Posix.printf("detached\n");
     }
     
     public icCanvasGtk.Drawing drawing {

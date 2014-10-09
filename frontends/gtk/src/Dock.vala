@@ -126,6 +126,8 @@ class icCanvasGtk.Dock : Gtk.Box {
             var dockrow = list.data as icCanvasGtk.DockingBox;
             dockrow.add(dockwdgt as Gtk.Widget);
             dockrow.reorder_child(dockwdgt as Gtk.Widget, pos);
+            
+            this.added_dockable(dockwdgt, this, dockrow);
         }
     }
     
@@ -146,4 +148,6 @@ class icCanvasGtk.Dock : Gtk.Box {
             this._hbox.reorder_child(this._center, this._hbox_center);
         }
     }
+    
+    public signal void added_dockable(icCanvasGtk.Dockable dockable, icCanvasGtk.Dock? dock, icCanvasGtk.DockingBox? row);
 }
