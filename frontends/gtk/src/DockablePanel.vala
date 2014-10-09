@@ -317,6 +317,8 @@ class icCanvasGtk.DockablePanel : Gtk.Bin, Gtk.Orientable, icCanvasGtk.Dockable 
         if (evt.type == Gdk.EventType.BUTTON_RELEASE) {
             if (this._in_drag && !this._detached) {
                 this.reveal_child = !this.reveal_child;
+            } else if (this._in_drag && this._detached) {
+                this.cancel_attach();
             }
             
             this._in_drag = false;

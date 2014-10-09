@@ -65,6 +65,7 @@ class icCanvasGtk.DockingController : GLib.Object {
             
             icCanvasGtk.FloatingPanelDock flPanel = new icCanvasGtk.FloatingPanelDock();
             flPanel.set_position(Gtk.WindowPosition.MOUSE);
+            flPanel.set_opacity(0.4);
             this.add_panel(flPanel);
             
             src.@ref();
@@ -92,6 +93,14 @@ class icCanvasGtk.DockingController : GLib.Object {
     }
     
     private void cancel_attach(icCanvasGtk.Dockable src) {
+        DockingData? dat = this._data.@get(src as Gtk.Widget);
+        if (dat == null) {
+            GLib.warning("DockingController got a message from an unregistered Dockable.");
+            return;
+        }
+        
+        Gtk.Widget wnd = (src as Gtk.Widget).get_toplevel();
+        wnd.set_opacity(1.0);
     }
     
     public void attach_signals(icCanvasGtk.Dockable dockable) {

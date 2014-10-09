@@ -4,6 +4,7 @@ class icCanvasGtk.FloatingPanelDock : Gtk.Window, icCanvasGtk.Dock {
     
     public FloatingPanelDock() {
         this.title = "";
+        this.set_type_hint(Gdk.WindowTypeHint.TOOLBAR);
         
         this._wdgt_box = new icCanvasGtk.DockingBox(Gtk.Orientation.VERTICAL);
         this.add(this._wdgt_box);
