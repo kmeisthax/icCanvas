@@ -60,6 +60,9 @@ class icCanvasGtk.DockablePanel : Gtk.Bin, Gtk.Orientable, icCanvasGtk.Dockable 
     private const int LABEL_PADDING = 5;
     private const int CHILD_MARGIN = 2;
     
+    private const int MINIMUM_WIDTH = 240;
+    private const int NATURAL_WIDTH = 320;
+    
     public override Gtk.SizeRequestMode get_request_mode () {
         if (this._child != null) {
             return this._child.get_request_mode ();
@@ -77,9 +80,12 @@ class icCanvasGtk.DockablePanel : Gtk.Bin, Gtk.Orientable, icCanvasGtk.Dockable 
             
             minimum_width += icCanvasGtk.DockablePanel.OUTER_PADDING * 2 + icCanvasGtk.DockablePanel.LABEL_PADDING * 2;
             natural_width += icCanvasGtk.DockablePanel.OUTER_PADDING * 2 + icCanvasGtk.DockablePanel.LABEL_PADDING * 2;
+            
+            minimum_width = int.max(minimum_width, icCanvasGtk.DockablePanel.MINIMUM_WIDTH);
+            natural_width = int.max(natural_width, icCanvasGtk.DockablePanel.NATURAL_WIDTH);
         } else {
-            minimum_width = 240;
-            natural_width = 320;
+            minimum_width = icCanvasGtk.DockablePanel.MINIMUM_WIDTH;
+            natural_width = icCanvasGtk.DockablePanel.NATURAL_WIDTH;
         }
     }
     
@@ -101,9 +107,12 @@ class icCanvasGtk.DockablePanel : Gtk.Bin, Gtk.Orientable, icCanvasGtk.Dockable 
     public override void get_preferred_width_for_height (int height, out int minimum_width, out int natural_width) {
         if (this._child != null) {
             this._child.get_preferred_width_for_height (height, out minimum_width, out natural_width);
+            
+            minimum_width = int.max(minimum_width, icCanvasGtk.DockablePanel.MINIMUM_WIDTH);
+            natural_width = int.max(natural_width, icCanvasGtk.DockablePanel.NATURAL_WIDTH);
         } else {
-            minimum_width = 240;
-            natural_width = 320;
+            minimum_width = icCanvasGtk.DockablePanel.MINIMUM_WIDTH;
+            natural_width = icCanvasGtk.DockablePanel.NATURAL_WIDTH;
         }
     }
     
