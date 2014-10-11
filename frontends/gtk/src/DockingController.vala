@@ -1,6 +1,5 @@
 class icCanvasGtk.DockingController : GLib.Object {
-    private GLib.List<icCanvasGtk.FloatingPanelDock> _loose_panels;
-    private GLib.List<icCanvasGtk.WindowDock> _docks;
+    private GLib.List<icCanvasGtk.Dock> _docks;
     
     private struct DockingData {
         public weak icCanvasGtk.Dockable dockable;
@@ -12,12 +11,11 @@ class icCanvasGtk.DockingController : GLib.Object {
     
     public DockingController() {
         this._data = new Gee.HashMap<weak Gtk.Widget, DockingData?>();
-        this._loose_panels = new GLib.List<icCanvasGtk.FloatingPanelDock>();
-        this._docks = new GLib.List<icCanvasGtk.WindowDock>();
+        this._docks = new GLib.List<icCanvasGtk.Dock>();
     }
     
     public void add_panel(icCanvasGtk.FloatingPanelDock panel) {
-        this._loose_panels.append(panel);
+        this._docks.append(panel);
         panel.added_dockable.connect(this.add_dockable);
     }
     
@@ -41,6 +39,70 @@ class icCanvasGtk.DockingController : GLib.Object {
         this._data.@set(dockable as Gtk.Widget, dat);
         
         this.attach_signals(dockable);
+    }
+    
+    private bool widget_hit_test(Gtk.Widget wdgt, int mouse_x, int mouse_y) {
+        int wx, wy, rx, ry, wh, ww;
+        Gtk.Window wnd = wdgt.get_toplevel() as Gtk.Window;
+        wdgt.translate_coordinates(wnd, 0, 0, out wx, out wy);
+        wnd.get_position(out rx, out ry);
+        
+        wx += rx;
+        wy += ry;
+        
+        wh = wdgt.get_allocated_height();
+        ww = wdgt.get_allocated_width();
+        
+        return wx <= mouse_x && mouse_x <= wx + ww && wy <= mouse_y && mouse_y <= wy + wh;
+    }
+    
+    /* Decide what, if any, of our known docks would be suitable to drop a
+     * (possibly floating) Dockable into.
+     * 
+     * The given out parameter found_it indicates if the other out parameters
+     * are valid. If false, the contents of the other four out parameters are
+     * undefined.
+     */
+    private void select_dock_for_dockable(icCanvasGtk.Dockable candidate_dockable, int mouse_x, int mouse_y, out bool out_found_it, out icCanvasGtk.Dock? out_target, out icCanvasGtk.Dock.Edge out_edge, out uint out_offsetFromEdge, out int out_pos) {
+        bool found_it = false;
+        icCanvasGtk.Dock? target = null;
+        icCanvasGtk.Dock.Edge edge = icCanvasGtk.Dock.Edge.LEFT;
+        uint offsetFromEdge = 0;
+        int pos = 0;
+        
+        //I am not too terribly proud of this code.
+        this._docks.@foreach((d) => {
+            if (!found_it) {
+                target = d;
+                
+                d.foreach_rows((nu_edge, rowIndex, row) => {
+                    edge = nu_edge;
+                    offsetFromEdge = rowIndex;
+                    
+                    if (row.is_dockable_compatible(candidate_dockable) && this.widget_hit_test(row, mouse_x, mouse_y)) {
+                        pos = 0;
+                        
+                        row.@foreach((wdgt) => {
+                            if (!found_it && wdgt is icCanvasGtk.Dockable) {
+                                if (this.widget_hit_test(wdgt, mouse_x, mouse_y)) {
+                                    found_it = true;
+                                } else {
+                                    pos += 1;
+                                }
+                            }
+                        });
+                    }
+                    
+                    return found_it;
+                });
+            }
+        });
+        
+        out_found_it = found_it;
+        out_target = target;
+        out_edge = edge;
+        out_offsetFromEdge = offsetFromEdge;
+        out_pos = pos;
     }
     
     private void detached(icCanvasGtk.Dockable src) {
