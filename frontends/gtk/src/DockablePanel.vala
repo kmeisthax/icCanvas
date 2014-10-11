@@ -301,7 +301,7 @@ class icCanvasGtk.DockablePanel : Gtk.Bin, Gtk.Orientable, icCanvasGtk.Dockable 
             
             if (!this._detached && dist > icCanvasGtk.DockablePanel.DRAG_THRESHOLD) {
                 this._detached = true;
-                this.detach();
+                this.detached();
                 
                 this._x_target_mouse = evt.x;
                 this._y_target_mouse = evt.y;
@@ -327,7 +327,7 @@ class icCanvasGtk.DockablePanel : Gtk.Bin, Gtk.Orientable, icCanvasGtk.Dockable 
             if (this._in_drag && !this._detached) {
                 this.reveal_child = !this.reveal_child;
             } else if (this._in_drag && this._detached) {
-                this.cancel_attach();
+                this.released();
             }
             
             this._in_drag = false;

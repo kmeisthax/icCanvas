@@ -1,43 +1,30 @@
 interface icCanvasGtk.Dockable : Gtk.Orientable {
     public abstract icCanvasGtk.DockingStyle docking_style { get; set; }
     
-    /* Fired when the dockable wants to detach from it's parent.
+    /* Fired when the user has detached the widget from it's parent.
      * 
      * Depending on the situation, the recipient of the signal may arrange for
-     * the widget to be reparented to a temporary GtkWindow (UTILITY type hint)
-     * or not. In either case, the Dockable will proceed to move it's parent
-     * GtkWindow in response to drag events.
+     * the widget to be reparented to a temporary FloatingPanelDock or not. In
+     * either case, the Dockable will proceed to move it's parent GtkWindow in
+     * response to drag events.
      */
-    public signal void detach();
+    public signal void detached();
     
-    /* Fired when the dockable is considering attaching to a dock or a loose
-     * box. Returning false as the last signal handler causes the dockable to
-     * cancel attaching to the panel or dock.
+    /* Fired when the user has dragged a detached widget.
      * 
-     * If true, the signal recipient may arrange for the target area to show to
-     * the user that it can accept the dockable (e.g. by moving other views out
-     * of the way and indicating reserved space).
-     * 
-     * If false, the dockable must not fire the related attach_to_* signals and
-     * the signal handler will not perform any additional UI actions.
+     * Typically this event is fired after the widget has moved it's toplevel
+     * container in response to the provided Event.
      */
-    public signal bool should_attach_to_row(icCanvasGtk.DockingBox row);
-    public signal bool should_attach_to_dock(icCanvasGtk.Dock dock);
+    public signal void dragged_window(Gdk.EventMotion evt);
     
-    /* Fired when a dockable wants to be attached to a dock or a loose box.
+    /* Fired when the user has released the widget.
      * 
-     * The signal handler should arrange to have the dockable widget placed in
-     * the indicated area.
+     * Depending on the situation, the recipient of the signal may make the
+     * above-mentioned temporary FloatingPanelDock permenant, or reparent the
+     * widget into another Dock, etc. In either case, the above-mentioned drag
+     * behavior will cease.
      */
-    public signal void attach_to_row(icCanvasGtk.DockingBox row, int offset);
-    public signal void attach_to_dock(icCanvasGtk.Dock dock, icCanvasGtk.Dock.Edge edge, int rows_from_edge, int offset);
-    
-    /* Fired when the dockable cancels the attachment operation. The signal
-     * handler should remove any animations or placeholders added by the above
-     * should_attach_* signals and, if the dockable was placed inside a new,
-     * temporary window, make that window permenant.
-     */
-    public signal void cancel_attach();
+    public signal void released();
 }
 
 enum icCanvasGtk.DockingStyle {

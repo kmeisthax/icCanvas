@@ -43,7 +43,7 @@ class icCanvasGtk.DockingController : GLib.Object {
         this.attach_signals(dockable);
     }
     
-    private void detach(icCanvasGtk.Dockable src) {
+    private void detached(icCanvasGtk.Dockable src) {
         DockingData? dat = this._data.@get(src as Gtk.Widget);
         if (dat == null) {
             GLib.warning("DockingController got a message from an unregistered Dockable.");
@@ -78,21 +78,11 @@ class icCanvasGtk.DockingController : GLib.Object {
         }
     }
     
-    private bool should_attach_to_row(icCanvasGtk.Dockable src, icCanvasGtk.DockingBox row) {
-        return true;
+    private void dragged_window(Gdk.EventMotion evt) {
+        //TODO: Select & indicate drop targets for user
     }
     
-    private bool should_attach_to_dock(icCanvasGtk.Dockable src, icCanvasGtk.Dock dock) {
-        return true;
-    }
-    
-    private void attach_to_row(icCanvasGtk.Dockable src, icCanvasGtk.DockingBox row, int offset) {
-    }
-    
-    private void attach_to_dock(icCanvasGtk.Dockable src, icCanvasGtk.Dock dock, icCanvasGtk.Dock.Edge edge, int rows_from_edge, int offset) {
-    }
-    
-    private void cancel_attach(icCanvasGtk.Dockable src) {
+    private void released(icCanvasGtk.Dockable src) {
         DockingData? dat = this._data.@get(src as Gtk.Widget);
         if (dat == null) {
             GLib.warning("DockingController got a message from an unregistered Dockable.");
@@ -104,11 +94,8 @@ class icCanvasGtk.DockingController : GLib.Object {
     }
     
     public void attach_signals(icCanvasGtk.Dockable dockable) {
-        dockable.detach.connect(this.detach);
-        dockable.should_attach_to_row.connect(this.should_attach_to_row);
-        dockable.should_attach_to_dock.connect(this.should_attach_to_dock);
-        dockable.attach_to_row.connect(this.attach_to_row);
-        dockable.attach_to_dock.connect(this.attach_to_dock);
-        dockable.cancel_attach.connect(this.cancel_attach);
+        dockable.detached.connect(this.detached);
+        dockable.dragged_window.connect(this.dragged_window);
+        dockable.released.connect(this.released);
     }
 }
