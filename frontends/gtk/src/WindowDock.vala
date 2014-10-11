@@ -139,4 +139,67 @@ class icCanvasGtk.WindowDock : Gtk.Box, icCanvasGtk.Dock {
             this._hbox.reorder_child(this._center, this._hbox_center);
         }
     }
+    
+    /* Iterate over the rows of the dock.
+     */
+    public void foreach_rows(icCanvasGtk.Dock.RowIteratee i) {
+        bool should_continue = true;
+        var child_start = this.get_children();
+        unowned GLib.List<weak Gtk.Widget> children = child_start;
+        var cur_edge = icCanvasGtk.Dock.Edge.TOP;
+        uint cur_idx = 0, cur_delta = 1;
+        
+        while (should_continue) {
+            var the_child = children.data;
+            
+            if (the_child == this._hbox) {
+                var hbchild_start = this._hbox.get_children();
+                unowned GLib.List<weak Gtk.Widget> hbchildren = hbchild_start;
+                
+                cur_edge = icCanvasGtk.Dock.Edge.LEFT;
+                cur_idx = 0;
+                cur_delta = 1;
+                
+                while (should_continue) {
+                    var hb_the_child = hbchildren.data;
+
+                    if (hb_the_child == this._center) {
+                        if (hbchildren.next == hbchild_start) {
+                            break;
+                        }
+                        
+                        cur_edge = icCanvasGtk.Dock.Edge.RIGHT;
+                        cur_idx = hbchildren.next.length() - 1;
+                        cur_delta = -1;
+                    } else {
+                        should_continue = i(cur_edge, cur_idx, hb_the_child as icCanvasGtk.DockingBox);
+                    }
+                    
+                    if (hbchildren.next == hbchild_start) {
+                        break;
+                    }
+                    
+                    hbchildren = hbchildren.next;
+                    cur_idx += cur_delta;
+                }
+                
+                if (children.next == child_start) {
+                    break;
+                }
+                
+                cur_edge = icCanvasGtk.Dock.Edge.BOTTOM;
+                cur_idx = children.next.length() - 1;
+                cur_delta = -1;
+            } else {
+                should_continue = i(cur_edge, cur_idx, the_child as icCanvasGtk.DockingBox);
+            }
+            
+            if (children.next == child_start) {
+                break;
+            }
+            
+            children = children.next;
+            cur_idx += cur_delta;
+        }
+    }
 }

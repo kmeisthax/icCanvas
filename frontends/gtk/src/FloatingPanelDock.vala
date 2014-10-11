@@ -27,4 +27,8 @@ class icCanvasGtk.FloatingPanelDock : Gtk.Window, icCanvasGtk.Dock {
         this._wdgt_box.reorder_child(dockwdgt as Gtk.Widget, pos);
         this.added_dockable(dockwdgt, this as icCanvasGtk.Dock, this._wdgt_box);
     }
+    
+    public void foreach_rows(icCanvasGtk.Dock.RowIteratee i) {
+        i(icCanvasGtk.Dock.Edge.LEFT, 0, this._wdgt_box);
+    }
 }

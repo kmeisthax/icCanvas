@@ -9,17 +9,34 @@ interface icCanvasGtk.Dock : GLib.Object {
         BOTTOM
     }
     
+    /* Add a row onto the Dock without adding any Dockables to it.
+     */
     public virtual void insert_new_row(Edge edge, uint before_row) {
     }
     
     /* Add a dockable widget to a particular edge of the dock.
-     * Depending on the implementation, Edge and offsetFromEdge may not be used.
      */
     public virtual void add_dockable(icCanvasGtk.Dockable dockwdgt, Edge edge) {
     }
     
+    /* Add a dockable widget to a specified position on the dock.
+     * Depending on the implementation, Edge and offsetFromEdge may not be used.
+     */
     public virtual void add_dockable_positioned(icCanvasGtk.Dockable dockwdgt, Edge edge, uint offsetFromEdge, int pos) {
     }
     
+    /* Delegate type for the foreach_rows method.
+     * 
+     * Returning FALSE cancels the iteration; the calling function will return
+     * to it's parent.
+     */
+    public delegate bool RowIteratee(Edge edge, uint rowIndex, icCanvasGtk.DockingBox row);
+    
+    /* Iterate over the rows of the dock.
+     */
+    public virtual void foreach_rows(RowIteratee i) {
+    }
+    
+    /* Fired when the Dock recieves a Dockable. */
     public signal void added_dockable(icCanvasGtk.Dockable dockable, icCanvasGtk.Dock? dock, icCanvasGtk.DockingBox? row);
 }
