@@ -5,6 +5,12 @@ class icCanvasGtk.DockingController : GLib.Object {
         public weak icCanvasGtk.Dockable dockable;
         public weak icCanvasGtk.Dock? dock;
         public weak icCanvasGtk.DockingBox? row;
+        
+        public bool has_selected_dock;
+        public icCanvasGtk.Dock? selected_dock;
+        public icCanvasGtk.Dock.Edge selected_edge;
+        public uint selected_offset;
+        public int selected_pos;
     }
     
     private Gee.Map<weak Gtk.Widget, DockingData?> _data;
@@ -24,6 +30,12 @@ class icCanvasGtk.DockingController : GLib.Object {
         dock.added_dockable.connect(this.add_dockable);
     }
     
+    public void remove_dock(icCanvasGtk.Dock dock) {
+        this._docks.remove(dock);
+        
+        //TODO: Remove child dockables in this dock.
+    }
+    
     public void add_dockable(icCanvasGtk.Dockable dockable, icCanvasGtk.Dock? dock, icCanvasGtk.DockingBox? row) {
         DockingData? dat;
         if (this._data.has_key(dockable as Gtk.Widget)) {
@@ -35,13 +47,14 @@ class icCanvasGtk.DockingController : GLib.Object {
         dat.dockable = dockable;
         dat.dock = dock;
         dat.row = row;
+        dat.has_selected_dock = false;
         
         this._data.@set(dockable as Gtk.Widget, dat);
         
         this.attach_signals(dockable);
     }
     
-    private bool widget_hit_test(Gtk.Widget wdgt, int mouse_x, int mouse_y) {
+    private bool widget_hit_test(Gtk.Widget wdgt, double mouse_x, double mouse_y) {
         int wx, wy, rx, ry, wh, ww;
         Gtk.Window wnd = wdgt.get_toplevel() as Gtk.Window;
         wdgt.translate_coordinates(wnd, 0, 0, out wx, out wy);
@@ -62,8 +75,13 @@ class icCanvasGtk.DockingController : GLib.Object {
      * The given out parameter found_it indicates if the other out parameters
      * are valid. If false, the contents of the other four out parameters are
      * undefined.
+     * 
+     * Assumes that the dock the dockable is currently in is not suitable for
+     * docking with.
      */
-    private void select_dock_for_dockable(icCanvasGtk.Dockable candidate_dockable, int mouse_x, int mouse_y, out bool out_found_it, out icCanvasGtk.Dock? out_target, out icCanvasGtk.Dock.Edge out_edge, out uint out_offsetFromEdge, out int out_pos) {
+    private void select_dock_for_dockable(icCanvasGtk.Dockable candidate_dockable, double mouse_x, double mouse_y, out bool out_found_it, out icCanvasGtk.Dock? out_target, out icCanvasGtk.Dock.Edge out_edge, out uint out_offsetFromEdge, out int out_pos) {
+        DockingData? dat = this._data.@get(candidate_dockable as Gtk.Widget);
+        
         bool found_it = false;
         icCanvasGtk.Dock? target = null;
         icCanvasGtk.Dock.Edge edge = icCanvasGtk.Dock.Edge.LEFT;
@@ -72,7 +90,7 @@ class icCanvasGtk.DockingController : GLib.Object {
         
         //I am not too terribly proud of this code.
         this._docks.@foreach((d) => {
-            if (!found_it) {
+            if (!found_it && d != dat.dock) {
                 target = d;
                 
                 d.foreach_rows((nu_edge, rowIndex, row) => {
@@ -93,7 +111,7 @@ class icCanvasGtk.DockingController : GLib.Object {
                         });
                     }
                     
-                    return found_it;
+                    return !found_it;
                 });
             }
         });
@@ -140,8 +158,23 @@ class icCanvasGtk.DockingController : GLib.Object {
         }
     }
     
-    private void dragged_window(Gdk.EventMotion evt) {
-        //TODO: Select & indicate drop targets for user
+    private void dragged_window(icCanvasGtk.Dockable src, Gdk.EventMotion evt) {
+        DockingData? dat = this._data.@get(src as Gtk.Widget);
+        if (dat == null) {
+            GLib.warning("DockingController got a message from an unregistered Dockable.");
+            return;
+        }
+        
+        this.select_dock_for_dockable(src, evt.x_root, evt.y_root, out dat.has_selected_dock, out dat.selected_dock, out dat.selected_edge, out dat.selected_offset, out dat.selected_pos);
+        
+        this._data.@set(src as Gtk.Widget, dat);
+        
+        Gtk.Widget wnd = (src as Gtk.Widget).get_toplevel();
+        if (dat.has_selected_dock) {
+            wnd.set_opacity(0.4);
+        } else {
+            wnd.set_opacity(1.0);
+        }
     }
     
     private void released(icCanvasGtk.Dockable src) {
@@ -151,8 +184,26 @@ class icCanvasGtk.DockingController : GLib.Object {
             return;
         }
         
-        Gtk.Widget wnd = (src as Gtk.Widget).get_toplevel();
-        wnd.set_opacity(1.0);
+        if (dat.has_selected_dock) {
+            Gtk.Window? wnd = null;
+            icCanvasGtk.Dock old_dock = dat.dock;
+            if (dat.dock is Gtk.Window) {
+                wnd = dat.dock as Gtk.Window;
+            }
+            
+            src.@ref();
+            (src as Gtk.Widget).parent.remove(src as Gtk.Widget);
+            dat.selected_dock.add_dockable_positioned(src, dat.selected_edge, dat.selected_offset, dat.selected_pos);
+            src.unref();
+            
+            if (wnd != null) {
+                this.remove_dock(old_dock);
+                wnd.close();
+            }
+        } else {
+            Gtk.Widget wnd = (src as Gtk.Widget).get_toplevel();
+            wnd.set_opacity(1.0);
+        }
     }
     
     public void attach_signals(icCanvasGtk.Dockable dockable) {

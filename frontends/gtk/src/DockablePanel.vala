@@ -314,6 +314,8 @@ class icCanvasGtk.DockablePanel : Gtk.Bin, Gtk.Orientable, icCanvasGtk.Dockable 
                 wnd_ry += (int)GLib.Math.rint(evt.y - this._y_target_mouse);
                 
                 wnd.move(wnd_rx, wnd_ry);
+                
+                this.dragged_window(evt);
             }
         }
         
