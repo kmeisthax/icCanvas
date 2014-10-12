@@ -8,6 +8,13 @@ class icCanvasGtk.WindowDock : Gtk.Box, icCanvasGtk.Dock {
     private int _vbox_center; //Position of Hbox within self.
     private int _hbox_center; //Position of Center within Hbox.
     
+    private struct RowData {
+        public Gtk.Widget parent; //Widget which contains entire row structure.
+        public icCanvasGtk.DockingBox row; //Widget which manages placement of dockables.
+    }
+    
+    private Gee.Map<icCanvasGtk.Dock.Edge, Gee.List<RowData?>> _rows;
+    
     public WindowDock() {
         Object(orientation:Gtk.Orientation.VERTICAL, spacing:0);
         this._hbox = new Gtk.Box(Gtk.Orientation.HORIZONTAL, 0);
@@ -17,55 +24,28 @@ class icCanvasGtk.WindowDock : Gtk.Box, icCanvasGtk.Dock {
         
         this._vbox_center = 0;
         this._hbox_center = 0;
+        this._rows = new Gee.HashMap<icCanvasGtk.Dock.Edge, Gee.List<RowData?>>();
+        
+        this._rows.@set(icCanvasGtk.Dock.Edge.LEFT, new Gee.LinkedList<RowData?>());
+        this._rows.@set(icCanvasGtk.Dock.Edge.RIGHT, new Gee.LinkedList<RowData?>());
+        this._rows.@set(icCanvasGtk.Dock.Edge.TOP, new Gee.LinkedList<RowData?>());
+        this._rows.@set(icCanvasGtk.Dock.Edge.BOTTOM, new Gee.LinkedList<RowData?>());
     }
     
     private int get_best_edge_box(icCanvasGtk.Dockable dockwdgt, icCanvasGtk.Dock.Edge edge) {
-        List<weak Gtk.Widget> owned_tgt = this.get_children();
-        unowned List<weak Gtk.Widget> tgt = owned_tgt;
-        Gtk.Widget stop = this._hbox;
-        var go_fwd = true;
-        var rval = 0;
+        var rowlist = this._rows.@get(edge);
+        var i = rowlist.list_iterator();
         
-        switch (edge) {
-            case Edge.TOP:
-                break;
-            case Edge.BOTTOM:
-                tgt = tgt.last();
-                go_fwd = false;
-                break;
-            case Edge.LEFT:
-                owned_tgt = this._hbox.get_children();
-                tgt = owned_tgt;
-                stop = this._center;
-                break;
-            case Edge.RIGHT:
-                owned_tgt = this._hbox.get_children();
-                tgt = owned_tgt.last();
-                stop = this._center;
-                go_fwd = false;
-                break;
+        while (i.has_next()) {
+            i.next();
+            var dat = i.@get();
+            
+            if (dat.row.is_dockable_compatible(dockwdgt)) {
+                return i.index();
+            }
         }
         
-        while (tgt != null) {
-            if (tgt.data is icCanvasGtk.DockingBox) {
-                if (((icCanvasGtk.DockingBox)tgt.data).is_dockable_compatible(dockwdgt)) {
-                    break;
-                }
-            } else if (tgt.data == stop) {
-                rval = -1;
-                break;
-            }
-            
-            if (go_fwd) {
-                tgt = tgt.next;
-            } else {
-                tgt = tgt.prev;
-            }
-            
-            rval++;
-        }
-        
-        return rval;
+        return -1;
     }
     
     public void insert_new_row(icCanvasGtk.Dock.Edge edge, uint before_row) {
@@ -84,42 +64,31 @@ class icCanvasGtk.WindowDock : Gtk.Box, icCanvasGtk.Dock {
         }
         
         tgt.pack_start(new_row, false, false, 0);
+        
+        RowData? dat = RowData();
+        dat.parent = new_row;
+        dat.row = new_row;
+        
+        this._rows.@get(edge).insert((int)before_row, dat);
     }
     
     /* Add a dockable widget to a particular edge of the dock.
      */
     public void add_dockable(icCanvasGtk.Dockable dockwdgt, icCanvasGtk.Dock.Edge edge) {
         var recommended_offset = get_best_edge_box(dockwdgt, edge);
-        if (recommended_offset == -1) {
-            this.insert_new_row(edge, 0);
-            recommended_offset = 0;
-        }
-        
         this.add_dockable_positioned(dockwdgt, edge, recommended_offset, -1);
     }
     
     public void add_dockable_positioned(icCanvasGtk.Dockable dockwdgt, icCanvasGtk.Dock.Edge edge, uint offsetFromEdge, int pos) {
-        Gtk.Box tgt = this;
-        
-        if (edge == Edge.LEFT || edge == Edge.RIGHT) {
-            tgt = this._hbox;
+        if (offsetFromEdge == -1) {
+            this.insert_new_row(edge, 0);
+            offsetFromEdge = 0;
         }
         
-        List<weak Gtk.Widget> owned_list = tgt.get_children();
-        unowned List<weak Gtk.Widget> list = owned_list;
-        
-        if (edge == Edge.BOTTOM || edge == Edge.RIGHT) {
-            offsetFromEdge = owned_list.length() - offsetFromEdge;
-        }
-        
-        list = list.nth(offsetFromEdge);
-        if (list.data is icCanvasGtk.DockingBox) {
-            var dockrow = list.data as icCanvasGtk.DockingBox;
-            dockrow.add(dockwdgt as Gtk.Widget);
-            dockrow.reorder_child(dockwdgt as Gtk.Widget, pos);
-            
-            this.added_dockable(dockwdgt, this, dockrow);
-        }
+        RowData? dat = this._rows.@get(edge).@get((int)offsetFromEdge);
+        dat.row.add(dockwdgt as Gtk.Widget);
+        dat.row.reorder_child(dockwdgt as Gtk.Widget, pos);
+        this.added_dockable(dockwdgt, this, dat.row);
     }
     
     /* Set the center widget.
@@ -142,64 +111,21 @@ class icCanvasGtk.WindowDock : Gtk.Box, icCanvasGtk.Dock {
     
     /* Iterate over the rows of the dock.
      */
-    public void foreach_rows(icCanvasGtk.Dock.RowIteratee i) {
+    public void foreach_rows(icCanvasGtk.Dock.RowIteratee ifunc) {
         bool should_continue = true;
-        var child_start = this.get_children(); //Owned ref.
-        unowned GLib.List<weak Gtk.Widget> children = child_start, child_end = children.last();
-        var cur_edge = icCanvasGtk.Dock.Edge.TOP;
-        uint cur_idx = 0, cur_delta = 1;
+        var i = this._rows.map_iterator();
         
-        while (should_continue) {
-            var the_child = children.data;
+        while (i.has_next() && should_continue) {
+            i.next();
             
-            if (the_child == this._hbox) {
-                var hbchild_start = this._hbox.get_children(); //Owned ref.
-                unowned GLib.List<weak Gtk.Widget> hbchildren = hbchild_start, hbchild_end = hbchildren.last();
+            var edge = i.get_key();
+            var j = i.get_value().list_iterator();
+            
+            while (j.has_next() && should_continue) {
+                j.next();
                 
-                cur_edge = icCanvasGtk.Dock.Edge.LEFT;
-                cur_idx = 0;
-                cur_delta = 1;
-                
-                while (should_continue) {
-                    var hb_the_child = hbchildren.data;
-
-                    if (hb_the_child == this._center) {
-                        if (hbchildren.next == hbchild_start) {
-                            break;
-                        }
-                        
-                        cur_edge = icCanvasGtk.Dock.Edge.RIGHT;
-                        cur_idx = hbchildren.next.length() - 1;
-                        cur_delta = -1;
-                    } else {
-                        should_continue = i(cur_edge, cur_idx, hb_the_child as icCanvasGtk.DockingBox);
-                    }
-                    
-                    if (hbchildren == hbchild_end) {
-                        break;
-                    }
-                    
-                    hbchildren = hbchildren.next;
-                    cur_idx += cur_delta;
-                }
-                
-                if (children == child_end) {
-                    break;
-                }
-                
-                cur_edge = icCanvasGtk.Dock.Edge.BOTTOM;
-                cur_idx = children.next.length() - 1;
-                cur_delta = -1;
-            } else {
-                should_continue = i(cur_edge, cur_idx, the_child as icCanvasGtk.DockingBox);
+                should_continue = ifunc(edge, j.index(), j.@get().row);
             }
-            
-            if (children == child_end) {
-                break;
-            }
-            
-            children = children.next;
-            cur_idx += cur_delta;
         }
     }
 }
