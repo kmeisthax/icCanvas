@@ -298,24 +298,29 @@ class icCanvasGtk.DockablePanel : Gtk.Bin, Gtk.Orientable, icCanvasGtk.Dockable 
     public override bool motion_notify_event(Gdk.EventMotion evt) {
         if (this._in_drag) {
             var dist = Posix.sqrt(Posix.pow(evt.x - this._x_start_drag, 2) + Posix.pow(evt.y - this._y_start_drag, 2));
-            
+
             if (!this._detached && dist > icCanvasGtk.DockablePanel.DRAG_THRESHOLD) {
                 this._detached = true;
                 this.detached();
-                
+
                 this._x_target_mouse = evt.x;
                 this._y_target_mouse = evt.y;
             } else if (this._detached) {
-                Gtk.Window wnd = this.get_toplevel() as Gtk.Window;
-                int wnd_rx, wnd_ry;
-                wnd.get_position(out wnd_rx, out wnd_ry);
-                
-                wnd_rx += (int)GLib.Math.rint(evt.x - this._x_target_mouse);
-                wnd_ry += (int)GLib.Math.rint(evt.y - this._y_target_mouse);
-                
-                wnd.move(wnd_rx, wnd_ry);
-                
-                this.dragged_window(evt);
+                //Short-circuit runaway drags
+                if ((evt.state & Gdk.ModifierType.BUTTON1_MASK) == 0) {
+                    this.real_release();
+                } else {
+                    Gtk.Window wnd = this.get_toplevel() as Gtk.Window;
+                    int wnd_rx, wnd_ry;
+                    wnd.get_position(out wnd_rx, out wnd_ry);
+
+                    wnd_rx += (int)GLib.Math.rint(evt.x - this._x_target_mouse);
+                    wnd_ry += (int)GLib.Math.rint(evt.y - this._y_target_mouse);
+
+                    wnd.move(wnd_rx, wnd_ry);
+
+                    this.dragged_window(evt);
+                }
             }
         }
         
@@ -324,18 +329,22 @@ class icCanvasGtk.DockablePanel : Gtk.Bin, Gtk.Orientable, icCanvasGtk.Dockable 
         return true;
     }
     
+    private void real_release() {
+        if (this._in_drag && !this._detached) {
+            this.reveal_child = !this.reveal_child;
+        } else if (this._in_drag && this._detached) {
+            this.released();
+        }
+        
+        this._in_drag = false;
+        this._detached = false;
+        this._x_start_drag = 0;
+        this._y_start_drag = 0;
+    }
+    
     public override bool button_release_event(Gdk.EventButton evt) {
         if (evt.type == Gdk.EventType.BUTTON_RELEASE) {
-            if (this._in_drag && !this._detached) {
-                this.reveal_child = !this.reveal_child;
-            } else if (this._in_drag && this._detached) {
-                this.released();
-            }
-            
-            this._in_drag = false;
-            this._detached = false;
-            this._x_start_drag = 0;
-            this._y_start_drag = 0;
+            this.real_release();
         }
         
         this.update_cursor(evt.x, evt.y);
