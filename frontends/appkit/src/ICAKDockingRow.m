@@ -40,7 +40,10 @@ static const NSInteger _MARGINS = 15;
     self->_bottom_margin_constraint = nil;
     
     self.translatesAutoresizingMaskIntoConstraints = NO;
-    
+};
+
+- (void)drawRect:(NSRect)rekt {
+    NSGraphicsContext* cocoaContext = [NSGraphicsContext currentContext];
     NSColor *color = [NSColor colorWithCatalogName:@"System" colorName:@"_sourceListBackgroundColor"];
     if (color == nil) {
         NSTableView *tableView = [[NSTableView alloc] initWithFrame:NSZeroRect];
@@ -48,9 +51,9 @@ static const NSInteger _MARGINS = 15;
         color = [tableView backgroundColor];
     }
     
-    self.wantsLayer = YES;
-    self.layer.backgroundColor = (__bridge CGColorRef)color;
-};
+    [color setFill];
+    NSRectFill(rekt);
+}
 
 - (id)init {
     self = [super init];
