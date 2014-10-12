@@ -58,7 +58,7 @@ class icCanvasGtk.DockingController : GLib.Object {
         int wx, wy, rx, ry, wh, ww;
         Gtk.Window wnd = wdgt.get_toplevel() as Gtk.Window;
         wdgt.translate_coordinates(wnd, 0, 0, out wx, out wy);
-        wnd.get_position(out rx, out ry);
+        wnd.get_window().get_origin(out rx, out ry);
         
         wx += rx;
         wy += ry;
