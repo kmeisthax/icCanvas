@@ -55,7 +55,11 @@ class icCanvasGtk.DockingController : GLib.Object {
     }
     
     private bool widget_hit_test(Gtk.Widget wdgt, double mouse_x, double mouse_y) {
-        int wx, wy, rx, ry, wh, ww;
+        return this.rectangle_hit_test(this.widget_abs_rect(wdgt), mouse_x, mouse_y);
+    }
+    
+    private Gdk.Rectangle widget_abs_rect(Gtk.Widget wdgt) {
+        int wx, wy, rx, ry;
         Gtk.Window wnd = wdgt.get_toplevel() as Gtk.Window;
         wdgt.translate_coordinates(wnd, 0, 0, out wx, out wy);
         wnd.get_window().get_origin(out rx, out ry);
@@ -63,10 +67,18 @@ class icCanvasGtk.DockingController : GLib.Object {
         wx += rx;
         wy += ry;
         
-        wh = wdgt.get_allocated_height();
-        ww = wdgt.get_allocated_width();
+        Gdk.Rectangle rekt = Gdk.Rectangle();
         
-        return wx <= mouse_x && mouse_x <= wx + ww && wy <= mouse_y && mouse_y <= wy + wh;
+        rekt.x = wx;
+        rekt.y = wy;
+        rekt.width = wdgt.get_allocated_width();
+        rekt.height = wdgt.get_allocated_height();
+        
+        return rekt;
+    }
+    
+    private bool rectangle_hit_test(Gdk.Rectangle rekt, double pt_x, double pt_y) {
+        return rekt.x <= pt_x && pt_x <= rekt.x + rekt.width && rekt.y <= pt_y && pt_y <= rekt.y + rekt.height;
     }
     
     /* Decide what, if any, of our known docks would be suitable to drop a
@@ -113,6 +125,8 @@ class icCanvasGtk.DockingController : GLib.Object {
                     
                     return !found_it;
                 });
+                
+                //Consider creating new rows 
             }
         });
         
