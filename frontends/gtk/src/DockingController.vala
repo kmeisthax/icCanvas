@@ -9,7 +9,7 @@ class icCanvasGtk.DockingController : GLib.Object {
         public bool has_selected_dock;
         public icCanvasGtk.Dock? selected_dock;
         public icCanvasGtk.Dock.Edge selected_edge;
-        public uint selected_offset;
+        public int selected_offset;
         public int selected_pos;
     }
     
@@ -81,6 +81,30 @@ class icCanvasGtk.DockingController : GLib.Object {
         return rekt.x <= pt_x && pt_x <= rekt.x + rekt.width && rekt.y <= pt_y && pt_y <= rekt.y + rekt.height;
     }
     
+    private Gdk.Rectangle rectangle_edge(Gdk.Rectangle rekt, icCanvasGtk.Dock.Edge edge, int range) {
+        var get_rekt = rekt;
+        switch (edge) {
+            case icCanvasGtk.Dock.Edge.LEFT:
+                get_rekt.width = int.min(range, rekt.width / 2);
+                break;
+            case icCanvasGtk.Dock.Edge.RIGHT:
+                get_rekt.width = int.min(range, rekt.width / 2);
+                get_rekt.x = get_rekt.x + rekt.width - get_rekt.width;
+                break;
+            case icCanvasGtk.Dock.Edge.TOP:
+                get_rekt.height = int.min(range, rekt.height / 2);
+                break;
+            case icCanvasGtk.Dock.Edge.BOTTOM:
+                get_rekt.height = int.min(range, rekt.height / 2);
+                get_rekt.y = get_rekt.y + rekt.height - get_rekt.height;
+                break;
+        }
+        
+        return get_rekt;
+    }
+    
+    private const int EDGE_THRESHOLD = 25;
+    
     /* Decide what, if any, of our known docks would be suitable to drop a
      * (possibly floating) Dockable into.
      * 
@@ -91,19 +115,64 @@ class icCanvasGtk.DockingController : GLib.Object {
      * Assumes that the dock the dockable is currently in is not suitable for
      * docking with.
      */
-    private void select_dock_for_dockable(icCanvasGtk.Dockable candidate_dockable, double mouse_x, double mouse_y, out bool out_found_it, out icCanvasGtk.Dock? out_target, out icCanvasGtk.Dock.Edge out_edge, out uint out_offsetFromEdge, out int out_pos) {
+    private void select_dock_for_dockable(icCanvasGtk.Dockable candidate_dockable, double mouse_x, double mouse_y, out bool out_found_it, out icCanvasGtk.Dock? out_target, out icCanvasGtk.Dock.Edge out_edge, out int out_offsetFromEdge, out int out_pos) {
         DockingData? dat = this._data.@get(candidate_dockable as Gtk.Widget);
         
         bool found_it = false;
         icCanvasGtk.Dock? target = null;
         icCanvasGtk.Dock.Edge edge = icCanvasGtk.Dock.Edge.LEFT;
-        uint offsetFromEdge = 0;
+        int offsetFromEdge = 0;
         int pos = 0;
         
         //I am not too terribly proud of this code.
         this._docks.@foreach((d) => {
             if (!found_it && d != dat.dock) {
                 target = d;
+                
+                //Check the edges of the dock.
+                if (d is icCanvasGtk.WindowDock) {
+                    var wd = d as icCanvasGtk.WindowDock;
+                    var center_rekt = this.widget_abs_rect(wd),
+                        test_rekt = this.rectangle_edge(center_rekt, icCanvasGtk.Dock.Edge.LEFT, icCanvasGtk.DockingController.EDGE_THRESHOLD);
+
+                    if (this.rectangle_hit_test(test_rekt, mouse_x, mouse_y)) {
+                        edge = icCanvasGtk.Dock.Edge.LEFT;
+                        offsetFromEdge = -1;
+                        pos = 0;
+                        found_it = true;
+                        return;
+                    }
+
+                    test_rekt = this.rectangle_edge(center_rekt, icCanvasGtk.Dock.Edge.RIGHT, icCanvasGtk.DockingController.EDGE_THRESHOLD);
+
+                    if (this.rectangle_hit_test(test_rekt, mouse_x, mouse_y)) {
+                        edge = icCanvasGtk.Dock.Edge.RIGHT;
+                        offsetFromEdge = -1;
+                        pos = 0;
+                        found_it = true;
+                        return;
+                    }
+
+                    test_rekt = this.rectangle_edge(center_rekt, icCanvasGtk.Dock.Edge.TOP, icCanvasGtk.DockingController.EDGE_THRESHOLD);
+
+                    if (this.rectangle_hit_test(test_rekt, mouse_x, mouse_y)) {
+                        edge = icCanvasGtk.Dock.Edge.TOP;
+                        offsetFromEdge = -1;
+                        pos = 0;
+                        found_it = true;
+                        return;
+                    }
+
+                    test_rekt = this.rectangle_edge(center_rekt, icCanvasGtk.Dock.Edge.BOTTOM, icCanvasGtk.DockingController.EDGE_THRESHOLD);
+
+                    if (this.rectangle_hit_test(test_rekt, mouse_x, mouse_y)) {
+                        edge = icCanvasGtk.Dock.Edge.BOTTOM;
+                        offsetFromEdge = -1;
+                        pos = 0;
+                        found_it = true;
+                        return;
+                    }
+                }
                 
                 d.foreach_rows((nu_edge, rowIndex, row) => {
                     edge = nu_edge;
@@ -125,8 +194,6 @@ class icCanvasGtk.DockingController : GLib.Object {
                     
                     return !found_it;
                 });
-                
-                //Consider creating new rows 
             }
         });
         

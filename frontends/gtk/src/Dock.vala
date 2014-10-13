@@ -30,7 +30,7 @@ interface icCanvasGtk.Dock : GLib.Object {
      * Returning FALSE cancels the iteration; the calling function will return
      * to it's parent.
      */
-    public delegate bool RowIteratee(Edge edge, uint rowIndex, icCanvasGtk.DockingBox row);
+    public delegate bool RowIteratee(Edge edge, int rowIndex, icCanvasGtk.DockingBox row);
     
     /* Iterate over the rows of the dock.
      */

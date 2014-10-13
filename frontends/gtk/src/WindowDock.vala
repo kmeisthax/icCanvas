@@ -5,7 +5,6 @@ class icCanvasGtk.WindowDock : Gtk.Box, icCanvasGtk.Dock {
     private Gtk.Box _hbox; //For vertical DockingPorts.
     private Gtk.Widget? _center;
     
-    private int _vbox_center; //Position of Hbox within self.
     private int _hbox_center; //Position of Center within Hbox.
     
     private struct RowData {
@@ -31,7 +30,6 @@ class icCanvasGtk.WindowDock : Gtk.Box, icCanvasGtk.Dock {
         
         this.pack_start(this._hbox, true, true, 0);
         
-        this._vbox_center = 0;
         this._hbox_center = 0;
         this._rows = new Gee.HashMap<icCanvasGtk.Dock.Edge, Gee.List<RowData?>>();
         
@@ -76,7 +74,13 @@ class icCanvasGtk.WindowDock : Gtk.Box, icCanvasGtk.Dock {
             before_row = tgt.get_children().length() - before_row;
         }
         
+        if (edge == Edge.LEFT) {
+            this._hbox_center++;
+        }
+        
         tgt.pack_start(new_row, false, false, 0);
+        tgt.reorder_child(new_row, (int)before_row);
+        new_row.show_all();
         
         RowData? dat = RowData();
         dat.parent = new_row;
