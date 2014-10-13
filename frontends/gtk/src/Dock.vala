@@ -37,6 +37,16 @@ interface icCanvasGtk.Dock : GLib.Object {
     public virtual void foreach_rows(RowIteratee i) {
     }
     
+    /* Remove a row from the dock.
+     * 
+     * If the selected row still contains child dockables, those will also be
+     * removed.
+     * 
+     * Some implementations may not support row removal.
+     */
+    public virtual void remove_row(Edge edge, uint offsetFromEdge) {
+    }
+    
     /* Fired when the Dock recieves a Dockable. */
     public signal void added_dockable(icCanvasGtk.Dockable dockable, icCanvasGtk.Dock? dock, icCanvasGtk.DockingBox? row);
 }
