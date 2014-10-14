@@ -2,10 +2,12 @@ using Gtk;
 using icCanvasManager;
 
 class icCanvasGtk.Application : Gtk.Application {
-    private GLib.List<icCanvasGtk.Drawing> drawing_list;
-
+    private GLib.List<icCanvasGtk.Drawing> _drawing_list;
+    public icCanvasGtk.DockingController docking_ctrl { get; set; }
+    
     public Application (string s, GLib.ApplicationFlags f) {
-        
+        this._drawing_list = new GLib.List<icCanvasGtk.Drawing>();
+        this.docking_ctrl = new icCanvasGtk.DockingController();
     }
     
     public override void activate() {
@@ -26,6 +28,6 @@ class icCanvasGtk.Application : Gtk.Application {
     }
     
     public void add_drawing(icCanvasGtk.Drawing drawing) {
-        this.drawing_list.append(drawing);
+        this._drawing_list.append(drawing);
     }
 }
