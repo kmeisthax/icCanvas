@@ -65,16 +65,6 @@ static const NSInteger _MARGINS = 15;
     return self;
 }
 
-- (id)initWithFrame:(NSRect)frameRect {
-    self = [super initWithFrame:frameRect];
-    
-    if (self != nil) {
-        [self setup];
-    }
-    
-    return self;
-};
-
 - (BOOL)vertical {
     return self->_is_vertical;
 };
@@ -92,6 +82,10 @@ static const NSInteger _MARGINS = 15;
     }
     
     return NO;
+};
+
+- (ICAKDockableViewStyle)prevailingStyle {
+    return self->_prevailing_style;
 };
 
 - (NSInteger)insertionPositionForPoint:(NSPoint)pt {
@@ -208,6 +202,10 @@ static const NSInteger _MARGINS = 15;
 }
 
 - (void)didAddSubview:(NSView*)subview {
+    if ([subview isKindOfClass:ICAKDockableView.class]) {
+        self->_prevailing_style = ((ICAKDockableView*)subview).style;
+    }
+    
     NSLayoutConstraint* newStapleConstraint;
     NSUInteger pos = [self.subviews indexOfObject:subview]; //why do I gotta DO THIS
     NSView* previousView = nil;

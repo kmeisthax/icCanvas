@@ -9,12 +9,12 @@
 + (BOOL)requiresConstraintBasedLayout;
 
 - (id)init;
-- (id)initWithFrame:(NSRect)frameRect;
 
 - (BOOL)vertical;
 - (void)setVertical:(BOOL)isVertical;
 
 - (BOOL)canAcceptDockableView:(ICAKDockableView*)dview;
+- (ICAKDockableViewStyle)prevailingStyle;
 
 - (NSInteger)insertionPositionForPoint:(NSPoint)pt;
 - (void)reserveSpace:(NSRect)rect atPosition:(NSInteger)pos;

@@ -7,7 +7,6 @@
  */
 @interface ICAKDockableView : NSView
 - (id)init;
-- (id)initWithFrame:(NSRect)frameRect;
 
 - (ICAKDockableViewStyle)style;
 - (void)setStyle:(ICAKDockableViewStyle)style;
