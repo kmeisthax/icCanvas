@@ -11,7 +11,7 @@
 - (id)init {
     //Create test window
     NSWindow *window;
-    NSRect r = {{100,100}, {250, 250}};
+    NSRect r = {{100,100}, {400, 400}};
     window = [[NSWindow alloc] initWithContentRect:r styleMask:(NSTitledWindowMask|NSClosableWindowMask|NSMiniaturizableWindowMask|NSResizableWindowMask) backing:NSBackingStoreBuffered defer:TRUE];
     
     self = [super initWithWindow:window];
