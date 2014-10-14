@@ -24,7 +24,6 @@
     
     self->_vert = [[NSSplitView alloc] initWithFrame:self.bounds];
     [self->_vert setVertical:NO];
-    self->_vert.delegate = self;
     self->_vert.dividerStyle = NSSplitViewDividerStyleThin;
     
     self->_horiz_center_idx = 0;
@@ -42,16 +41,6 @@
 
 - (id)init {
     self = [super init];
-    
-    if (self != nil) {
-        [self setupSubviews];
-    }
-    
-    return self;
-};
-
-- (id)initWithFrame:(NSRect)frameRect {
-    self = [super initWithFrame:frameRect];
     
     if (self != nil) {
         [self setupSubviews];
@@ -239,5 +228,84 @@
     } else {
         [dock addSubview:view positioned:NSWindowBelow relativeTo:[dock.subviews objectAtIndex:offset]];
     }
+    
+    [self->_vert adjustSubviews];
+    [self->_horiz adjustSubviews];
 };
+
+- (CGFloat)calculateSplitViewMainAxisLength:(NSSplitView*)splitView atDivider:(NSInteger)dividerIndex atRightSide:(BOOL)isRightSide {
+    CGFloat answer = 0;
+    NSArray *subviews = [splitView subviews];
+    
+    int direction = isRightSide ? -1 : 1;
+    NSUInteger i = isRightSide ? subviews.count - 1 : 0;
+    for (; isRightSide ? i > dividerIndex + 1 : i < dividerIndex; i += direction) {
+        NSView *pane = [subviews objectAtIndex:i];
+        CGFloat paneLength;
+        if (splitView.isVertical) {
+            paneLength = [pane frame].size.height;
+        } else {
+            paneLength = [pane frame].size.width;
+        }
+        answer += paneLength;
+    }
+    
+    return answer;
+}
+
+/* Code cribbed from https://github.com/incbee/BESplitViewConstraintEnforcer and modified */
+- (CGFloat)splitView:(NSSplitView *)splitView constrainMinCoordinate:(CGFloat)proposedMin ofSubviewAt:(NSInteger)dividerIndex {
+    CGFloat widthUpToSubview = [self calculateSplitViewMainAxisLength:splitView atDivider:dividerIndex atRightSide:NO];
+    NSView *theView = [splitView.subviews objectAtIndex:dividerIndex];
+    
+    if ([theView isKindOfClass:ICAKDockingRow.class]) {
+        ICAKDockingRow *theDockingRow = (ICAKDockingRow*)theView;
+        CGFloat minWidth = 0;
+        
+        if (theDockingRow.subviews.count == 0) {
+            minWidth = 0;
+        } else if (theDockingRow.prevailingStyle == ICAKDockableViewStylePanel) {
+            minWidth = ICAKDockableViewMinPanelSize;
+        } else if (theDockingRow.prevailingStyle == ICAKDockableViewStyleToolbar) {
+            minWidth = ICAKDockableViewMinToolbarSize;
+        }
+        
+        CGFloat minAllowedWidth = widthUpToSubview + minWidth;
+        return proposedMin < minAllowedWidth ? minAllowedWidth : proposedMin;
+    }
+    
+    return proposedMin;
+}
+
+- (CGFloat)splitView:(NSSplitView *)splitView constrainMaxCoordinate:(CGFloat)proposedMax ofSubviewAt:(NSInteger)dividerIndex {
+    CGFloat widthDownToSubview = [self calculateSplitViewMainAxisLength:splitView atDivider:dividerIndex atRightSide:YES];
+    
+    NSView *theView = [splitView.subviews objectAtIndex:dividerIndex + 1];
+    
+    if ([theView isKindOfClass:ICAKDockingRow.class]) {
+        ICAKDockingRow *theDockingRow = (ICAKDockingRow*)theView;
+        CGFloat minWidth = 0;
+        
+        if (theDockingRow.subviews.count == 0) {
+            minWidth = 0;
+        } else if (theDockingRow.prevailingStyle == ICAKDockableViewStylePanel) {
+            minWidth = ICAKDockableViewMinPanelSize;
+        } else if (theDockingRow.prevailingStyle == ICAKDockableViewStyleToolbar) {
+            minWidth = ICAKDockableViewMinToolbarSize;
+        }
+        
+        // Now when we add the pane's minimum width on top of the consumed width
+        // after it, we get the maximum width allowed for the constraints to be met.
+        // But we need a position from the left of the split view, so we translate
+        // that by deducting it from the split view's total width.
+        CGFloat splitViewWidth = [splitView frame].size.width;
+        CGFloat maxAllowedWidth = splitViewWidth - (widthDownToSubview + minWidth);
+
+        // This is the converse of the minimum constraint method: accept the proposed
+        // maximum only if it doesn't exced the maximum allowed width
+        return proposedMax > maxAllowedWidth ? maxAllowedWidth : proposedMax;
+    }
+    
+    return proposedMax;
+}
 @end

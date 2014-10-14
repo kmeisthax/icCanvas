@@ -9,6 +9,7 @@ include(${PARENT_PROJECT_DIR}/CMakeLists.txt)
 include(${PARENT_PROJECT_DIR}/api/objc/CMakeLists.txt)
 
 find_library(APPKIT AppKit)
+find_library(QUARTZCORE QuartzCore)
 
 file(GLOB ICAPPKIT_SRC src/*.m)
 include_directories(include)
@@ -17,7 +18,7 @@ add_executable(icCanvas MACOSX_BUNDLE ${ICAPPKIT_SRC})
 target_link_libraries(icCanvas ${APPKIT})
 target_link_libraries(icCanvas icCanvasManager)
 
-target_link_libraries(icCanvasManager ${APPKIT})
+target_link_libraries(icCanvasManager ${APPKIT} ${QUARTZCORE})
 
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
     set_target_properties(icCanvas PROPERTIES COMPILE_FLAGS "-fobjc-arc")
