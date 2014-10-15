@@ -37,7 +37,7 @@ class icCanvasGtk.DrawingWindow : Gtk.ApplicationWindow {
         dt2.add(bx);
         
         this.dock.add_dockable(dt, icCanvasGtk.Dock.Edge.LEFT);
-        this.dock.add_dockable(dt2, icCanvasGtk.Dock.Edge.LEFT);
+        this.dock.add_dockable(dt2, icCanvasGtk.Dock.Edge.RIGHT);
     }
     
     public icCanvasGtk.Drawing drawing {
