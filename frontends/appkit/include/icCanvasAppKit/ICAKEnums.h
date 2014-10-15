@@ -11,3 +11,6 @@ typedef NS_ENUM(NSInteger, ICAKDockableViewStyle) {
     ICAKDockableViewStyleToolbar,
     ICAKDockableViewStylePanel
 };
+
+static const CGFloat ICAKDockableViewMinPanelSize = 240.0f;
+static const CGFloat ICAKDockableViewMinToolbarSize = 50.0f;

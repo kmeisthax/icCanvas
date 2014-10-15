@@ -40,7 +40,10 @@ static const NSInteger _MARGINS = 15;
     self->_bottom_margin_constraint = nil;
     
     self.translatesAutoresizingMaskIntoConstraints = NO;
-    
+};
+
+- (void)drawRect:(NSRect)rekt {
+    NSGraphicsContext* cocoaContext = [NSGraphicsContext currentContext];
     NSColor *color = [NSColor colorWithCatalogName:@"System" colorName:@"_sourceListBackgroundColor"];
     if (color == nil) {
         NSTableView *tableView = [[NSTableView alloc] initWithFrame:NSZeroRect];
@@ -48,9 +51,9 @@ static const NSInteger _MARGINS = 15;
         color = [tableView backgroundColor];
     }
     
-    self.wantsLayer = YES;
-    self.layer.backgroundColor = (__bridge CGColorRef)color;
-};
+    [color setFill];
+    NSRectFill(rekt);
+}
 
 - (id)init {
     self = [super init];
@@ -61,16 +64,6 @@ static const NSInteger _MARGINS = 15;
     
     return self;
 }
-
-- (id)initWithFrame:(NSRect)frameRect {
-    self = [super initWithFrame:frameRect];
-    
-    if (self != nil) {
-        [self setup];
-    }
-    
-    return self;
-};
 
 - (BOOL)vertical {
     return self->_is_vertical;
@@ -89,6 +82,10 @@ static const NSInteger _MARGINS = 15;
     }
     
     return NO;
+};
+
+- (ICAKDockableViewStyle)prevailingStyle {
+    return self->_prevailing_style;
 };
 
 - (NSInteger)insertionPositionForPoint:(NSPoint)pt {
@@ -205,6 +202,10 @@ static const NSInteger _MARGINS = 15;
 }
 
 - (void)didAddSubview:(NSView*)subview {
+    if ([subview isKindOfClass:ICAKDockableView.class]) {
+        self->_prevailing_style = ((ICAKDockableView*)subview).style;
+    }
+    
     NSLayoutConstraint* newStapleConstraint;
     NSUInteger pos = [self.subviews indexOfObject:subview]; //why do I gotta DO THIS
     NSView* previousView = nil;

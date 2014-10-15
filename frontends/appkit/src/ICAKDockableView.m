@@ -18,6 +18,7 @@
     self->_in_detach = NO;
     self->_detach_threshold = 20.0;
     self->_delegate = NULL;
+    self->_style = ICAKDockableViewStylePanel;
 };
 
 - (id)init {
@@ -29,16 +30,6 @@
     
     return self;
 }
-
-- (id)initWithFrame:(NSRect)frameRect {
-    self = [super initWithFrame:frameRect];
-    
-    if (self != nil) {
-        [self setup];
-    }
-    
-    return self;
-};
 
 - (ICAKDockableViewStyle)style {
     return self->_style;

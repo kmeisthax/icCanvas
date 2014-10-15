@@ -20,6 +20,7 @@ static const NSInteger _MARGINS_LABEL_BOTTOM = 15;
 - (void)dockablePanelSetupSubviews {
     self.translatesAutoresizingMaskIntoConstraints = NO;
     [self addConstraint:[NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationGreaterThanOrEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0 constant:240]];
+    [self addConstraint:[NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationGreaterThanOrEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0 constant:120]];
     
     self->_label = [[NSTextView alloc] init];
     [self addSubview:self->_label];
@@ -34,6 +35,8 @@ static const NSInteger _MARGINS_LABEL_BOTTOM = 15;
     [self addConstraint:[NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self->_label attribute:NSLayoutAttributeTop multiplier:1.0 constant:0]];
     
     self->_content = nil;
+    
+    self.style = ICAKDockableViewStylePanel;
 };
 
 - (id)init {
@@ -45,16 +48,6 @@ static const NSInteger _MARGINS_LABEL_BOTTOM = 15;
     
     return self;
 }
-
-- (id)initWithFrame:(NSRect)frameRect {
-    self = [super initWithFrame:frameRect];
-    
-    if (self != nil) {
-        [self dockablePanelSetupSubviews];
-    }
-    
-    return self;
-};
 
 - (NSView*)contentView {
     return self->_content;

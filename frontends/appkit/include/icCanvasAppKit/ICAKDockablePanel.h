@@ -3,7 +3,6 @@
 @interface ICAKDockablePanel : ICAKDockableView
 
 - (id)init;
-- (id)initWithFrame:(NSRect)frameRect;
 
 - (NSView*)contentView;
 - (void)setContentView:(NSView*)view;
