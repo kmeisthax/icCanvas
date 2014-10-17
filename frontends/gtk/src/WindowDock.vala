@@ -62,6 +62,7 @@ class icCanvasGtk.WindowDock : Gtk.Box, icCanvasGtk.Dock {
     public void insert_new_row(icCanvasGtk.Dock.Edge edge, uint before_row) {
         icCanvasGtk.DockingBox new_row;
         Gtk.Box tgt = this;
+        var container_offset = before_row;
         
         if (edge == Edge.LEFT || edge == Edge.RIGHT) {
             new_row = new icCanvasGtk.DockingBox(Gtk.Orientation.VERTICAL);
@@ -71,7 +72,7 @@ class icCanvasGtk.WindowDock : Gtk.Box, icCanvasGtk.Dock {
         }
         
         if (edge == Edge.BOTTOM || edge == Edge.RIGHT) {
-            before_row = tgt.get_children().length() - before_row;
+            container_offset = tgt.get_children().length() - before_row;
         }
         
         if (edge == Edge.LEFT) {
@@ -79,7 +80,7 @@ class icCanvasGtk.WindowDock : Gtk.Box, icCanvasGtk.Dock {
         }
         
         tgt.pack_start(new_row, false, false, 0);
-        tgt.reorder_child(new_row, (int)before_row);
+        tgt.reorder_child(new_row, (int)container_offset);
         new_row.show_all();
         
         RowData? dat = RowData();
@@ -174,7 +175,7 @@ class icCanvasGtk.WindowDock : Gtk.Box, icCanvasGtk.Dock {
             
             this._center = value;
             
-            this._hbox.pack_end(this._center, true, true, 0);
+            this._hbox.pack_start(this._center, true, true, 0);
             this._hbox.reorder_child(this._center, this._hbox_center);
         }
     }
