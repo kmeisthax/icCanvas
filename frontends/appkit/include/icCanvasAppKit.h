@@ -11,4 +11,4 @@
 #import "icCanvasAppKit/ICAKDockingRow.h"
 #import "icCanvasAppKit/ICAKDockablePanel.h"
 
-#import "icCanvasAppKit/ICAKPanelController.h"
+#import "icCanvasAppKit/ICAKDockingController.h"

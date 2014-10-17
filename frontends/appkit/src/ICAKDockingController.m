@@ -1,6 +1,6 @@
 #include <icCanvasAppKit.h>
 
-@implementation ICAKPanelController {
+@implementation ICAKDockingController {
     NSMutableArray* _panels;
     NSMutableArray* _docks;
 }

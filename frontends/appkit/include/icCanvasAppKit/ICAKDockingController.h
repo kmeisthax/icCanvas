@@ -3,7 +3,7 @@
 /* Manage free-floating panels that contain ICAKDockableViews of the Panel style.
  */
 
-@interface ICAKPanelController : NSObject <ICAKDockableViewDelegate>
+@interface ICAKDockingController : NSObject <ICAKDockableViewDelegate>
 
 - (id)init;
 
