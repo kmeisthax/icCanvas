@@ -166,15 +166,15 @@ static const NSInteger _MARGINS = 15;
 
 - (void)addMarginConstraintsForView:(NSView*)subview {
     //Add margins
-    NSLayoutAttribute attr1 = NSLayoutAttributeLeft;
-    NSLayoutAttribute attr2 = NSLayoutAttributeRight;
+    NSLayoutAttribute attr1 = NSLayoutAttributeBottom;
+    NSLayoutAttribute attr2 = NSLayoutAttributeTop;
     if (self->_is_vertical) {
-        attr1 = NSLayoutAttributeBottom;
-        attr2 = NSLayoutAttributeTop;
+        attr1 = NSLayoutAttributeLeft;
+        attr2 = NSLayoutAttributeRight;
     }
     
     [self addConstraint:[NSLayoutConstraint constraintWithItem:subview attribute:attr1 relatedBy:NSLayoutRelationEqual toItem:self attribute:attr1 multiplier:1.0 constant:_MARGINS]];
-    [self addConstraint:[NSLayoutConstraint constraintWithItem:subview attribute:attr2 relatedBy:NSLayoutRelationEqual toItem:self attribute:attr2 multiplier:1.0 constant:_MARGINS]];
+    [self addConstraint:[NSLayoutConstraint constraintWithItem:subview attribute:attr2 relatedBy:NSLayoutRelationEqual toItem:self attribute:attr2 multiplier:1.0 constant:_MARGINS * -1.0]];
 };
 
 - (NSLayoutConstraint*)createConstraintStapleView:(NSView*)view1 toView:(NSView*)view2 {
@@ -183,7 +183,7 @@ static const NSInteger _MARGINS = 15;
     NSView* attr1View = view1;
     NSView* attr2View = view2;
     
-    if (self->_is_vertical) {
+    if (!self->_is_vertical) {
         attr1 = NSLayoutAttributeLeft;
         attr2 = NSLayoutAttributeRight;
         attr1View = view2;
@@ -194,16 +194,18 @@ static const NSInteger _MARGINS = 15;
 };
 
 - (NSLayoutConstraint*)createConstraintTopMarginForView:(NSView*)view1 {
-    if (self->_is_vertical) {
+    if (!self->_is_vertical) {
         return [NSLayoutConstraint constraintWithItem:view1 attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeLeft multiplier:1.0 constant:_MARGINS];
     } else {
-        return [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:view1 attribute:NSLayoutAttributeTop multiplier:1.0 constant:_MARGINS];
+        return [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:view1 attribute:NSLayoutAttributeTop multiplier:1.0 constant:_MARGINS * -1.0];
     }
 }
 
 - (void)didAddSubview:(NSView*)subview {
     if ([subview isKindOfClass:ICAKDockableView.class]) {
-        self->_prevailing_style = ((ICAKDockableView*)subview).style;
+        if (self->_prevailing_style != ((ICAKDockableView*)subview).style) {
+            self->_prevailing_style = ((ICAKDockableView*)subview).style;
+        }
     }
     
     NSLayoutConstraint* newStapleConstraint;
