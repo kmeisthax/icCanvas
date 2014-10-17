@@ -308,4 +308,118 @@
     
     return proposedMax;
 }
+
+- (void)splitView:(NSSplitView *)splitView resizeSubviewsWithOldSize:(NSSize)oldSize {
+    //Main/cross terms are defined as per CSS3 Flexbox spec
+    CGFloat old_main_length, old_cross_length, new_main_length, new_cross_length;  
+    if (splitView.isVertical) {
+        new_main_length = splitView.bounds.size.width;
+        new_cross_length = splitView.bounds.size.height;
+        old_main_length = oldSize.width;
+        old_cross_length = oldSize.height;
+    } else {
+        new_main_length = splitView.bounds.size.height;
+        new_cross_length = splitView.bounds.size.width;
+        old_main_length = oldSize.height;
+        old_cross_length = oldSize.width;
+    }
+    
+    CGFloat main_length = 0.0f, available_main_length = 0.0f;
+    
+    if (splitView.isVertical) {
+        available_main_length = splitView.bounds.size.width;
+    } else {
+        available_main_length = splitView.bounds.size.height;
+    }
+    
+    available_main_length -= splitView.dividerThickness * (splitView.subviews.count - 1);
+    
+    for (NSView* view in splitView.subviews) {
+        NSRect frame = view.frame, bounds = view.bounds;
+        
+        if (splitView.isVertical) {
+            frame.origin.y = 0.0f;
+            frame.origin.x = main_length;
+            frame.size.height = new_cross_length;
+            bounds.size.height = new_cross_length;
+        } else {
+            frame.origin.y = splitView.bounds.size.height - main_length;
+            frame.origin.x = 0.0f;
+            frame.size.width = new_cross_length;
+            bounds.size.width = new_cross_length;
+        }
+        
+        if (view == self->_horiz || view == self->_center) {
+        } else {
+            CGFloat minLength = 0;
+            if ([view isKindOfClass:ICAKDockingRow.class]) {
+                ICAKDockingRow *theDockingRow = (ICAKDockingRow*)view;
+                
+                if (theDockingRow.prevailingStyle == ICAKDockableViewStylePanel) {
+                    minLength = ICAKDockableViewMinPanelSize;
+                } else {
+                    minLength = ICAKDockableViewMinToolbarSize;
+                }
+            }
+            
+            if (splitView.isVertical) {
+                frame.size.width = fmax(minLength, frame.size.width);
+                bounds.size.width = fmax(minLength, bounds.size.width);
+                main_length += frame.size.width;
+            } else {
+                frame.size.height = fmax(minLength, frame.size.height);
+                bounds.size.height = fmax(minLength, bounds.size.height);
+                main_length += frame.size.height;
+            }
+        }
+        
+        view.frame = frame;
+        view.bounds = bounds;
+    }
+    
+    NSView* center = nil;
+    
+    for (NSView* view in splitView.subviews) {
+        NSRect frame = view.frame, bounds = view.bounds;
+        
+        if (view == self->_horiz || view == self->_center) {
+            CGFloat divider = 0.0f;
+            center = view;
+            
+            if (splitView.isVertical) {
+                frame.size.width = available_main_length - main_length;
+                bounds.size.width = available_main_length - main_length;
+            } else {
+                frame.size.height = available_main_length - main_length;
+                bounds.size.height = available_main_length - main_length;
+            }
+        } else if (center != nil) {
+            if (splitView.isVertical) {
+                frame.origin.x += center.frame.size.width;
+            } else {
+                frame.origin.y -= center.frame.size.height;
+            }
+        }
+        
+        view.frame = frame;
+        view.bounds = bounds;
+    }
+    
+    CGFloat dividerAccrual = 0.0f;
+    
+    for (NSView* view in splitView.subviews) {
+        NSRect frame = view.frame, bounds = view.bounds;
+        
+        if (splitView.isVertical) {
+            frame.origin.x += dividerAccrual;
+        } else {
+            frame.origin.y += dividerAccrual;
+        }
+        
+        dividerAccrual += splitView.dividerThickness;
+        
+        view.frame = frame;
+        view.bounds = bounds;
+    }
+}
 @end

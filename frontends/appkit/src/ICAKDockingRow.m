@@ -25,6 +25,7 @@ static const NSInteger _MARGINS = 15;
     //Only set when an empty docking row is asked to reserve space.
     NSLayoutConstraint* _empty_constraint;
     NSLayoutConstraint* _bottom_margin_constraint;
+    NSLayoutConstraint* _min_width_constraint;
 }
 
 //I don't feel like learning autoresizing
@@ -203,7 +204,23 @@ static const NSInteger _MARGINS = 15;
 
 - (void)didAddSubview:(NSView*)subview {
     if ([subview isKindOfClass:ICAKDockableView.class]) {
-        self->_prevailing_style = ((ICAKDockableView*)subview).style;
+        if (self->_prevailing_style != ((ICAKDockableView*)subview).style) {
+            self->_prevailing_style = ((ICAKDockableView*)subview).style;
+            
+            [self removeConstraint:self->_min_width_constraint];
+            NSUInteger mw = ICAKDockableViewMinPanelSize;
+            if (self->_prevailing_style == ICAKDockableViewStyleToolbar) {
+                mw = ICAKDockableViewMinToolbarSize;
+            }
+            
+            if (self->_is_vertical) {
+                self->_min_width_constraint = [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationGreaterThanOrEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0 constant:mw];
+            } else {
+                self->_min_width_constraint = [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationGreaterThanOrEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0 constant:mw];
+            }
+            
+            [self addConstraint:self->_min_width_constraint];
+        }
     }
     
     NSLayoutConstraint* newStapleConstraint;
