@@ -109,7 +109,7 @@
 
 - (void)createNewRowOnEdge:(ICAKDockEdge)edge beforeRow:(NSInteger)rowsFromEdge {
     ICAKDockingRow* row = [[ICAKDockingRow alloc] init];
-    NSView* target_view = nil;
+    NSSplitView* target_view = nil;
     
     switch (edge) {
         case ICAKDockEdgeTop:
@@ -125,6 +125,8 @@
             assert(FALSE);
             return; //just in case? lol
     }
+    
+    row.vertical = target_view.isVertical;
     
     NSView* before_view = nil;
     NSWindowOrderingMode relative_dir = NSWindowBelow; //e.g. before
