@@ -49,10 +49,7 @@
           dragDistance = sqrt(dX*dX + dY*dY);
     
     if (!self->_in_detach && dragDistance > self->_detach_threshold) {
-        if (self.superview.subviews.count > 1) {
-            [self->_delegate dockableViewWillDetach:self];
-        }
-        
+        [self->_delegate dockableViewWillDetach:self];
         self->_in_detach = YES;
         
         //Once detached, starting_pt is reused for a drag
