@@ -80,4 +80,8 @@
     [self->scv setNeedsDisplay:YES];
 };
 
+- (ICAKDock*)dock {
+    return self->dk;
+};
+
 @end

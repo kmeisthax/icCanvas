@@ -1,6 +1,8 @@
 #import <Cocoa/Cocoa.h>
 #import <icCanvasManagerObjC.h>
 
+@class ICAKDockingController;
+
 @interface ICAKDrawing : NSDocument
 
 - (id)init;
@@ -11,5 +13,6 @@
 - (void)backgroundTick;
 
 - (ICMDrawing*)drawing;
+- (void)setDockingController:(ICAKDockingController*)dock_ctrl;
 
 @end

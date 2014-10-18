@@ -1,5 +1,7 @@
 #import <Cocoa/Cocoa.h>
 
+@class ICAKDockingController;
+
 /* Provides the ability for users to dock toolbars and panels to the sides of
  * a widget.
  */
@@ -15,4 +17,6 @@
 
 - (CGFloat)splitView:(NSSplitView *)splitView constrainMinCoordinate:(CGFloat)proposedMin ofSubviewAt:(NSInteger)dividerIndex;
 - (CGFloat)splitView:(NSSplitView *)splitView constrainMaxCoordinate:(CGFloat)proposedMax ofSubviewAt:(NSInteger)dividerIndex;
+
+- (void)setDockingController:(ICAKDockingController*)dc;
 @end

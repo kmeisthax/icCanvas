@@ -3,6 +3,7 @@
 @interface ICAKDock()
 - (void)setupSubviews;
 - (NSInteger)findValidLocationForDockableView:(ICAKDockableView*)view atEdge:(ICAKDockEdge)edge;
+- (void)applyDockingController:(ICAKDockingController*)dc toAllRowsInArray:(NSArray*)arr;
 @end
 
 @implementation ICAKDock {
@@ -12,6 +13,8 @@
     NSInteger _horiz_center_idx;
     
     NSMutableArray *_left_rows, *_right_rows, *_top_rows, *_bottom_rows;
+    
+    ICAKDockingController* _dock_ctrl;
 }
 
 - (void)setupSubviews {
@@ -233,6 +236,8 @@
     
     [self->_vert adjustSubviews];
     [self->_horiz adjustSubviews];
+    
+    view.delegate = self->_dock_ctrl;
 };
 
 - (CGFloat)calculateSplitViewMainAxisLength:(NSSplitView*)splitView atDivider:(NSInteger)dividerIndex atRightSide:(BOOL)isRightSide {
@@ -424,4 +429,24 @@
         view.bounds = bounds;
     }
 }
+
+- (void)applyDockingController:(ICAKDockingController*)dc toAllRowsInArray:(NSArray*)arr {
+    for (ICAKDockingRow* dr in arr) {
+        for (NSView* view in dr.subviews) {
+            if ([view isKindOfClass:ICAKDockableView.class]) {
+                ICAKDockableView* dv = (ICAKDockableView*)view;
+                dv.delegate = dc;
+            }
+        }
+    }
+};
+
+- (void)setDockingController:(ICAKDockingController*)dc {
+    self->_dock_ctrl = dc;
+    
+    [self applyDockingController:dc toAllRowsInArray:self->_left_rows];
+    [self applyDockingController:dc toAllRowsInArray:self->_right_rows];
+    [self applyDockingController:dc toAllRowsInArray:self->_top_rows];
+    [self applyDockingController:dc toAllRowsInArray:self->_bottom_rows];
+};
 @end

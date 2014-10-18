@@ -63,6 +63,11 @@
 
 - (void)addDock:(ICAKDock*)dock {
     [self->_docks addObject:dock];
+    dock.dockingController = self;
+};
+
+- (void)addDrawingController:(ICAKDrawingController*)dc {
+    [self addDock:dc.dock];
 };
 
 @end

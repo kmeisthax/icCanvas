@@ -3,6 +3,7 @@
 @implementation ICAKDrawing {
     ICMDrawing* internal_drawing;
     NSTimer* background_timer;
+    ICAKDockingController* _dock_ctrl;
 }
 
 - (id)init {
@@ -42,10 +43,16 @@
     ICAKDrawingController* dc = [[ICAKDrawingController alloc] init];
     [dc setDocument:self];
     [self addWindowController:dc];
+    
+    [self->_dock_ctrl addDrawingController:dc];
 }
 
 - (ICMDrawing*)drawing {
     return self->internal_drawing;
+}
+
+- (void)setDockingController:(ICAKDockingController*)dock_ctrl {
+    self->_dock_ctrl = dock_ctrl;
 }
 
 @end

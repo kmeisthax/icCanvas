@@ -5,6 +5,8 @@
 
 - (id)init;
 - (void)setDocument:(NSDocument *)document;
+- (ICAKDock*)dock;
+
 - (void)rendererDidRenderTiles;
 
 @end

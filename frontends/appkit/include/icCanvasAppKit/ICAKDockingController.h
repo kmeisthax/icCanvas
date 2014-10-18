@@ -16,5 +16,6 @@
 
 - (void)addPanel:(NSPanel*)panel;
 - (void)addDock:(ICAKDock*)dock;
+- (void)addDrawingController:(ICAKDrawingController*)dc;
 
 @end

@@ -1,8 +1,16 @@
 #import <icCanvasAppKit.h>
 #import <icCanvasManagerObjC.h>
 
+@interface ICAKAppDelegate (Private)
+
+- (void)wireDrawingObject:(ICAKDrawing*)drawing;
+
+@end
+
 @implementation ICAKAppDelegate {
     ICMApplication* coreApp;
+    
+    ICAKDockingController* _dock_ctrl;
 }
 
 - (id)init {
@@ -10,10 +18,15 @@
     
     if (self != nil) {
         self->coreApp = [ICMApplication getInstance];
+        self->_dock_ctrl = [[ICAKDockingController alloc] init];
     }
     
     return self;
 }
+
+- (void)wireDrawingObject:(ICAKDrawing*)drawing {
+    drawing.dockingController = self->_dock_ctrl;
+};
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification {
     [NSUserDefaults.standardUserDefaults setBool:NO forKey:@"NSConstraintBasedLayoutVisualizeMutuallyExclusiveConstraints"];
@@ -24,15 +37,20 @@
     appInvoke.target = self->coreApp;
     NSTimer* appTimer = [NSTimer timerWithTimeInterval:0.0 invocation:appInvoke repeats:YES];
     [[NSRunLoop mainRunLoop] addTimer:appTimer forMode:NSDefaultRunLoopMode];
-    
-    //Force creation of new document
-    [[NSDocumentController sharedDocumentController] openUntitledDocumentAndDisplay:YES error: nil];
 }
 
 - (BOOL)applicationOpenUntitledFile:(NSApplication *)theApplication {
     NSDocumentController *dc = [NSDocumentController sharedDocumentController];
     
-    [dc makeUntitledDocumentOfType:@"icCanvas Drawing" error:nil];
+    id doc = [dc makeUntitledDocumentOfType:@"icCanvas Drawing" error:nil];
+    
+    if ([doc isKindOfClass:ICAKDrawing.class]) {
+        ICAKDrawing* draw = (ICAKDrawing*)doc;
+        draw.dockingController = self->_dock_ctrl;
+    }
+    
+    [doc makeWindowControllers];
+    [doc showWindows];
     
     return YES;
 }
