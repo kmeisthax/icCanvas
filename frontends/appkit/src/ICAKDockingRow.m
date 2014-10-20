@@ -212,7 +212,7 @@ static const NSInteger _MARGINS = 15;
     NSUInteger pos = [self.subviews indexOfObject:subview]; //why do I gotta DO THIS
     NSView* previousView = nil;
     if (pos != 0) { //oh that's why
-        [self.subviews objectAtIndex:pos - 1];
+        previousView = [self.subviews objectAtIndex:pos - 1];
     }
     
     [self removePreviousSpaceReservation];

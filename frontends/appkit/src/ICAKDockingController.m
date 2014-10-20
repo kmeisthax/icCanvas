@@ -17,11 +17,27 @@
 };
 
 - (void)dockableViewWillDetach:(ICAKDockableView*)view {
-    [view removeFromSuperview];
+    NSRect frameRelativeToWindow = [view convertRect:view.bounds toView:nil];
     
-    NSPanel* package = [[NSPanel alloc] init];
-    package.contentView = [[ICAKDockingRow alloc] init];
-    [package.contentView addSubview:view];
+    frameRelativeToWindow.origin.x -= ICAKDockableViewPanelMargins;
+    frameRelativeToWindow.origin.y -= ICAKDockableViewPanelMargins;
+    frameRelativeToWindow.size.width += ICAKDockableViewPanelMargins * 2;
+    frameRelativeToWindow.size.height += ICAKDockableViewPanelMargins * 2;
+    
+    NSRect frameRelativeToScreen = [view.window convertRectToScreen:frameRelativeToWindow];
+    NSPanel* package = [[NSPanel alloc] initWithContentRect:frameRelativeToScreen styleMask:(NSTitledWindowMask|NSClosableWindowMask|NSResizableWindowMask|NSUtilityWindowMask) backing:NSBackingStoreBuffered defer:TRUE];
+    [package standardWindowButton:NSWindowZoomButton].enabled = NO;
+    
+    frameRelativeToWindow.origin.x = 0;
+    frameRelativeToWindow.origin.y = 0;
+    
+    ICAKDockingRow* row = [[ICAKDockingRow alloc] initWithFrame:frameRelativeToWindow];
+    row.vertical = YES;
+    
+    package.contentView = row;
+    [row addSubview:view positioned:NSWindowAbove relativeTo:nil];
+    
+    [package makeKeyAndOrderFront:nil];
     
     [self addPanel:package];
 };
