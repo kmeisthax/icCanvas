@@ -18,4 +18,7 @@
 - (void)addDock:(ICAKDock*)dock;
 - (void)addDrawingController:(ICAKDrawingController*)dc;
 
+- (void)didAddDockable:(ICAKDockableView*)view toDock:(ICAKDock*)dock onRow:(ICAKDockingRow*)row;
+- (void)didAddDockable:(ICAKDockableView*)view toPanel:(NSPanel*)panel onRow:(ICAKDockingRow*)row;
+
 @end

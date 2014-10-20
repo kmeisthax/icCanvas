@@ -238,6 +238,7 @@
     [self->_horiz adjustSubviews];
     
     view.delegate = self->_dock_ctrl;
+    [self->_dock_ctrl didAddDockable:view toDock:self onRow:dock];
 };
 
 - (CGFloat)calculateSplitViewMainAxisLength:(NSSplitView*)splitView atDivider:(NSInteger)dividerIndex atRightSide:(BOOL)isRightSide {
@@ -436,6 +437,7 @@
             if ([view isKindOfClass:ICAKDockableView.class]) {
                 ICAKDockableView* dv = (ICAKDockableView*)view;
                 dv.delegate = dc;
+                [self->_dock_ctrl didAddDockable:dv toDock:self onRow:dr];
             }
         }
     }
