@@ -12,14 +12,15 @@
     //Create test window
     NSWindow *window;
     NSRect r = {{100,100}, {400, 400}};
-    window = [[NSWindow alloc] initWithContentRect:r styleMask:(NSTitledWindowMask|NSClosableWindowMask|NSMiniaturizableWindowMask|NSResizableWindowMask) backing:NSBackingStoreBuffered defer:TRUE];
+    window = [[NSWindow alloc] initWithContentRect:r styleMask:(NSTitledWindowMask|NSClosableWindowMask|NSMiniaturizableWindowMask|NSResizableWindowMask|NSFullSizeContentViewWindowMask) backing:NSBackingStoreBuffered defer:TRUE];
     
     self = [super initWithWindow:window];
     
     if (self != nil) {
         [window makeKeyAndOrderFront:nil];
         [window setCollectionBehavior:(window.collectionBehavior|NSWindowCollectionBehaviorFullScreenPrimary)];
-
+        window.titlebarAppearsTransparent = YES;
+        
         ICMDrawing* drawing = [[ICMDrawing alloc] init];
 
         self->cv = [[ICAKCanvasView alloc] initWithDrawing: drawing];
