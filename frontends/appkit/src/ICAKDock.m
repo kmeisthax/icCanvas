@@ -4,6 +4,7 @@
 - (void)setupSubviews;
 - (NSInteger)findValidLocationForDockableView:(ICAKDockableView*)view atEdge:(ICAKDockEdge)edge;
 - (void)applyDockingController:(ICAKDockingController*)dc toAllRowsInArray:(NSArray*)arr;
+- (BOOL)traverseEdge:(ICAKDockEdge)edge withArray:(NSArray*)arr withBlock:(BOOL(^)(ICAKDockEdge, NSInteger, ICAKDockingRow*))cbk;
 @end
 
 @implementation ICAKDock {
@@ -450,5 +451,36 @@
     [self applyDockingController:dc toAllRowsInArray:self->_right_rows];
     [self applyDockingController:dc toAllRowsInArray:self->_top_rows];
     [self applyDockingController:dc toAllRowsInArray:self->_bottom_rows];
+};
+
+- (void)traverseDockablesWithBlock:(BOOL(^)(ICAKDockEdge, NSInteger, ICAKDockingRow*))cbk {
+    BOOL should_stop = FALSE;
+    
+    should_stop = [self traverseEdge:ICAKDockEdgeLeft withArray:self->_left_rows withBlock:cbk];
+    if (should_stop) return;
+    
+    should_stop = [self traverseEdge:ICAKDockEdgeRight withArray:self->_right_rows withBlock:cbk];
+    if (should_stop) return;
+    
+    should_stop = [self traverseEdge:ICAKDockEdgeTop withArray:self->_top_rows withBlock:cbk];
+    if (should_stop) return;
+    
+    should_stop = [self traverseEdge:ICAKDockEdgeBottom withArray:self->_bottom_rows withBlock:cbk];
+    if (should_stop) return;
+};
+
+- (BOOL)traverseEdge:(ICAKDockEdge)edge withArray:(NSArray*)arr withBlock:(BOOL(^)(ICAKDockEdge, NSInteger, ICAKDockingRow*))cbk {
+    BOOL should_stop = FALSE;
+    NSInteger rowIndex = 0;
+    
+    for (NSView* view in arr) {
+        ICAKDockingRow* dk = (ICAKDockingRow*)view;
+        should_stop = cbk(edge, rowIndex, dk);
+        if (should_stop) break;
+        
+        rowIndex++;
+    }
+    
+    return should_stop;
 };
 @end
