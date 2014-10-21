@@ -13,33 +13,18 @@
  */
 - (void)dockableViewWillDetach:(ICAKDockableView*)view;
 
-/* Fired when the dockable view is considering attaching to a panel or dock.
- * Returning NO causes the dockable to cancel attaching to the panel or dock.
+/* Fired when the dockable view has detached and recieved a drag event.
  *
- * If YES, the delegate should arrange for the Panel or Dock to indicate that
- * the DockableView can be docked to the desired point, and expect a willAttach
- * message to be sent shortly thereafter.
- *
- * If NO, the DockableView is not permitted to send a willAttach message and
- * the delegate will perform no auxiliary UI actions.
- *
+ * The default behavior of a dockable view is to drag it's parent window, but
+ * this may be used to add additional functionality.
  */
-- (BOOL)dockableView:(ICAKDockableView*)view shouldAttachToPanel:(NSPanel*)panel;
-- (BOOL)dockableView:(ICAKDockableView*)view shouldAttachToDock:(ICAKDock*)dock;
+- (BOOL)dockableView:(ICAKDockableView*)view wasDraggedByEvent:(NSEvent*)evt;
 
-/* Fired when a dockable view wants to be attached to a panel or dock.
+/* Fired when a detached dockable view has been released by the user.
  *
- * The delegate recieving this message should arrange to have the dockable view
- * placed in the indicated area.
+ * The delegate may, at it's leisure, mutate the view hierarchy as needed to
+ * support docking the released view back to another dock or panel.
  */
-- (void)dockableView:(ICAKDockableView*)view willAttachToPanel:(NSPanel*)panel atOffset:(NSInteger)offset;
-- (void)dockableView:(ICAKDockableView*)view willAttachToDock:(ICAKDock*)dock onEdge:(ICAKDockEdge)edge onRow:(NSInteger)rowsFromEdge atOffset:(NSInteger)offset;
-
-/* Fired when the dockable view cancels the attachment operation. The delegate
- * should remove any animations or placeholders added by a shouldAttach message
- * and, if the dockable view was placed inside a new NSPanel, make said NSPanel
- * permenant.
- */
-- (void)dockableViewDidNotAttach:(ICAKDockableView*)view;
+- (BOOL)dockableViewWasReleased:(ICAKDockableView*)view;
 
 @end
