@@ -9,12 +9,14 @@ class icCanvasGtk.DockableToolbar : Gtk.Bin, Gtk.Orientable, icCanvasGtk.Dockabl
     
     private Gtk.Widget? _child;
     private Gdk.Window? _evtwnd;
+    private Gtk.Allocation _handle_alloc;
     
     public DockableToolbar() {
         this.add_events(Gdk.EventMask.POINTER_MOTION_MASK | Gdk.EventMask.BUTTON_PRESS_MASK | Gdk.EventMask.BUTTON_RELEASE_MASK | Gdk.EventMask.LEAVE_NOTIFY_MASK);
         this.set_has_window(true);
         this._evtwnd = null;
         this._child = null;
+        this._handle_alloc = Gtk.Allocation();
     }
     
     private Gtk.Orientation _orientation;
@@ -130,17 +132,28 @@ class icCanvasGtk.DockableToolbar : Gtk.Bin, Gtk.Orientable, icCanvasGtk.Dockabl
         this.set_allocation(allocation);
         
         Gtk.Allocation toolbar_alloc = Gtk.Allocation();
+        this._handle_alloc = Gtk.Allocation();
         
         if (this.orientation == Gtk.Orientation.HORIZONTAL) {
             toolbar_alloc.x = icCanvasGtk.DockableToolbar.PADDING_MAIN * 2 + icCanvasGtk.DockableToolbar.HANDLE_LENGTH;
             toolbar_alloc.y = icCanvasGtk.DockableToolbar.PADDING_CROSS;
             toolbar_alloc.width = int.max(allocation.width - toolbar_alloc.x - icCanvasGtk.DockableToolbar.PADDING_MAIN, 0);
             toolbar_alloc.height = int.max(allocation.height - icCanvasGtk.DockableToolbar.PADDING_CROSS * 2, 0);
+            
+            this._handle_alloc.x = icCanvasGtk.DockableToolbar.PADDING_MAIN;
+            this._handle_alloc.y = icCanvasGtk.DockableToolbar.PADDING_CROSS;
+            this._handle_alloc.width = icCanvasGtk.DockableToolbar.HANDLE_LENGTH;
+            this._handle_alloc.height = allocation.height - icCanvasGtk.DockableToolbar.PADDING_CROSS * 2;
         } else if (this.orientation == Gtk.Orientation.VERTICAL) {
             toolbar_alloc.x = icCanvasGtk.DockableToolbar.PADDING_CROSS;
             toolbar_alloc.y = icCanvasGtk.DockableToolbar.PADDING_MAIN * 2 + icCanvasGtk.DockableToolbar.HANDLE_LENGTH;
             toolbar_alloc.width = int.max(allocation.width - icCanvasGtk.DockableToolbar.PADDING_CROSS * 2, 0);
             toolbar_alloc.height = int.max(allocation.height - toolbar_alloc.y - icCanvasGtk.DockableToolbar.PADDING_MAIN, 0);
+            
+            this._handle_alloc.y = icCanvasGtk.DockableToolbar.PADDING_MAIN;
+            this._handle_alloc.x = icCanvasGtk.DockableToolbar.PADDING_CROSS;
+            this._handle_alloc.height = icCanvasGtk.DockableToolbar.HANDLE_LENGTH;
+            this._handle_alloc.width = allocation.width - icCanvasGtk.DockableToolbar.PADDING_CROSS * 2;
         }
         
         if (this._child != null) {
