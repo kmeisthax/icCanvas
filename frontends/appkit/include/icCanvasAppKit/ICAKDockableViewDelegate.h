@@ -18,13 +18,13 @@
  * The default behavior of a dockable view is to drag it's parent window, but
  * this may be used to add additional functionality.
  */
-- (BOOL)dockableView:(ICAKDockableView*)view wasDraggedByEvent:(NSEvent*)evt;
+- (void)dockableView:(ICAKDockableView*)view wasDraggedByEvent:(NSEvent*)evt;
 
 /* Fired when a detached dockable view has been released by the user.
  *
  * The delegate may, at it's leisure, mutate the view hierarchy as needed to
  * support docking the released view back to another dock or panel.
  */
-- (BOOL)dockableViewWasReleased:(ICAKDockableView*)view;
+- (void)dockableViewWasReleased:(ICAKDockableView*)view;
 
 @end
