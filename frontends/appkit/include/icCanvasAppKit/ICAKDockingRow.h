@@ -22,4 +22,6 @@
 
 - (void)didAddSubview:(NSView*)subview;
 - (void)willRemoveSubview:(NSView*)subview;
+
+- (NSRect)marginlessFrameOfSubview:(NSView*)subview;
 @end

@@ -79,35 +79,127 @@ typedef struct {
     [self didAddDockable:view toPanel:package onRow:row];
 };
 
-- (BOOL)dockableView:(ICAKDockableView*)view shouldAttachToPanel:(NSPanel*)panel {
-    id contentView = panel.contentView;
-    if (![contentView respondsToSelector:@selector(canAcceptDockableView:)]) {
-        return NO; //I don't know what the heck this panel is
+- (void)dockableView:(ICAKDockableView*)view wasDraggedByEvent:(NSEvent*)evt {
+    NSPoint window_loc = evt.locationInWindow;
+    NSRect testrect;
+    testrect.origin = window_loc;
+    testrect.size.width = 0.0;
+    testrect.size.height = 0.0;
+    
+    NSRect convertedRect = [view.window convertRectToScreen:testrect];
+    NSPoint screen_loc = convertedRect.origin;
+    
+    __block ICAKDockingControllerDockData dat; //why do I gotta DO this
+    
+    NSValue* maybeDat = [self->_docknfo objectForKey:[NSValue valueWithNonretainedObject:view]];
+    if (maybeDat == nil) {
+        return; //WTF
+    }
+    [maybeDat getValue:&dat];
+    
+    dat.has_selected_target = NO;
+    dat.selected_dock = nil;
+    dat.selected_panel = nil;
+    
+    for (ICAKDock* dock in self->_docks) {
+        [dock traverseDockablesWithBlock:^(ICAKDockEdge edge, NSInteger row_cnt, ICAKDockingRow* row) {
+            NSRect winRelFrame = [row convertRect:row.frame toView:nil];
+            NSRect absFrame = [row.window convertRectToScreen:winRelFrame];
+            
+            if (NSPointInRect(screen_loc, absFrame) && [row canAcceptDockableView:view]) {
+                NSInteger current_pos = 0;
+                for (NSView* maybe_dockable in row.subviews) {
+                    if ([maybe_dockable isKindOfClass:ICAKDockableView.class]) {
+                        ICAKDockableView* dv = (ICAKDockableView*)maybe_dockable;
+                        NSRect marginless_frame = [row marginlessFrameOfSubview:view];
+                        
+                        if (NSPointInRect(screen_loc, marginless_frame)) {
+                            break;
+                        }
+                    }
+                    current_pos++;
+                }
+                
+                dat.has_selected_target = YES;
+                dat.selected_dock = dock;
+                dat.selected_edge = edge;
+                dat.selected_offset = row_cnt;
+                dat.selected_pos = current_pos;
+                
+                return YES;
+            }
+            
+            return NO;
+        }];
+        
+        if (dat.has_selected_target) {
+            break;
+        }
+        
+        //Consider the edges of the frame
+        NSRect dockWinFrame = [dock convertRect:dock.frame toView: nil];
+        NSRect dockAbsFrame = [dock.window convertRectToScreen:dockWinFrame];
+        NSRect insetDockFrame = NSInsetRect(dockAbsFrame, fmin(25.0f, dockAbsFrame.size.width / 2.0f), fmin(25.0f, dockAbsFrame.size.height / 2.0f));
+        
+        if (screen_loc.x >= dockAbsFrame.origin.x && screen_loc.x <= insetDockFrame.origin.x) {
+            dat.has_selected_target = YES;
+            dat.selected_dock = dock;
+            dat.selected_edge = ICAKDockEdgeLeft;
+            dat.selected_offset = -1;
+            dat.selected_pos = 0;
+        }
+        
+        if (screen_loc.x >= dockAbsFrame.origin.y && screen_loc.y <= insetDockFrame.origin.y) {
+            dat.has_selected_target = YES;
+            dat.selected_dock = dock;
+            dat.selected_edge = ICAKDockEdgeBottom;
+            dat.selected_offset = -1;
+            dat.selected_pos = 0;
+        }
+        
+        if (screen_loc.x >= insetDockFrame.origin.x + dockAbsFrame.size.width && screen_loc.x <= dockAbsFrame.origin.x + dockAbsFrame.size.width) {
+            dat.has_selected_target = YES;
+            dat.selected_dock = dock;
+            dat.selected_edge = ICAKDockEdgeRight;
+            dat.selected_offset = -1;
+            dat.selected_pos = 0;
+        }
+        
+        if (screen_loc.y >= insetDockFrame.origin.y + dockAbsFrame.size.height && screen_loc.y <= dockAbsFrame.origin.y + dockAbsFrame.size.height) {
+            dat.has_selected_target = YES;
+            dat.selected_dock = dock;
+            dat.selected_edge = ICAKDockEdgeTop;
+            dat.selected_offset = -1;
+            dat.selected_pos = 0;
+        }
+        
+        if (dat.has_selected_target) break;
     }
     
-    return [contentView canAcceptDockableView:view];
-};
-- (BOOL)dockableView:(ICAKDockableView*)view shouldAttachToDock:(ICAKDock*)dock {
-    return YES; //Docks currently can always accept dockable views
-};
-
-- (void)dockableView:(ICAKDockableView*)view willAttachToPanel:(NSPanel*)panel atOffset:(NSInteger)offset {
-    id contentView = panel.contentView;
-    if (![contentView respondsToSelector:@selector(insertDockableView:atPosition:)]) {
-        return; //Do nothing, what the eff is this thing
+    if (dat.has_selected_target) {
+        view.window.alphaValue = 0.6;
+    } else {
+        view.window.alphaValue = 1.0;
     }
     
-    [contentView addSubview:view positioned:NSWindowBelow relativeTo:[[contentView subviews] objectAtIndex:offset]];
-};
-- (void)dockableView:(ICAKDockableView*)view willAttachToDock:(ICAKDock*)dock onEdge:(ICAKDockEdge)edge onRow:(NSInteger)rowsFromEdge atOffset:(NSInteger)offset {
-    [dock attachDockableView:view toEdge:edge onRow:rowsFromEdge atOffset:offset];
+    [self->_docknfo setObject:[NSValue valueWithBytes:&dat objCType:@encode(ICAKDockingControllerDockData)] forKey:[NSValue valueWithNonretainedObject:view]];
 };
 
-- (void)dockableViewDidNotAttach:(ICAKDockableView*)view {
-    /* Do nothing for now.
-     * In the future, when we use DockingRow's reservation feature, we should
-     * cancel whatever reservation was in place.
-     */
+- (void)dockableViewWasReleased:(ICAKDockableView*)view {
+    ICAKDockingControllerDockData dat;
+    
+    NSValue* maybeDat = [self->_docknfo objectForKey:[NSValue valueWithNonretainedObject:view]];
+    if (maybeDat != nil) {
+        [maybeDat getValue:&dat];
+    }
+    
+    if (dat.has_selected_target) {
+        if (dat.selected_dock) {
+            [dat.selected_dock attachDockableView:view toEdge:dat.selected_edge onRow:dat.selected_offset atOffset:dat.selected_pos];
+        }
+        
+        //TODO: Release to Panel
+    }
 };
 
 - (void)addPanel:(NSPanel*)panel {

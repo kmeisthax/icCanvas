@@ -271,4 +271,9 @@ static const NSInteger _MARGINS = 15;
     
     [self->_spacing_constraints removeObjectAtIndex:pos];
 };
+
+- (NSRect)marginlessFrameOfSubview:(NSView*)subview {
+    NSRect svFrame = subview.frame;
+    return NSInsetRect(svFrame, ICAKDockableViewPanelMargins * -1.0, ICAKDockableViewPanelMargins * -1.0);
+};
 @end
