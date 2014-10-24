@@ -202,14 +202,15 @@
 
 - (void)attachDockableView:(ICAKDockableView*)view toEdge:(ICAKDockEdge)edge {
     NSInteger row = [self findValidLocationForDockableView:view atEdge:edge];
-    if (row == -1) { //Special case: no accepting rows
-        [self createNewRowOnEdge:edge beforeRow:0];
-        row = 0;
-    }
     [self attachDockableView:view toEdge:edge onRow:row atOffset:0];
 };
 
 - (void)attachDockableView:(ICAKDockableView*)view toEdge:(ICAKDockEdge)edge onRow:(NSInteger)rowsFromEdge atOffset:(NSInteger)offset {
+    if (rowsFromEdge == -1) { //Special case: no accepting rows
+        [self createNewRowOnEdge:edge beforeRow:0];
+        rowsFromEdge = 0;
+    }
+    
     ICAKDockingRow* dock = nil;
     
     switch (edge) {
