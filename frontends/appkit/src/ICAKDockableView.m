@@ -55,6 +55,7 @@
         //Once detached, starting_pt is reused for a drag
         self->_starting_pt = NSEvent.mouseLocation;
     } else {
+        [self->_delegate dockableView:self wasDraggedByEvent:event];
         //Drag containing window once detached
         NSRect winFrame = self.window.frame;
         winFrame.origin.x = winFrame.origin.x + dX;
@@ -66,6 +67,7 @@
 };
 
 - (void)mouseUp:(NSEvent*)event {
+    [self->_delegate dockableViewWasReleased:self];
     self->_in_detach = NO;
 };
 
