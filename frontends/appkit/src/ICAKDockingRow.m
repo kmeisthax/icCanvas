@@ -178,8 +178,8 @@ static const NSInteger _MARGINS = 15;
 };
 
 - (NSLayoutConstraint*)createConstraintStapleView:(NSView*)view1 toView:(NSView*)view2 {
-    NSLayoutAttribute attr1 = NSLayoutAttributeBottom;
-    NSLayoutAttribute attr2 = NSLayoutAttributeTop;
+    NSLayoutAttribute attr1 = NSLayoutAttributeTop;
+    NSLayoutAttribute attr2 = NSLayoutAttributeBottom;
     NSView* attr1View = view1;
     NSView* attr2View = view2;
     
