@@ -166,7 +166,7 @@ typedef struct {
             dat.selected_pos = 0;
         }
         
-        if (screen_loc.x >= insetDockFrame.origin.x + dockAbsFrame.size.width && screen_loc.x <= dockAbsFrame.origin.x + dockAbsFrame.size.width) {
+        if (screen_loc.x >= insetDockFrame.origin.x + insetDockFrame.size.width && screen_loc.x <= dockAbsFrame.origin.x + dockAbsFrame.size.width) {
             dat.has_selected_target = YES;
             dat.selected_dock = dock;
             dat.selected_edge = ICAKDockEdgeRight;
@@ -174,7 +174,7 @@ typedef struct {
             dat.selected_pos = 0;
         }
         
-        if (screen_loc.y >= insetDockFrame.origin.y + dockAbsFrame.size.height && screen_loc.y <= dockAbsFrame.origin.y + dockAbsFrame.size.height) {
+        if (screen_loc.y >= insetDockFrame.origin.y + insetDockFrame.size.height && screen_loc.y <= dockAbsFrame.origin.y + dockAbsFrame.size.height) {
             dat.has_selected_target = YES;
             dat.selected_dock = dock;
             dat.selected_edge = ICAKDockEdgeTop;
