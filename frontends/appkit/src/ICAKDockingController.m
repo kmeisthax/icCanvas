@@ -49,7 +49,7 @@ typedef struct {
     
     [maybeDat getValue:&dat];
     
-    if (dat.dock == nil && view.superview.subviews.count <= 1) {
+    if (dat.dock == nil && dat.row.subviews.count <= 1) {
         return;
     }
     
@@ -77,6 +77,15 @@ typedef struct {
     
     [self addPanel:package];
     [self didAddDockable:view toPanel:package onRow:row];
+    
+    if (dat.row.subviews.count == 0) {
+        if (dat.dock != nil) {
+            ICAKDockEdge edge;
+            NSInteger rowsFromEdge;
+            if (![dat.dock getEdge:&edge andOffset:&rowsFromEdge forRow:dat.row]) return;//WTF
+            [dat.dock removeRowOnEdge:edge atOffset:rowsFromEdge];
+        }
+    }
 };
 
 - (void)dockableView:(ICAKDockableView*)view wasDraggedByEvent:(NSEvent*)evt {

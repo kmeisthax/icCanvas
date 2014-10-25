@@ -200,6 +200,63 @@
     [target_view addSubview:row positioned:relative_dir relativeTo:before_view];
 };
 
+- (void)removeRowOnEdge:(ICAKDockEdge)edge atOffset:(NSInteger)rowsFromEdge {
+    ICAKDockingRow* rowView = nil;
+    
+    switch (edge) {
+        case ICAKDockEdgeLeft:
+            rowView = [self->_left_rows objectAtIndex:rowsFromEdge];
+            [self->_left_rows removeObjectAtIndex:rowsFromEdge];
+            break;
+        case ICAKDockEdgeRight:
+            rowView = [self->_right_rows objectAtIndex:rowsFromEdge];
+            [self->_right_rows removeObjectAtIndex:rowsFromEdge];
+            break;
+        case ICAKDockEdgeTop:
+            rowView = [self->_top_rows objectAtIndex:rowsFromEdge];
+            [self->_top_rows removeObjectAtIndex:rowsFromEdge];
+            break;
+        case ICAKDockEdgeBottom:
+            rowView = [self->_bottom_rows objectAtIndex:rowsFromEdge];
+            [self->_bottom_rows removeObjectAtIndex:rowsFromEdge];
+            break;
+    }
+    
+    [rowView removeFromSuperview];
+};
+
+- (BOOL)getEdge:(ICAKDockEdge*)outEdge andOffset:(NSInteger*)outRowsFromEdge forRow:(ICAKDockingRow*)row {
+    if ([self->_left_rows containsObject:row]) {
+        if (outEdge) *outEdge = ICAKDockEdgeLeft;
+        if (outRowsFromEdge) *outRowsFromEdge = [self->_left_rows indexOfObject:row];
+        
+        return true;
+    }
+    
+    if ([self->_right_rows containsObject:row]) {
+        if (outEdge) *outEdge = ICAKDockEdgeRight;
+        if (outRowsFromEdge) *outRowsFromEdge = [self->_right_rows indexOfObject:row];
+        
+        return true;
+    }
+    
+    if ([self->_top_rows containsObject:row]) {
+        if (outEdge) *outEdge = ICAKDockEdgeTop;
+        if (outRowsFromEdge) *outRowsFromEdge = [self->_top_rows indexOfObject:row];
+        
+        return true;
+    }
+    
+    if ([self->_bottom_rows containsObject:row]) {
+        if (outEdge) *outEdge = ICAKDockEdgeBottom;
+        if (outRowsFromEdge) *outRowsFromEdge = [self->_bottom_rows indexOfObject:row];
+        
+        return true;
+    }
+    
+    return false;
+};
+
 - (void)attachDockableView:(ICAKDockableView*)view toEdge:(ICAKDockEdge)edge {
     NSInteger row = [self findValidLocationForDockableView:view atEdge:edge];
     [self attachDockableView:view toEdge:edge onRow:row atOffset:0];
