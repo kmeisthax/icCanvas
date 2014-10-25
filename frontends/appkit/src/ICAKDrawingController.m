@@ -64,10 +64,12 @@
 
         [window setContentView:self->dk];
         
-        self->panel1 = [[ICAKDockablePanel alloc] init];
-        self->panel1.label = @"Panel test";
-        
-        [self->dk attachDockableView:self->panel1 toEdge:ICAKDockEdgeLeft];
+        for (int i = 0; i < 5; i++) {
+            ICAKDockablePanel* pnl = [[ICAKDockablePanel alloc] init];
+            pnl.label = @"Panel test";
+
+            [self->dk attachDockableView:pnl toEdge:ICAKDockEdgeLeft];
+        }
     }
     
     return self;
