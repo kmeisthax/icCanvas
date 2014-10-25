@@ -208,6 +208,10 @@ typedef struct {
         }
         
         //TODO: Release to Panel
+        
+        if (dat.panel != nil) {
+            [dat.panel close];
+        }
     }
 };
 
