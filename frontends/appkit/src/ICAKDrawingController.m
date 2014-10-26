@@ -66,7 +66,7 @@
         
         for (int i = 0; i < 5; i++) {
             ICAKDockablePanel* pnl = [[ICAKDockablePanel alloc] init];
-            pnl.label = @"Panel test";
+            pnl.label = [NSString stringWithFormat:@"Panel test %d", i + 1];
 
             [self->dk attachDockableView:pnl toEdge:ICAKDockEdgeLeft];
         }
