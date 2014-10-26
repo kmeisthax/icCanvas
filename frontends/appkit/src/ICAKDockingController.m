@@ -117,14 +117,13 @@ typedef struct {
             
             if (NSPointInRect(screen_loc, absFrame) && [row canAcceptDockableView:view]) {
                 NSInteger current_pos = 0;
-                for (NSView* maybe_dockable in row.subviews) {
-                    if ([maybe_dockable isKindOfClass:ICAKDockableView.class]) {
-                        ICAKDockableView* dv = (ICAKDockableView*)maybe_dockable;
-                        NSRect marginless_frame = [row marginlessFrameOfSubview:view];
-                        
-                        if (NSPointInRect(screen_loc, marginless_frame)) {
-                            break;
-                        }
+                for (NSView* otherView in row.subviews) {
+                    NSRect marginless_frame = [row marginlessFrameOfSubview:otherView];
+                    NSRect win_margin_frame = [row convertRect:marginless_frame toView:nil];
+                    NSRect abs_margin_frame = [row.window convertRectToScreen:win_margin_frame];
+
+                    if (NSPointInRect(screen_loc, abs_margin_frame)) {
+                        break;
                     }
                     current_pos++;
                 }
