@@ -134,6 +134,8 @@ typedef struct {
                 dat.selected_offset = row_cnt;
                 dat.selected_pos = current_pos;
                 
+                [row reserveSpace:view.frame atPosition:dat.selected_pos];
+                
                 return YES;
             }
             
