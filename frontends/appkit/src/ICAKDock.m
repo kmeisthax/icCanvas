@@ -285,10 +285,8 @@
             break;
     }
     
-    if (dock.subviews.count == 0) {
+    if (offset >= dock.subviews.count) {
         [dock addSubview:view positioned:NSWindowAbove relativeTo:nil];
-    } else if (offset >= dock.subviews.count) {
-        [dock addSubview:view positioned:NSWindowAbove relativeTo:[dock.subviews objectAtIndex:dock.subviews.count - 1]];
     } else {
         [dock addSubview:view positioned:NSWindowBelow relativeTo:[dock.subviews objectAtIndex:offset]];
     }

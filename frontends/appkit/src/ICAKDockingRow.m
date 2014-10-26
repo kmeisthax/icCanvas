@@ -9,6 +9,8 @@ static const NSInteger _MARGINS = 15;
 - (void)addMarginConstraintsForView:(NSView*)view;
 - (NSLayoutConstraint*)createConstraintStapleView:(NSView*)view1 toView:(NSView*)view2;
 - (NSLayoutConstraint*)createConstraintTopMarginForView:(NSView*)view1;
+- (void)regenerateSpacingConstraints;
+- (void)regenerateSpacingConstraintsExcludingSubview:(NSView*)view;
 @end
 
 @implementation ICAKDockingRow {
@@ -217,60 +219,43 @@ static const NSInteger _MARGINS = 15;
     
     [self removePreviousSpaceReservation];
     [self addMarginConstraintsForView:subview];
-    
-    if (pos < self.subviews.count - 1) { //Inserting a subview
-        NSView* nextView = [self.subviews objectAtIndex:pos + 1];
-        [self removeConstraint:[self->_spacing_constraints objectAtIndex:pos]];
-        newStapleConstraint = [self createConstraintStapleView:nextView toView:subview];
-        [self addConstraint:newStapleConstraint];
-        [self->_spacing_constraints replaceObjectAtIndex:pos withObject:newStapleConstraint];
-    }
-    
-    if (previousView == nil) {
-        newStapleConstraint = [self createConstraintTopMarginForView:subview];
-    } else {
-        newStapleConstraint = [self createConstraintStapleView:subview toView:previousView];
-    }
-    
-    [self addConstraint:newStapleConstraint];
-    
-    if (pos < self.subviews.count - 1) {
-        [self->_spacing_constraints insertObject:newStapleConstraint atIndex:pos];
-    } else {
-        [self->_spacing_constraints addObject:newStapleConstraint];
-    }
+    [self regenerateSpacingConstraints];
 };
 
 - (void)willRemoveSubview:(NSView*)subview {
     [self removePreviousSpaceReservation];
+    [self regenerateSpacingConstraintsExcludingSubview:subview];
+};
+
+- (void)regenerateSpacingConstraints {
+    [self regenerateSpacingConstraintsExcludingSubview:nil];
+}
+
+- (void)regenerateSpacingConstraintsExcludingSubview:(NSView*)deadview {
+    for (NSLayoutConstraint* constraint in self->_spacing_constraints) {
+        [self removeConstraint:constraint];
+    }
     
-    //why do I gotta DO THIS
-    NSUInteger pos = [self.subviews indexOfObject:subview];
-    NSView* nextView = nil;
+    [self->_spacing_constraints removeAllObjects];
+    
     NSView* previousView = nil;
     
-    if (pos != 0) {
-        previousView = [self.subviews objectAtIndex:pos - 1];
-    }
-    
-    if (pos < self.subviews.count - 1) {
-        nextView = [self.subviews objectAtIndex:pos + 1];
-    }
-    
-    if (nextView != nil) {
-        NSLayoutConstraint* stapleConstraint;
+    for (NSView* view in self.subviews) {
+        if (view == deadview) continue;
         
-        if (previousView != nil) {
-            stapleConstraint = [self createConstraintStapleView:nextView toView:previousView];
+        NSLayoutConstraint* stapleConstraint;
+        if (previousView == nil) {
+            stapleConstraint = [self createConstraintTopMarginForView:view];
         } else {
-            stapleConstraint = [self createConstraintTopMarginForView:nextView];
+            stapleConstraint = [self createConstraintStapleView:view toView:previousView];
         }
         
-        [self->_spacing_constraints replaceObjectAtIndex:pos + 1 withObject:stapleConstraint];
+        [self addConstraint:stapleConstraint];
+        [self->_spacing_constraints addObject:stapleConstraint];
+        
+        previousView = view;
     }
-    
-    [self->_spacing_constraints removeObjectAtIndex:pos];
-};
+}
 
 - (NSRect)marginlessFrameOfSubview:(NSView*)subview {
     NSRect svFrame = subview.frame;
