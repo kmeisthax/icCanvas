@@ -6,7 +6,7 @@
 
 @implementation ICAKDockableView {
     BOOL _in_detach;
-    NSPoint _starting_pt;
+    NSPoint _starting_pt, _starting_loc;
     CGFloat _detach_threshold;
     
     ICAKDockableViewStyle _style;
@@ -44,9 +44,11 @@
 };
 
 - (void)mouseDragged:(NSEvent*)event {
-    float dX = NSEvent.mouseLocation.x - self->_starting_pt.x,
-          dY = NSEvent.mouseLocation.y - self->_starting_pt.y,
-          dragDistance = sqrt(dX*dX + dY*dY);
+    float mouse_dX = NSEvent.mouseLocation.x - self->_starting_pt.x,
+          mouse_dY = NSEvent.mouseLocation.y - self->_starting_pt.y,
+          frame_dX = self->_starting_loc.x + mouse_dX,
+          frame_dY = self->_starting_loc.y + mouse_dY,
+          dragDistance = sqrt(mouse_dX*mouse_dX + mouse_dY*mouse_dY);
     
     if (!self->_in_detach && dragDistance > self->_detach_threshold) {
         [self->_delegate dockableViewWillDetach:self];
@@ -54,16 +56,15 @@
         
         //Once detached, starting_pt is reused for a drag
         self->_starting_pt = NSEvent.mouseLocation;
+        self->_starting_loc = self.window.frame.origin;
     } else if (self->_in_detach) {
         [self->_delegate dockableView:self wasDraggedByEvent:event];
         
         //Drag containing window once detached
         NSRect winFrame = self.window.frame;
-        winFrame.origin.x = winFrame.origin.x + dX;
-        winFrame.origin.y = winFrame.origin.y + dY;
+        winFrame.origin.x = frame_dX;
+        winFrame.origin.y = frame_dY;
         self.window.frameOrigin = winFrame.origin;
-        
-        self->_starting_pt = NSEvent.mouseLocation;
     }
 };
 
