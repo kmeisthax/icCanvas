@@ -159,7 +159,11 @@ static const NSInteger _MARGINS = 15;
         }
         
         if (self->_reserved_before < self.subviews.count) {
-            [[self->_spacing_constraints objectAtIndex:self->_reserved_before] setConstant:_MARGINS];
+            if (self->_reserved_before == 0 && self->_is_vertical) {
+                [[self->_spacing_constraints objectAtIndex:self->_reserved_before] setConstant:_MARGINS * -1.0];
+            } else {
+                [[self->_spacing_constraints objectAtIndex:self->_reserved_before] setConstant:_MARGINS];
+            }
         }
         
         self->_is_reservation_active = NO;
