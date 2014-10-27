@@ -259,7 +259,7 @@
 
 - (void)attachDockableView:(ICAKDockableView*)view toEdge:(ICAKDockEdge)edge {
     NSInteger row = [self findValidLocationForDockableView:view atEdge:edge];
-    [self attachDockableView:view toEdge:edge onRow:row atOffset:0];
+    [self attachDockableView:view toEdge:edge onRow:row atOffset:INT_MAX];
 };
 
 - (void)attachDockableView:(ICAKDockableView*)view toEdge:(ICAKDockEdge)edge onRow:(NSInteger)rowsFromEdge atOffset:(NSInteger)offset {
