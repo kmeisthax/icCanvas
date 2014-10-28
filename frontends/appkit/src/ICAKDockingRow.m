@@ -265,4 +265,24 @@ static const NSInteger _MARGINS = 15;
     NSRect svFrame = subview.frame;
     return NSInsetRect(svFrame, ICAKDockableViewPanelMargins * -1.0, ICAKDockableViewPanelMargins * -1.0);
 };
+
+- (BOOL)isScreenPoint:(NSPoint)pt beforePosition:(NSInteger)pos {
+    //TODO: Account for BIDI
+    CGFloat main_pos, main_length = 0;
+    NSView* theSubView = [self.subviews objectAtIndex:pos];
+    NSRect winRelFrame = [self convertRect:self.frame toView:nil],
+           svRelFrame = [self convertRect:theSubView.frame toView:nil];
+    NSRect absFrame = [self.window convertRectToScreen:winRelFrame],
+           svAbsFrame = [self.window convertRectToScreen:svRelFrame];
+    
+    if (self->_is_vertical) {
+        main_pos = pt.y;
+        main_length = svAbsFrame.origin.y + (svAbsFrame.size.height / 2.0);
+        return main_length > main_pos;
+    } else {
+        main_pos = pt.x;
+        main_length = svAbsFrame.origin.x + (svAbsFrame.size.width / 2.0);
+        return main_pos > main_length;
+    }
+};
 @end

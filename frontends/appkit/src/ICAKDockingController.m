@@ -117,15 +117,10 @@ typedef struct {
             
             if (NSPointInRect(screen_loc, absFrame) && [row canAcceptDockableView:view]) {
                 NSInteger current_pos = 0;
-                for (NSView* otherView in row.subviews) {
-                    NSRect marginless_frame = [row marginlessFrameOfSubview:otherView];
-                    NSRect win_margin_frame = [row convertRect:marginless_frame toView:nil];
-                    NSRect abs_margin_frame = [row.window convertRectToScreen:win_margin_frame];
-
-                    if (NSPointInRect(screen_loc, abs_margin_frame)) {
+                for (; current_pos < row.subviews.count; current_pos++) {
+                    if (![row isScreenPoint:screen_loc beforePosition:current_pos]) {
                         break;
                     }
-                    current_pos++;
                 }
                 
                 dat.has_selected_target = YES;
