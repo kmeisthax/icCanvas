@@ -141,7 +141,11 @@ static const NSInteger _MARGINS = 15;
     }
     
     if (pos < self.subviews.count) {
-        [[self->_spacing_constraints objectAtIndex:pos] setConstant:length];
+        if (pos == 0 && self->_is_vertical) {
+            [[self->_spacing_constraints objectAtIndex:pos] setConstant:length * -1.0];
+        } else {
+            [[self->_spacing_constraints objectAtIndex:pos] setConstant:length];
+        }
     } else {
         self->_bottom_margin_constraint.constant = length;
     }
