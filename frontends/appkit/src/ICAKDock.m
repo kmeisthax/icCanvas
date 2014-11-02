@@ -289,6 +289,7 @@
         [dock addSubview:view positioned:NSWindowAbove relativeTo:nil];
     } else {
         [dock addSubview:view positioned:NSWindowBelow relativeTo:[dock.subviews objectAtIndex:offset]];
+        [dock regenerateSpacingConstraints];
     }
     
     [self->_vert adjustSubviews];

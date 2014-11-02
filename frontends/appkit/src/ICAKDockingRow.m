@@ -9,8 +9,6 @@ static const NSInteger _MARGINS = 15;
 - (void)addMarginConstraintsForView:(NSView*)view;
 - (NSLayoutConstraint*)createConstraintStapleView:(NSView*)view1 toView:(NSView*)view2;
 - (NSLayoutConstraint*)createConstraintTopMarginForView:(NSView*)view1;
-- (void)regenerateSpacingConstraints;
-- (void)regenerateSpacingConstraintsExcludingSubview:(NSView*)view;
 @end
 
 @implementation ICAKDockingRow {
@@ -216,13 +214,6 @@ static const NSInteger _MARGINS = 15;
         if (self->_prevailing_style != ((ICAKDockableView*)subview).style) {
             self->_prevailing_style = ((ICAKDockableView*)subview).style;
         }
-    }
-    
-    NSLayoutConstraint* newStapleConstraint;
-    NSUInteger pos = [self.subviews indexOfObject:subview]; //why do I gotta DO THIS
-    NSView* previousView = nil;
-    if (pos != 0) { //oh that's why
-        previousView = [self.subviews objectAtIndex:pos - 1];
     }
     
     [self removePreviousSpaceReservation];

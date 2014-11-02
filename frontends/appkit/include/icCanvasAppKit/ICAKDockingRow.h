@@ -25,4 +25,7 @@
 
 - (NSRect)marginlessFrameOfSubview:(NSView*)subview;
 - (BOOL)isScreenPoint:(NSPoint)pt beforePosition:(NSInteger)pos;
+
+- (void)regenerateSpacingConstraints;
+- (void)regenerateSpacingConstraintsExcludingSubview:(NSView*)view;
 @end
