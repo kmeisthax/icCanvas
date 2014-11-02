@@ -111,36 +111,6 @@ typedef struct {
     dat.selected_panel = nil;
     
     for (ICAKDock* dock in self->_docks) {
-        [dock traverseDockablesWithBlock:^(ICAKDockEdge edge, NSInteger row_cnt, ICAKDockingRow* row) {
-            NSRect winRelFrame = [row convertRect:row.frame toView:nil];
-            NSRect absFrame = [row.window convertRectToScreen:winRelFrame];
-            
-            if (NSPointInRect(screen_loc, absFrame) && [row canAcceptDockableView:view]) {
-                NSInteger current_pos = 0;
-                for (; current_pos < row.subviews.count; current_pos++) {
-                    if (![row isScreenPoint:screen_loc beforePosition:current_pos]) {
-                        break;
-                    }
-                }
-                
-                dat.has_selected_target = YES;
-                dat.selected_dock = dock;
-                dat.selected_edge = edge;
-                dat.selected_offset = row_cnt;
-                dat.selected_pos = current_pos;
-                
-                [row reserveSpace:view.frame atPosition:dat.selected_pos];
-                
-                return YES;
-            }
-            
-            return NO;
-        }];
-        
-        if (dat.has_selected_target) {
-            break;
-        }
-        
         //Consider the edges of the frame
         NSRect dockWinFrame = [dock convertRect:dock.frame toView: nil];
         NSRect dockAbsFrame = [dock.window convertRectToScreen:dockWinFrame];
@@ -177,6 +147,34 @@ typedef struct {
             dat.selected_offset = -1;
             dat.selected_pos = 0;
         }
+        
+        if (dat.has_selected_target) break;
+        
+        [dock traverseDockablesWithBlock:^(ICAKDockEdge edge, NSInteger row_cnt, ICAKDockingRow* row) {
+            NSRect winRelFrame = [row convertRect:row.frame toView:nil];
+            NSRect absFrame = [row.window convertRectToScreen:winRelFrame];
+            
+            if (NSPointInRect(screen_loc, absFrame) && [row canAcceptDockableView:view]) {
+                NSInteger current_pos = 0;
+                for (; current_pos < row.subviews.count; current_pos++) {
+                    if (![row isScreenPoint:screen_loc beforePosition:current_pos]) {
+                        break;
+                    }
+                }
+                
+                dat.has_selected_target = YES;
+                dat.selected_dock = dock;
+                dat.selected_edge = edge;
+                dat.selected_offset = row_cnt;
+                dat.selected_pos = current_pos;
+                
+                [row reserveSpace:view.frame atPosition:dat.selected_pos];
+                
+                return YES;
+            }
+            
+            return NO;
+        }];
         
         if (dat.has_selected_target) break;
     }
