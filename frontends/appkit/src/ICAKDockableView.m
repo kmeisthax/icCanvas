@@ -5,6 +5,7 @@
 @end
 
 @implementation ICAKDockableView {
+    BOOL _is_vertical;
     BOOL _in_detach;
     NSPoint _starting_pt, _starting_loc;
     CGFloat _detach_threshold;
@@ -15,6 +16,7 @@
 
 - (void)setup {
     self.translatesAutoresizingMaskIntoConstraints = NO;
+    self->_is_vertical = NO;
     self->_in_detach = NO;
     self->_detach_threshold = 20.0;
     self->_delegate = NULL;
@@ -79,6 +81,13 @@
 
 - (void)setDelegate:(id <ICAKDockableViewDelegate>)delegate {
     self->_delegate = delegate;
+};
+
+- (BOOL)vertical {
+    return self->_is_vertical;
+};
+- (void)setVertical:(BOOL)isVertical {
+    self->_is_vertical = isVertical;
 };
 
 @end

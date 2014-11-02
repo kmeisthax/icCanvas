@@ -18,4 +18,7 @@
 - (id <ICAKDockableViewDelegate>)delegate;
 - (void)setDelegate:(id <ICAKDockableViewDelegate>)delegate;
 
+- (BOOL)vertical;
+- (void)setVertical:(BOOL)isVertical;
+
 @end
