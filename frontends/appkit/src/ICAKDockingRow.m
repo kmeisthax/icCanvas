@@ -139,7 +139,7 @@ static const NSInteger _MARGINS = 15;
     }
     
     if (pos < self.subviews.count) {
-        if (pos == 0 && self->_is_vertical) {
+        if ((pos == 0 && self->_is_vertical) || !self->_is_vertical) {
             [[self->_spacing_constraints objectAtIndex:pos] setConstant:length * -1.0];
         } else {
             [[self->_spacing_constraints objectAtIndex:pos] setConstant:length];
@@ -174,8 +174,8 @@ static const NSInteger _MARGINS = 15;
 
 - (void)addMarginConstraintsForView:(NSView*)subview {
     //Add margins
-    NSLayoutAttribute attr1 = NSLayoutAttributeBottom;
-    NSLayoutAttribute attr2 = NSLayoutAttributeTop;
+    NSLayoutAttribute attr1 = NSLayoutAttributeTop;
+    NSLayoutAttribute attr2 = NSLayoutAttributeBottom;
     if (self->_is_vertical) {
         attr1 = NSLayoutAttributeLeft;
         attr2 = NSLayoutAttributeRight;
@@ -192,10 +192,11 @@ static const NSInteger _MARGINS = 15;
     NSView* attr2View = view2;
     
     if (!self->_is_vertical) {
-        attr1 = NSLayoutAttributeLeft;
-        attr2 = NSLayoutAttributeRight;
+        attr1 = NSLayoutAttributeRight;
+        attr2 = NSLayoutAttributeLeft;
         attr1View = view2;
         attr2View = view1;
+        return [NSLayoutConstraint constraintWithItem:attr1View attribute:attr1 relatedBy:NSLayoutRelationEqual toItem:attr2View attribute:attr2 multiplier:1.0 constant:_MARGINS * -1.0];
     }
     
     return [NSLayoutConstraint constraintWithItem:attr1View attribute:attr1 relatedBy:NSLayoutRelationEqual toItem:attr2View attribute:attr2 multiplier:1.0 constant:_MARGINS];
@@ -203,7 +204,7 @@ static const NSInteger _MARGINS = 15;
 
 - (NSLayoutConstraint*)createConstraintTopMarginForView:(NSView*)view1 {
     if (!self->_is_vertical) {
-        return [NSLayoutConstraint constraintWithItem:view1 attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeLeft multiplier:1.0 constant:_MARGINS];
+        return [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:view1 attribute:NSLayoutAttributeLeft multiplier:1.0 constant:_MARGINS * -1.0];
     } else {
         return [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:view1 attribute:NSLayoutAttributeTop multiplier:1.0 constant:_MARGINS * -1.0];
     }
