@@ -148,6 +148,7 @@
                 break;
             } else {
                 before_view = [self->_top_rows objectAtIndex:rowsFromEdge];
+                [self->_top_rows insertObject:row atIndex:rowsFromEdge];
             }
             break;
         case ICAKDockEdgeLeft:
@@ -163,6 +164,7 @@
                 break;
             } else {
                 before_view = [self->_left_rows objectAtIndex:rowsFromEdge];
+                [self->_left_rows insertObject:row atIndex:rowsFromEdge];
             }
             break;
         case ICAKDockEdgeBottom:
@@ -178,6 +180,7 @@
             } else {
                 relative_dir = NSWindowAbove; //e.g. after
                 before_view = [self->_bottom_rows objectAtIndex:rowsFromEdge];
+                [self->_bottom_rows insertObject:row atIndex:rowsFromEdge];
             }
             break;
         case ICAKDockEdgeRight:
@@ -193,6 +196,7 @@
             } else {
                 relative_dir = NSWindowAbove; //e.g. after
                 before_view = [self->_right_rows objectAtIndex:rowsFromEdge];
+                [self->_right_rows insertObject:row atIndex:rowsFromEdge];
             }
             break;
     }
