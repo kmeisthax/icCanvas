@@ -67,6 +67,12 @@
         for (int i = 0; i < 5; i++) {
             ICAKDockablePanel* pnl = [[ICAKDockablePanel alloc] init];
             pnl.label = [NSString stringWithFormat:@"Panel test %d", i + 1];
+            
+            NSButton* btn = [[NSButton alloc] init];
+            btn.title = [NSString stringWithFormat:@"Action %d", i + 1];
+            btn.buttonType = NSMomentaryPushInButton;
+            
+            pnl.contentView = btn;
 
             [self->dk attachDockableView:pnl toEdge:ICAKDockEdgeLeft];
         }
