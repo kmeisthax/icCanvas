@@ -162,7 +162,7 @@ static const NSInteger _MARGINS = 15;
             self->_bottom_margin_constraint.constant = _MARGINS;
         }
         
-        if (self->_reserved_before < self.subviews.count) {
+        if (self->_reserved_before < self->_spacing_constraints.count) {
             if (self->_reserved_before == 0 && self->_is_vertical) {
                 [[self->_spacing_constraints objectAtIndex:self->_reserved_before] setConstant:_MARGINS * -1.0];
             } else {
