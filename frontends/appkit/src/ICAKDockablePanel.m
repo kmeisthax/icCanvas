@@ -19,7 +19,6 @@ static const NSInteger _MARGINS_LABEL_BOTTOM = 15;
 
 - (void)dockablePanelSetupSubviews {
     self.translatesAutoresizingMaskIntoConstraints = NO;
-    [self addConstraint:[NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationGreaterThanOrEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0 constant:120]];
     
     self->_label = [[NSTextView alloc] init];
     [self addSubview:self->_label];
@@ -59,10 +58,13 @@ static const NSInteger _MARGINS_LABEL_BOTTOM = 15;
     }
     
     self->_content = view;
+    self->_content.translatesAutoresizingMaskIntoConstraints = NO;
+    [self addSubview:self->_content];
     
     [self addConstraint:[NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:self->_content attribute:NSLayoutAttributeLeft multiplier:1.0 constant:0]];
     [self addConstraint:[NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:self->_content attribute:NSLayoutAttributeRight multiplier:1.0 constant:0]];
-    [self addConstraint:[NSLayoutConstraint constraintWithItem:self->_label attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:self->_content attribute:NSLayoutAttributeTop multiplier:1.0 constant:_MARGINS_LABEL_BOTTOM * -1]];
+    [self addConstraint:[NSLayoutConstraint constraintWithItem:self->_content attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self->_label attribute:NSLayoutAttributeBottom multiplier:1.0 constant:_MARGINS_LABEL_BOTTOM]];
+    [self addConstraint:[NSLayoutConstraint constraintWithItem:self->_content attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeBottom multiplier:1.0 constant:0]];
 };
 
 - (void)setLabel:(NSString*)lbl {
