@@ -23,7 +23,7 @@
 - (void)didAddSubview:(NSView*)subview;
 - (void)willRemoveSubview:(NSView*)subview;
 
-- (NSRect)marginlessFrameOfSubview:(NSView*)subview;
++ (NSRect)viewFramePlusMargins:(NSView*)subview;
 - (BOOL)isScreenPoint:(NSPoint)pt beforePosition:(NSInteger)pos;
 
 - (void)regenerateSpacingConstraints;

@@ -133,9 +133,9 @@ static const NSInteger _MARGINS = 15;
         return;
     }
     
-    NSInteger length = rect.size.height;
+    NSInteger length = rect.size.width;
     if (self->_is_vertical) {
-        length = rect.size.width;
+        length = rect.size.height;
     }
     
     if (pos < self.subviews.count) {
@@ -257,7 +257,7 @@ static const NSInteger _MARGINS = 15;
     }
 }
 
-- (NSRect)marginlessFrameOfSubview:(NSView*)subview {
++ (NSRect)viewFramePlusMargins:(NSView*)subview {
     NSRect svFrame = subview.frame;
     return NSInsetRect(svFrame, ICAKDockableViewPanelMargins * -1.0, ICAKDockableViewPanelMargins * -1.0);
 };

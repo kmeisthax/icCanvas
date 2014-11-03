@@ -90,6 +90,7 @@ typedef struct {
 
 - (void)dockableView:(ICAKDockableView*)view wasDraggedByEvent:(NSEvent*)evt {
     NSPoint window_loc = evt.locationInWindow;
+    NSRect viewFrame = [ICAKDockingRow viewFramePlusMargins:view];
     NSRect testrect;
     testrect.origin = window_loc;
     testrect.size.width = 0.0;
@@ -168,7 +169,7 @@ typedef struct {
                 dat.selected_offset = row_cnt;
                 dat.selected_pos = current_pos;
                 
-                [row reserveSpace:view.frame atPosition:dat.selected_pos];
+                [row reserveSpace:viewFrame atPosition:dat.selected_pos];
                 
                 return YES;
             }
