@@ -89,15 +89,8 @@ typedef struct {
 };
 
 - (void)dockableView:(ICAKDockableView*)view wasDraggedByEvent:(NSEvent*)evt {
-    NSPoint window_loc = evt.locationInWindow;
+    NSPoint screen_loc = NSEvent.mouseLocation;
     NSRect viewFrame = [ICAKDockingRow viewFramePlusMargins:view];
-    NSRect testrect;
-    testrect.origin = window_loc;
-    testrect.size.width = 0.0;
-    testrect.size.height = 0.0;
-    
-    NSRect convertedRect = [view.window convertRectToScreen:testrect];
-    NSPoint screen_loc = convertedRect.origin;
     
     __block ICAKDockingControllerDockData dat; //why do I gotta DO this
     
