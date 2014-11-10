@@ -338,7 +338,7 @@ class icCanvasGtk.DockableToolbar : Gtk.Bin, Gtk.Orientable, icCanvasGtk.Dockabl
     
     //Drawing
     public override bool draw (Cairo.Context cr) {
-        cr.set_source_rgba(0,0,0,1);
+        cr.set_source_rgb(0.7, 0.7, 0.7);
         cr.rectangle(this._handle_alloc.x, this._handle_alloc.y, this._handle_alloc.width, this._handle_alloc.height);
         cr.fill();
         
