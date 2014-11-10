@@ -38,6 +38,18 @@ class icCanvasGtk.DrawingWindow : Gtk.ApplicationWindow {
         
         this.dock.add_dockable(dt, icCanvasGtk.Dock.Edge.LEFT);
         this.dock.add_dockable(dt2, icCanvasGtk.Dock.Edge.RIGHT);
+        
+        icCanvasGtk.DockableToolbar db = new icCanvasGtk.DockableToolbar();
+        
+        Gtk.Toolbar tb = new Gtk.Toolbar();
+        
+        Gtk.Image tbn1img = new Gtk.Image.from_icon_name("document-open", Gtk.IconSize.SMALL_TOOLBAR);
+        Gtk.ToolButton tbn1 = new Gtk.ToolButton(tbn1img, null);
+        tb.add(tbn1);
+        
+        db.add(tb);
+        
+        this.dock.add_dockable(db, icCanvasGtk.Dock.Edge.TOP);
     }
     
     public icCanvasGtk.Drawing drawing {
