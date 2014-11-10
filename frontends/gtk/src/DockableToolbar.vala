@@ -11,6 +11,16 @@ class icCanvasGtk.DockableToolbar : Gtk.Bin, Gtk.Orientable, icCanvasGtk.Dockabl
     private Gdk.Window? _evtwnd;
     private Gtk.Allocation _handle_alloc;
     
+    private bool _in_drag;
+    private bool _detached;
+    private double _x_start_drag;
+    private double _y_start_drag;
+    
+    private double _x_target_mouse;
+    private double _y_target_mouse;
+    
+    private const double DRAG_THRESHOLD = 20.0;
+    
     public DockableToolbar() {
         this.add_events(Gdk.EventMask.POINTER_MOTION_MASK | Gdk.EventMask.BUTTON_PRESS_MASK | Gdk.EventMask.BUTTON_RELEASE_MASK | Gdk.EventMask.LEAVE_NOTIFY_MASK);
         this.set_has_window(true);
@@ -215,6 +225,115 @@ class icCanvasGtk.DockableToolbar : Gtk.Bin, Gtk.Orientable, icCanvasGtk.Dockabl
     public override void unrealize() {
         this._evtwnd = null;
         base.unrealize();
+    }
+    
+    //Stolen from DockableToolbar.
+    private void update_cursor(double x, double y) {
+        if (this._in_drag) {
+            this._evtwnd.set_cursor(new Gdk.Cursor.for_display(this._evtwnd.get_display(), Gdk.CursorType.FLEUR));
+        } else {
+            if (x >= this._handle_alloc.x &&
+                x <= this._handle_alloc.x + this._handle_alloc.width &&
+                y >= this._handle_alloc.y &&
+                y <= this._handle_alloc.y + this._handle_alloc.height) {
+                
+                this._evtwnd.set_cursor(new Gdk.Cursor.for_display(this._evtwnd.get_display(), Gdk.CursorType.HAND2));
+            } else {
+                this._evtwnd.set_cursor(new Gdk.Cursor.for_display(this._evtwnd.get_display(), Gdk.CursorType.ARROW));
+            }
+        }
+    }
+    
+    public override bool button_press_event(Gdk.EventButton evt) {
+        if (evt.type == Gdk.EventType.BUTTON_PRESS) {
+            if (!this._in_drag) {
+                if (evt.x >= this._handle_alloc.x &&
+                    evt.x <= this._handle_alloc.x + this._handle_alloc.width &&
+                    evt.y >= this._handle_alloc.y &&
+                    evt.y <= this._handle_alloc.y + this._handle_alloc.height) {
+                    this._in_drag = true;
+                    this._detached = false;
+                    this._x_start_drag = evt.x;
+                    this._y_start_drag = evt.y;
+                }
+            }
+        }
+        
+        this.update_cursor(evt.x, evt.y);
+        
+        return true;
+    }
+    
+    public override bool motion_notify_event(Gdk.EventMotion evt) {
+        if (this._in_drag) {
+            var dist = Posix.sqrt(Posix.pow(evt.x - this._x_start_drag, 2) + Posix.pow(evt.y - this._y_start_drag, 2));
+
+            if (!this._detached && dist > icCanvasGtk.DockableToolbar.DRAG_THRESHOLD) {
+                this._detached = true;
+                this.detached();
+
+                this._x_target_mouse = evt.x;
+                this._y_target_mouse = evt.y;
+            } else if (this._detached) {
+                //Short-circuit runaway drags
+                if ((evt.state & Gdk.ModifierType.BUTTON1_MASK) == 0) {
+                    this.real_release();
+                } else {
+                    Gtk.Window wnd = this.get_toplevel() as Gtk.Window;
+                    int wnd_rx, wnd_ry;
+                    wnd.get_position(out wnd_rx, out wnd_ry);
+
+                    wnd_rx += (int)GLib.Math.rint(evt.x - this._x_target_mouse);
+                    wnd_ry += (int)GLib.Math.rint(evt.y - this._y_target_mouse);
+
+                    wnd.move(wnd_rx, wnd_ry);
+
+                    this.dragged_window(evt);
+                }
+            }
+        }
+        
+        this.update_cursor(evt.x, evt.y);
+        
+        return true;
+    }
+    
+    private void real_release() {
+        if (this._in_drag && this._detached) {
+            this.released();
+        }
+        
+        this._in_drag = false;
+        this._detached = false;
+        this._x_start_drag = 0;
+        this._y_start_drag = 0;
+    }
+    
+    public override bool button_release_event(Gdk.EventButton evt) {
+        if (evt.type == Gdk.EventType.BUTTON_RELEASE) {
+            this.real_release();
+        }
+        
+        this.update_cursor(evt.x, evt.y);
+
+        return true;
+    }
+    
+    public override bool leave_notify_event (Gdk.EventCrossing evt) {
+        if (this._in_drag && this._detached) {
+            Gtk.Window wnd = this.get_toplevel() as Gtk.Window;
+            int wnd_rx, wnd_ry;
+            wnd.get_position(out wnd_rx, out wnd_ry);
+
+            wnd_rx += (int)GLib.Math.rint(evt.x - this._x_target_mouse);
+            wnd_ry += (int)GLib.Math.rint(evt.y - this._y_target_mouse);
+
+            wnd.move(wnd_rx, wnd_ry);
+        }
+        
+        this.update_cursor(evt.x, evt.y);
+        
+        return true;
     }
     
     //Drawing
