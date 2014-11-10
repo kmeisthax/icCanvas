@@ -40,6 +40,10 @@ class icCanvasGtk.DockingBox : Gtk.Box {
             
             this._dockable_count++;
             this._current_style = dockable.docking_style;
+            
+            if (widget is Gtk.Orientable) {
+                (widget as Gtk.Orientable).orientation = this.orientation;
+            }
         }
     }
     
