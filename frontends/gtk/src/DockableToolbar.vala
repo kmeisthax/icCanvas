@@ -165,6 +165,24 @@ class icCanvasGtk.DockableToolbar : Gtk.Bin, Gtk.Orientable, icCanvasGtk.Dockabl
         }
     }
     
+    public override void forall_internal (bool include_internals, Gtk.Callback callback) {
+        if (this._child != null) {
+            callback (this._child);
+        }
+    }
+    
+    public override void add (Gtk.Widget widget) {
+        if (this._child == null) {
+            this._child = widget;
+        }
+    }
+    
+    public override void remove (Gtk.Widget widget) {
+        if (this._child == widget) {
+            this._child = null;
+        }
+    }
+    
     //Events
     public override void realize() {
         this.set_realized(true);
