@@ -45,8 +45,8 @@ class icCanvasGtk.DockableToolbar : Gtk.Bin, Gtk.Orientable, icCanvasGtk.Dockabl
         return Gtk.SizeRequestMode.WIDTH_FOR_HEIGHT;
     }
     
-    private const int PADDING_CROSS = 5;
-    private const int PADDING_MAIN = 3;
+    private const int PADDING_CROSS = 1;
+    private const int PADDING_MAIN = 1;
     private const int HANDLE_LENGTH = 10;
     
     //Widget sizing
