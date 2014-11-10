@@ -47,6 +47,10 @@ class icCanvasGtk.DrawingWindow : Gtk.ApplicationWindow {
         Gtk.ToolButton tbn1 = new Gtk.ToolButton(tbn1img, null);
         tb.add(tbn1);
         
+        Gtk.Image tbn2img = new Gtk.Image.from_icon_name("window-close", Gtk.IconSize.SMALL_TOOLBAR);
+        Gtk.ToolButton tbn2 = new Gtk.ToolButton(tbn2img, null);
+        tb.add(tbn2);
+        
         db.add(tb);
         
         this.dock.add_dockable(db, icCanvasGtk.Dock.Edge.TOP);
