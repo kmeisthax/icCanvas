@@ -82,7 +82,7 @@ class icCanvasGtk.DockableToolbar : Gtk.Bin, Gtk.Orientable, icCanvasGtk.Dockabl
         natural_height = 0;
         
         if (this._child != null) {
-            this._child.get_preferred_width (out minimum_height, out natural_height);
+            this._child.get_preferred_height (out minimum_height, out natural_height);
         }
         
         if (this.orientation == Gtk.Orientation.HORIZONTAL) {
@@ -127,7 +127,7 @@ class icCanvasGtk.DockableToolbar : Gtk.Bin, Gtk.Orientable, icCanvasGtk.Dockabl
             child_width -= icCanvasGtk.DockableToolbar.PADDING_MAIN * 3 + icCanvasGtk.DockableToolbar.HANDLE_LENGTH;
         }
         
-        this._child.get_preferred_width_for_height (child_width, out minimum_height, out natural_height);
+        this._child.get_preferred_height_for_width (child_width, out minimum_height, out natural_height);
         
         if (this.orientation == Gtk.Orientation.HORIZONTAL) {
             minimum_height += icCanvasGtk.DockableToolbar.PADDING_CROSS * 2;
