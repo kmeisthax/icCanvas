@@ -21,12 +21,6 @@ class icCanvasGtk.DrawingWindow : Gtk.ApplicationWindow {
         this.canvaswdgt = new icCanvasGtk.CanvasWidget();
         this.scrollwdgt.add(canvaswdgt);
         
-        icCanvasGtk.DockablePanel dt = new icCanvasGtk.DockablePanel();
-        dt.label = "I am wearing pants";
-        
-        Gtk.Button btn = new Gtk.Button.with_label("Do something funny");
-        dt.add(btn);
-        
         icCanvasGtk.DockablePanel dt2 = new icCanvasGtk.DockablePanel();
         dt2.label = "Box packing test";
         
@@ -36,24 +30,7 @@ class icCanvasGtk.DrawingWindow : Gtk.ApplicationWindow {
         bx.pack_start(new Gtk.Button.with_label("Button 3"));
         dt2.add(bx);
         
-        this.dock.add_dockable(dt, icCanvasGtk.Dock.Edge.LEFT);
         this.dock.add_dockable(dt2, icCanvasGtk.Dock.Edge.RIGHT);
-        
-        icCanvasGtk.DockableToolbar db = new icCanvasGtk.DockableToolbar();
-        
-        Gtk.Toolbar tb = new Gtk.Toolbar();
-        
-        Gtk.Image tbn1img = new Gtk.Image.from_icon_name("document-open", Gtk.IconSize.SMALL_TOOLBAR);
-        Gtk.ToolButton tbn1 = new Gtk.ToolButton(tbn1img, null);
-        tb.add(tbn1);
-        
-        Gtk.Image tbn2img = new Gtk.Image.from_icon_name("window-close", Gtk.IconSize.SMALL_TOOLBAR);
-        Gtk.ToolButton tbn2 = new Gtk.ToolButton(tbn2img, null);
-        tb.add(tbn2);
-        
-        db.add(tb);
-        
-        this.dock.add_dockable(db, icCanvasGtk.Dock.Edge.TOP);
     }
     
     public icCanvasGtk.Drawing drawing {
@@ -64,5 +41,9 @@ class icCanvasGtk.DrawingWindow : Gtk.ApplicationWindow {
     
     public void tile_rendered() {
         this.canvaswdgt.queue_draw();
+    }
+    
+    public void add_dockable(icCanvasGtk.Dockable dk, icCanvasGtk.Dock.Edge edge) {
+        this.dock.add_dockable(dk, edge);
     }
 }

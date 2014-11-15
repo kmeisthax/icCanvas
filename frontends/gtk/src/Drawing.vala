@@ -14,14 +14,6 @@ class icCanvasGtk.Drawing {
         this._drawing = new icCanvasManager.Drawing();
     }
     
-    public void make_windows(icCanvasGtk.Application app) {
-        var wnd = new icCanvasGtk.DrawingWindow(app);
-        this.add_window(wnd);
-        
-        wnd.drawing = this;
-        wnd.show_all();
-    }
-    
     public bool on_idle() {
         var app = icCanvasManager.Application.get_instance();
         var rsched = app.get_render_scheduler();
