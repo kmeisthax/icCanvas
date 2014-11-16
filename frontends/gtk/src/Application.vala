@@ -23,6 +23,7 @@ class icCanvasGtk.Application : Gtk.Application {
         drawing.add_window(wnd);
         wnd.drawing = drawing;
         
+        wnd.docking_controller = this.docking_ctrl;
         wnd.add_dockable(this.new_file_toolbar(), icCanvasGtk.Dock.Edge.TOP);
         
         wnd.show_all();
