@@ -16,25 +16,25 @@
         self.style = ICAKDockableViewStyleToolbar;
         self.behavior = ICAKDockableToolbarBehaviorPalette;
         
-        self._intrinsic_height = [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationGreaterThanOrEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0 constant:0];
-        self._intrinsic_width = [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationGreaterThanOrEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0 constant:0];
+        self->_intrinsic_height = [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationGreaterThanOrEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0 constant:0];
+        self->_intrinsic_width = [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationGreaterThanOrEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0 constant:0];
         
-        [self addConstraint:self._intrinsic_height];
-        [self addConstraint:self._intrinsic_width];
+        [self addConstraint:self->_intrinsic_height];
+        [self addConstraint:self->_intrinsic_width];
     }
     
     return self;
 }
 
 - (ICAKDockableToolbarBehavior)behavior {
-    return self._behavior;
+    return self->_behavior;
 };
 - (void)setBehavior:(ICAKDockableToolbarBehavior)behavior {
-    self._behavior = behavior;
+    self->_behavior = behavior;
 };
 
 - (int)buttonCount {
-    return self->_btns.count;
+    return self.subviews.count;
 };
 - (int)addButton {
     NSButton* btn = [[NSButton alloc] init];
@@ -42,7 +42,7 @@
     btn.buttonType = NSTexturedSquareBezelStyle;
     
     [self addSubview:btn];
-    return self.buttonCount;
+    return self.buttonCount - 1;
 };
 - (int)addButtonBeforeButton:(int)button {
     NSButton* btn = [[NSButton alloc] init];
@@ -50,16 +50,16 @@
     btn.buttonType = NSTexturedSquareBezelStyle;
     
     [self addSubview:btn positioned:NSWindowBelow relativeTo:[self.subviews objectAtIndex:button]];
-    return self.buttonCount;
+    return self.buttonCount - 1;
 };
 - (void)setButton:(int)btnCount action:(SEL)action andTarget:(id)target {
-    NSButton* btn = [self.subviews objectAtIndex:button];
+    NSButton* btn = [self.subviews objectAtIndex:btnCount];
     
     btn.action = action;
     btn.target = target;
 };
 - (void)setButton:(int)btnCount image:(NSImage*)img {
-    NSButton* btn = [self.subviews objectAtIndex:button];
+    NSButton* btn = [self.subviews objectAtIndex:btnCount];
     
     btn.image = img;
 };
@@ -68,12 +68,12 @@
     CGFloat main_length = ICAKDockableViewToolbarTopMargin + ICAKDockableViewToolbarBottomMargin + (ICAKDockableViewToolbarControlLength * self.subviews.count) + (ICAKDockableViewToolbarControlMargin * self.subviews.count);
     CGFloat cross_length = ICAKDockableViewMinToolbarSize;
     
-    if (self.isVertical) {
-        self._intrinsic_height.constant = main_length;
-        self._intrinsic_width.constant = cross_length;
+    if (self.vertical) {
+        self->_intrinsic_height.constant = main_length;
+        self->_intrinsic_width.constant = cross_length;
     } else {
-        self._intrinsic_width.constant = main_length;
-        self._intrinsic_height.constant = cross_length;
+        self->_intrinsic_width.constant = main_length;
+        self->_intrinsic_height.constant = cross_length;
     }
 }
 
@@ -81,7 +81,7 @@
     [super layout];
     
     NSInteger colCross, colMain, countCross = 0, countMain = 0;
-    if (self.isVertical) {
+    if (self.vertical) {
         colCross = floor(self.frame.size.width / ICAKDockableViewToolbarControlLength);
         colMain = floor(self.frame.size.height / ICAKDockableViewToolbarControlLength);
     } else {
@@ -93,7 +93,7 @@
         NSRect subframe = subview.frame;
         NSRect subbounds = subview.bounds;
         
-        if (self.isVertical) {
+        if (self.vertical) {
             subframe.origin.x = self.bounds.size.height - ICAKDockableViewToolbarControlLength * countMain;
             subframe.origin.y = ICAKDockableViewToolbarSideMargin + ICAKDockableViewToolbarControlLength * countCross;
         } else {

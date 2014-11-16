@@ -11,9 +11,6 @@
 @interface ICAKDockableToolbar : ICAKDockableView
 - (id)init;
 
-- (BOOL)vertical;
-- (void)setVertical:(BOOL)isVertical;
-
 - (ICAKDockableToolbarBehavior)behavior;
 - (void)setBehavior:(ICAKDockableToolbarBehavior)behavior;
 
