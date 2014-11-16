@@ -40,16 +40,30 @@
     NSButton* btn = [[NSButton alloc] init];
     
     btn.buttonType = NSTexturedSquareBezelStyle;
+    btn.translatesAutoresizingMaskIntoConstraints = NO;
     
     [self addSubview:btn];
+    [self recalculateIntrinsicSize];
+    [self setNeedsLayout:YES];
+    
+    [self addConstraint:[NSLayoutConstraint constraintWithItem:btn attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationGreaterThanOrEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0 constant:ICAKDockableViewToolbarControlLength]];
+    [self addConstraint:[NSLayoutConstraint constraintWithItem:btn attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationGreaterThanOrEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0 constant:ICAKDockableViewToolbarControlLength]];
+    
     return self.buttonCount - 1;
 };
 - (int)addButtonBeforeButton:(int)button {
     NSButton* btn = [[NSButton alloc] init];
     
     btn.buttonType = NSTexturedSquareBezelStyle;
+    btn.translatesAutoresizingMaskIntoConstraints = NO;
     
     [self addSubview:btn positioned:NSWindowBelow relativeTo:[self.subviews objectAtIndex:button]];
+    [self recalculateIntrinsicSize];
+    [self setNeedsLayout:YES];
+    
+    [self addConstraint:[NSLayoutConstraint constraintWithItem:btn attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationGreaterThanOrEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0 constant:ICAKDockableViewToolbarControlLength]];
+    [self addConstraint:[NSLayoutConstraint constraintWithItem:btn attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationGreaterThanOrEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0 constant:ICAKDockableViewToolbarControlLength]];
+    
     return self.buttonCount - 1;
 };
 - (void)setButton:(int)btnCount action:(SEL)action andTarget:(id)target {
@@ -78,8 +92,6 @@
 }
 
 - (void)layout {
-    [super layout];
-    
     NSInteger colCross, colMain, countCross = 0, countMain = 0;
     if (self.vertical) {
         colCross = floor(self.frame.size.width / ICAKDockableViewToolbarControlLength);
@@ -91,18 +103,18 @@
     
     for (NSView* subview in self.subviews) {
         NSRect subframe = subview.frame;
-        NSRect subbounds = subview.bounds;
         
         if (self.vertical) {
-            subframe.origin.x = self.bounds.size.height - ICAKDockableViewToolbarControlLength * countMain;
-            subframe.origin.y = ICAKDockableViewToolbarSideMargin + ICAKDockableViewToolbarControlLength * countCross;
-        } else {
-            subframe.origin.y = self.bounds.size.width - ICAKDockableViewToolbarControlLength * countMain;
             subframe.origin.x = ICAKDockableViewToolbarSideMargin + ICAKDockableViewToolbarControlLength * countCross;
+            subframe.origin.y = self.bounds.size.height - (ICAKDockableViewToolbarTopMargin + ICAKDockableViewToolbarControlLength * countMain + ICAKDockableViewToolbarControlMargin * countMain);
+        } else {
+            subframe.origin.x = ICAKDockableViewToolbarTopMargin + ICAKDockableViewToolbarControlLength * countMain + ICAKDockableViewToolbarControlMargin * countMain;
+            subframe.origin.y = self.bounds.size.height - ICAKDockableViewToolbarSideMargin - ICAKDockableViewToolbarControlLength * (countCross + 1);
         }
         
+        NSLog(@"New frame %fx%f size %fx%f", subframe.origin.x, subframe.origin.y, subframe.size.width, subframe.size.height);
+        
         subview.frame = subframe;
-        subview.bounds = subbounds;
         
         countCross++;
         if (countCross >= colCross) {
@@ -110,6 +122,8 @@
             countMain++;
         }
     }
+    
+    [super layout];
 };
 
 @end
