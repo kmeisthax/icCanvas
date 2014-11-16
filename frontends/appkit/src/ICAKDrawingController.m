@@ -81,6 +81,7 @@
         for (int i = 0; i < 5; i++) {
             [tbl addButton];
             [tbl setButton:i image:[NSImage imageNamed:NSImageNameActionTemplate]];
+            [tbl setButton:i type:NSMomentaryPushInButton];
         }
         [self->dk attachDockableView:tbl toEdge:ICAKDockEdgeLeft];
     }

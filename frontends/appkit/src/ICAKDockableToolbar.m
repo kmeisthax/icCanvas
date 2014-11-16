@@ -77,6 +77,11 @@
     
     btn.image = img;
 };
+- (void)setButton:(int)btnCount type:(NSButtonType)type {
+    NSButton* btn = [self.subviews objectAtIndex:btnCount];
+    
+    btn.buttonType = type;
+};
 
 - (void)recalculateIntrinsicSize {
     CGFloat main_length = ICAKDockableViewToolbarTopMargin + ICAKDockableViewToolbarBottomMargin + (ICAKDockableViewToolbarControlLength * self.subviews.count) + (ICAKDockableViewToolbarControlMargin * self.subviews.count);

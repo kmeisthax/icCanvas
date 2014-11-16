@@ -19,4 +19,5 @@
 - (int)addButtonBeforeButton:(int)button;
 - (void)setButton:(int)btnCount action:(SEL)action andTarget:(id)target;
 - (void)setButton:(int)btnCount image:(NSImage*)img;
+- (void)setButton:(int)btnCount type:(NSButtonType)type;
 @end
