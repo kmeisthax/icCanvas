@@ -5,6 +5,7 @@
 #import "icCanvasAppKit/ICAKDock.h"
 #import "icCanvasAppKit/ICAKDockingRow.h"
 #import "icCanvasAppKit/ICAKDockablePanel.h"
+#import "icCanvasAppKit/ICAKDockableToolbar.h"
 #import "icCanvasAppKit/ICAKCanvasView.h"
 
 #import "icCanvasAppKit/ICAKDrawing.h"
