@@ -78,10 +78,11 @@
         }
         
         ICAKDockableToolbar* tbl = [[ICAKDockableToolbar alloc] init];
-        [tbl addButton];
-        [tbl setButton:0 image:[NSImage imageNamed:NSImageNameActionTemplate]];
-        
-        [self->dk attachDockableView:tbl toEdge:ICAKDockEdgeTop];
+        for (int i = 0; i < 5; i++) {
+            [tbl addButton];
+            [tbl setButton:i image:[NSImage imageNamed:NSImageNameActionTemplate]];
+        }
+        [self->dk attachDockableView:tbl toEdge:ICAKDockEdgeLeft];
     }
     
     return self;
