@@ -1,6 +1,5 @@
 #include <icCanvasManager.h>
 
-icCanvasManager::CanvasTool::
 icCanvasManager::CanvasTool::CanvasTool() {};
 icCanvasManager::CanvasTool::~CanvasTool() {};
 
