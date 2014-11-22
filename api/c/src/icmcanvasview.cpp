@@ -72,19 +72,4 @@ extern "C" {
         icCanvasManager::CanvasView* d = (icCanvasManager::CanvasView*)w;
         d->set_zoom(vpixel_size);
     };
-
-    void icm_canvasview_mouse_down(icm_canvasview w, const double x, const double y, const double deltaX, const double deltaY) {
-        icCanvasManager::CanvasView* d = (icCanvasManager::CanvasView*)w;
-        d->mouse_down(x, y, deltaX, deltaY);
-    };
-
-    void icm_canvasview_mouse_drag(icm_canvasview w, const double x, const double y, const double deltaX, const double deltaY) {
-        icCanvasManager::CanvasView* d = (icCanvasManager::CanvasView*)w;
-        d->mouse_drag(x, y, deltaX, deltaY);
-    };
-
-    void icm_canvasview_mouse_up(icm_canvasview w, const double x, const double y, const double deltaX, const double deltaY) {
-        icCanvasManager::CanvasView* d = (icCanvasManager::CanvasView*)w;
-        d->mouse_up(x, y, deltaX, deltaY);
-    };
 }

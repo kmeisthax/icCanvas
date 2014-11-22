@@ -25,10 +25,6 @@ extern "C" {
     void icm_canvasview_set_scroll_center(icm_canvasview wrap, const double x, const double y);
     void icm_canvasview_set_zoom(icm_canvasview wrap, const double vpixel_size);
 
-    void icm_canvasview_mouse_down(icm_canvasview wrap, const double x, const double y, const double deltaX, const double deltaY);
-    void icm_canvasview_mouse_drag(icm_canvasview wrap, const double x, const double y, const double deltaX, const double deltaY);
-    void icm_canvasview_mouse_up(icm_canvasview wrap, const double x, const double y, const double deltaX, const double deltaY);
-
 #ifdef __cplusplus
 }
 #endif
