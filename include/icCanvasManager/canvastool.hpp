@@ -1,5 +1,5 @@
-#ifndef __ICCANVASMANAGER_CANVASVIEW_HPP__
-#define __ICCANVASMANAGER_CANVASVIEW_HPP__
+#ifndef __ICCANVASMANAGER_CANVASTOOL_HPP__
+#define __ICCANVASMANAGER_CANVASTOOL_HPP__
 
 #include <icCanvasManager.hpp>
 
@@ -36,5 +36,7 @@ namespace icCanvasManager {
         void mouse_down(const double x, const double y, const double deltaX, const double deltaY);
         void mouse_drag(const double x, const double y, const double deltaX, const double deltaY);
         void mouse_up(const double x, const double y, const double deltaX, const double deltaY);
-    }
+    };
 }
+
+#endif

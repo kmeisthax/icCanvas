@@ -1,4 +1,4 @@
-#include <icCanvasManager.h>
+#include <icCanvasManager.hpp>
 
 icCanvasManager::CanvasTool::CanvasTool() {};
 icCanvasManager::CanvasTool::~CanvasTool() {};
