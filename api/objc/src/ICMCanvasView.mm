@@ -63,18 +63,6 @@
     self->_wrapped->set_zoom(vpixel_size);
 };
 
-- (void)mouseDownWithX:(const double)x andY:(const double)y andDeltaX:(const double)deltaX andDeltaY:(const double)deltaY {
-    self->_wrapped->mouse_down(x, y, deltaX, deltaY);
-};
-
-- (void)mouseDragWithX:(const double)x andY:(const double)y andDeltaX:(const double)deltaX andDeltaY:(const double)deltaY {
-    self->_wrapped->mouse_drag(x, y, deltaX, deltaY);
-};
-
-- (void)mouseUpWithX:(const double)x andY:(const double)y andDeltaX:(const double)deltaX andDeltaY:(const double)deltaY {
-    self->_wrapped->mouse_up(x, y, deltaX, deltaY);
-};
-
 - (void*)getWrappedObject {
     return (void*)self->_wrapped;
 };
