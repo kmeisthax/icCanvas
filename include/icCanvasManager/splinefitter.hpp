@@ -48,12 +48,22 @@ namespace icCanvasManager {
          *
          * This function may only be called after a storage stroke and error
          * threshold have been established with begin_fitting.
+         *
+         * This function may not be called before calling begin_fitting or
+         * after calling prepare_for_reuse.
          */
         void add_fit_point(int x, int y, int pressure, int tilt, int angle, int dx, int dy);
 
-        /* Calculate the final, fitted stroke.
+        /* Finalize the fitted stroke.
+         *
+         * This function may not be called before calling begin_fitting or
+         * after calling prepare_for_reuse.
          */
         void finish_fitting();
+
+        /* Reset SplineFitter to initial state.
+         */
+        void prepare_for_reuse();
     };
 }
 

@@ -14,5 +14,7 @@
 #include "icCanvasManager/renderscheduler.hpp"
 #include "icCanvasManager/singleton.hpp"
 #include "icCanvasManager/application.hpp"
+#include "icCanvasManager/canvastool.hpp"
+#include "icCanvasManager/brushtool.hpp"
 
 #endif

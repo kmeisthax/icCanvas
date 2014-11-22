@@ -123,7 +123,15 @@ void icCanvasManager::SplineFitter::add_fit_point(int x, int y, int pressure, in
     this->target_curve->pen_to_velocity(curve_xdelta(1,0), curve_ydelta(1,0), curve_xdelta(2,0), curve_ydelta(2,0), curve_xdelta(3,0), curve_ydelta(3,0));
 };
 
-void icCanvasManager::SplineFitter::finish_fitting() {};
+void icCanvasManager::SplineFitter::finish_fitting() {
+}
+
+void icCanvasManager::SplineFitter::prepare_for_reuse() {
+    if (this->unfitted_points.size() > 0) this->unfitted_points.clear();
+    if (this->distances.size() > 0) this->distances.clear();
+    this->target_curve = NULL;
+    this->unfitted_id = 0;
+};
 
 icCanvasManager::SplineFitter::__ErrorPoint icCanvasManager::SplineFitter::measure_fitting_error() {
     icCanvasManager::SplineFitter::__ErrorPoint errorPt = {0,0,0,0,0,0,0};
