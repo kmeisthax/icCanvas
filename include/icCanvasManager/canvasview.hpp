@@ -11,7 +11,6 @@ namespace icCanvasManager {
      */
     class CanvasView : public RefCnt {
         RefPtr<Renderer> renderer;
-        RefPtr<SplineFitter> fitter;
         RefPtr<Drawing> drawing;
 
         double width, height;   //In window-system coordinates.
@@ -20,10 +19,6 @@ namespace icCanvasManager {
         int x_center, y_center; //The center of the screen, also canvas coords
         float x_size, y_size;   //Size of the view in canvas units.
         float ui_scale;
-
-        //During spline fitting only.
-        RefPtr<BrushStroke> built_stroke;
-        bool is_fitting;
 
         //Convert window-space coordinates to canvas coordinates and back.
         void windowToCoordspace(const int32_t x, const int32_t y, int32_t* out_tx, int32_t* out_ty);
@@ -102,11 +97,6 @@ namespace icCanvasManager {
          * the physical pixel scale factor. In that case, do not call set_zoom.
          */
         void set_zoom(const double vpixel_size);
-
-        /* Respond to mouse input. */
-        void mouse_down(const double x, const double y, const double deltaX, const double deltaY);
-        void mouse_drag(const double x, const double y, const double deltaX, const double deltaY);
-        void mouse_up(const double x, const double y, const double deltaX, const double deltaY);
     };
 }
 

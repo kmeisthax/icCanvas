@@ -6,14 +6,11 @@
 
 icCanvasManager::CanvasView::CanvasView() {
     this->renderer = new icCanvasManager::Renderer();
-    this->fitter = new icCanvasManager::SplineFitter();
 
     this->x_center = 0;
     this->y_center = 0;
     this->ui_scale = 1;
     this->zoom = 65535; //TODO: Replace with Drawing-specified zoom
-
-    this->is_fitting = false;
 };
 
 icCanvasManager::CanvasView::~CanvasView() {};
@@ -210,28 +207,4 @@ void icCanvasManager::CanvasView::windowToCoordspace(const int32_t x, const int3
 void icCanvasManager::CanvasView::coordToWindowspace(const int32_t x, const int32_t y, int32_t* out_tx, int32_t* out_ty) {
     if (out_tx) *out_tx = (int)((float)(x - this->x_scroll) / this->zoom);
     if (out_ty) *out_ty = (int)((float)(y - this->y_scroll) / this->zoom);
-};
-
-void icCanvasManager::CanvasView::mouse_down(const double x, const double y, const double deltaX, const double deltaY) {
-    this->is_fitting = true;
-    this->built_stroke = new icCanvasManager::BrushStroke();
-    this->fitter->begin_fitting(this->built_stroke, this->width * this->zoom);
-};
-
-void icCanvasManager::CanvasView::mouse_drag(const double x, const double y, const double deltaX, const double deltaY) {
-    if (this->is_fitting) {
-        int cx, cy, cdx = deltaX * this->zoom, cdy = deltaY * this->zoom;
-
-        this->windowToCoordspace(x, y, &cx, &cy);
-        this->fitter->add_fit_point(cx, cy, icCanvasManager::BrushStroke::PRESSURE_MAX, 0, 0, cdx, cdy);
-    }
-};
-
-void icCanvasManager::CanvasView::mouse_up(const double x, const double y, const double deltaX, const double deltaY) {
-    if (this->is_fitting) {
-        this->fitter->finish_fitting();
-        this->drawing->append_stroke(this->built_stroke);
-        this->built_stroke = NULL;
-        this->is_fitting = false;
-    }
 };
