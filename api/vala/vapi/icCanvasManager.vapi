@@ -65,10 +65,6 @@ namespace icCanvasManager {
         public void get_scale_extents(out double minscale, out double maxscale);
         public void set_scroll_center(double x, double y);
         public void set_zoom(double vpixel_size);
-        
-        public void mouse_down(double x, double y, double deltaX, double deltaY);
-        public void mouse_drag(double x, double y, double deltaX, double deltaY);
-        public void mouse_up(double x, double y, double deltaX, double deltaY);
     }
     
     [CCode (cname = "icm_drawing",
