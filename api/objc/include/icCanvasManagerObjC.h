@@ -5,3 +5,7 @@
 #import "icCanvasManagerObjC/ICMSplineFitter.h"
 #import "icCanvasManagerObjC/ICMCanvasView.h"
 #import "icCanvasManagerObjC/ICMApplication.h"
+
+#import "icCanvasManagerObjc/ICMCanvasTool.h"
+#import "icCanvasManagerObjc/ICMBrushToolDelegate.h"
+#import "icCanvasManagerObjc/ICMBrushTool.h"
