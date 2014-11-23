@@ -19,4 +19,6 @@
 - (double)minimumMagnification;
 - (double)maximumMagnification;
 
+//ICMBrushToolDelegate impl
+- (void)brushToolCapturedStroke:(ICMBrushStroke*)stroke;
 @end
