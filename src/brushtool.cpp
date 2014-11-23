@@ -2,7 +2,7 @@
 
 //icCanvasManager::BrushTool::
 
-icCanvasManager::BrushTool::BrushTool() : _error_threshold(0) {
+icCanvasManager::BrushTool::BrushTool() : _error_threshold(0), _fitter(new icCanvasManager::SplineFitter()) {
 }
 
 icCanvasManager::BrushTool::~BrushTool() {
