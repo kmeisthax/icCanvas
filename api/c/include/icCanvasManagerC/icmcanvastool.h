@@ -11,7 +11,7 @@ extern "C" {
 
     typedef void *icm_canvastool;
 
-    icm_drawing icm_canvastool_construct();
+    //No constructor for icm_canvastool; seek out it's various subclasses.
     int icm_canvastool_reference(icm_canvastool wrap);
     int icm_canvastool_dereference(icm_canvastool wrap);
 
