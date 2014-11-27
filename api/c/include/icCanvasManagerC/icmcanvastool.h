@@ -3,8 +3,6 @@
 
 #include <icCanvasManagerC.h>
 
-#include <cairo.h>
-
 #ifdef __cplusplus
 extern "C" {
 #endif
