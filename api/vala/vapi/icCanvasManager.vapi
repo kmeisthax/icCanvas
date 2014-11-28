@@ -111,8 +111,8 @@ namespace icCanvasManager {
         [CCode (cname = "icm_brushtool_construct")]
         public BrushTool();
         
-        public static BrushTool? downcast(CanvasTool up_obj);
-        public CanvasTool upcast();
+        public static unowned BrushTool? downcast(CanvasTool up_obj);
+        public unowned CanvasTool upcast();
         
         public void set_delegate(BrushToolDelegate del);
         public BrushToolDelegate get_delegate();
