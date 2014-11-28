@@ -11,7 +11,7 @@ extern "C" {
 
     typedef void *icm_brushtool;
 
-    icm_drawing icm_brushtool_construct();
+    icm_brushtool icm_brushtool_construct();
     int icm_brushtool_reference(icm_brushtool wrap);
     int icm_brushtool_dereference(icm_brushtool wrap);
 
