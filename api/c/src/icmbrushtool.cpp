@@ -102,4 +102,17 @@ extern "C" {
 
         return dcustom != NULL;
     };
+
+    void icm_brushtool_set_delegate(icm_brushtool w, icm_brushtool_delegate w_del) {
+        icCanvasManager::BrushTool* d = (icCanvasManager::BrushTool*)w;
+        icCanvasManager::BrushTool::Delegate* d_del = (icCanvasManager::BrushTool::Delegate*)w_del;
+
+        d->set_delegate(d_del);
+    };
+
+    icm_brushtool_delegate icm_brushtool_get_delegate(icm_brushtool w) {
+        icCanvasManager::BrushTool* d = (icCanvasManager::BrushTool*)w;
+
+        return (void*)d->get_delegate();
+    };
 }
