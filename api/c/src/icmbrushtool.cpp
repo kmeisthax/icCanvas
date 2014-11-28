@@ -14,7 +14,7 @@ namespace icCanvasManager {
         virtual void captured_stroke(RefPtr<BrushStroke> stroke) {
             if (this->captured_stroke_impl) {
                 BrushStroke* bs = stroke;
-                this->captured_stroke_impl(this->captured_stroke_user_data, (void*)bs);
+                this->captured_stroke_impl((void*)bs, this->captured_stroke_user_data);
             }
         }
 

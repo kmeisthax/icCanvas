@@ -44,7 +44,7 @@ extern "C" {
      *to store necessary state data. The lifetime of the pointed-to data must
      *extend beyond the life of the custom delegate.
      */
-    typedef void (*icm_brushtool_delegate_captured_stroke_func) (void* user_data, icm_brushstroke stroke);
+    typedef void (*icm_brushtool_delegate_captured_stroke_func) (icm_brushstroke stroke, void* user_data);
     void icm_brushtool_delegate_set_custom_captured_stroke_func(icm_brushtool_delegate w, icm_brushtool_delegate_captured_stroke_func func, void* user_data);
 
     /*Finally, you can set your delegate here.*/
