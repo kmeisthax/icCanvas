@@ -7,10 +7,10 @@ namespace icCanvasManager {
         icm_brushtool_delegate_hooks hooks;
 
     public:
-        BrushToolDelegateCImpl(icm_brushtool_delegate_hooks hooks) : hooks(hooks) {}
+        BrushToolDelegateCImpl(icm_brushtool_delegate_hooks* hooks) : hooks(*hooks) {}
         virtual ~BrushToolDelegateCImpl() {
-            if (this->hooks.captured_stroke_free) {
-                this->hooks.captured_stroke_free(this->hooks.captured_stroke_context);
+            if (this->hooks.captured_stroke_target_destroy_notify) {
+                this->hooks.captured_stroke_target_destroy_notify(this->hooks.captured_stroke_context);
             }
         }
 
@@ -89,7 +89,7 @@ extern "C" {
         }
     };
 
-    icm_brushtool_delegate icm_brushtool_delegate_construct_custom(icm_brushtool_delegate_hooks hooks) {
+    icm_brushtool_delegate icm_brushtool_delegate_construct_custom(icm_brushtool_delegate_hooks* hooks) {
         auto* dcustom = new icCanvasManager::BrushToolDelegateCImpl(hooks);
         auto* d = static_cast<icCanvasManager::BrushTool::Delegate*>(dcustom);
 

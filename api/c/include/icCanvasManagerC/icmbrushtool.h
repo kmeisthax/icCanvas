@@ -45,11 +45,11 @@ extern "C" {
     typedef struct {
         icm_captured_stroke_func captured_stroke;
         void* captured_stroke_context;
-        void (*captured_stroke_free)(void*);
+        void (*captured_stroke_target_destroy_notify)(void*);
     } icm_brushtool_delegate_hooks;
 
     /*Custom delegates are used to allow C code to be called from C++ code.*/
-    icm_brushtool_delegate icm_brushtool_delegate_construct_custom(icm_brushtool_delegate_hooks hooks);
+    icm_brushtool_delegate icm_brushtool_delegate_construct_custom(icm_brushtool_delegate_hooks* hooks);
     bool icm_brushtool_delegate_is_custom(icm_brushtool_delegate wrap);
 
     /*Finally, you can set your delegate here.*/

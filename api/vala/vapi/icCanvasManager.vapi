@@ -87,8 +87,7 @@ namespace icCanvasManager {
     
     [CCode (cname = "icm_brushtool_delegate_hooks")]
     public struct BrushToolDelegateHooks {
-        [CCode (delegate_target_cname = "captured_stroke_context",
-                delegate_target_destroy_notify_cname = "captured_stroke_free")]
+        [CCode (delegate_target_cname = "captured_stroke_context")]
         public CapturedStrokeFunc captured_stroke;
     }
     
@@ -114,8 +113,10 @@ namespace icCanvasManager {
         public static unowned BrushTool? downcast(CanvasTool up_obj);
         public unowned CanvasTool upcast();
         
-        public void set_delegate(BrushToolDelegate del);
-        public BrushToolDelegate get_delegate();
+        public BrushToolDelegate delegate {
+            [CCode (cname = "icm_brushtool_get_delegate")] get;
+            [CCode (cname = "icm_brushtool_set_delegate")] set;
+        }
     }
     
     [CCode (cname = "icm_drawing",
