@@ -4,21 +4,22 @@
 
 namespace icCanvasManager {
     class BrushToolDelegateCImpl : public BrushTool::Delegate, public RefCnt {
-        icm_brushtool_delegate_captured_stroke_func captured_stroke_impl;
-        void* captured_stroke_user_data;
+        icm_brushtool_delegate_hooks hooks;
 
     public:
-        BrushToolDelegateCImpl() : captured_stroke_impl(NULL), captured_stroke_user_data(NULL) {}
-        virtual ~BrushToolDelegateCImpl() {}
-
-        virtual void captured_stroke(RefPtr<BrushStroke> stroke) {
-            if (this->captured_stroke_impl) {
-                BrushStroke* bs = stroke;
-                this->captured_stroke_impl((void*)bs, this->captured_stroke_user_data);
+        BrushToolDelegateCImpl(icm_brushtool_delegate_hooks hooks) : hooks(hooks) {}
+        virtual ~BrushToolDelegateCImpl() {
+            if (this->hooks.captured_stroke_free) {
+                this->hooks.captured_stroke_free(this->hooks.captured_stroke_context);
             }
         }
 
-        friend void ::icm_brushtool_delegate_set_custom_captured_stroke_func(icm_brushtool_delegate, icm_brushtool_delegate_captured_stroke_func, void*);
+        virtual void captured_stroke(RefPtr<BrushStroke> stroke) {
+            if (this->hooks.captured_stroke) {
+                BrushStroke* bs = stroke;
+                this->hooks.captured_stroke((void*)bs, this->hooks.captured_stroke_context);
+            }
+        }
     };
 }
 
@@ -88,8 +89,8 @@ extern "C" {
         }
     };
 
-    icm_brushtool_delegate icm_brushtool_delegate_construct_custom() {
-        auto* dcustom = new icCanvasManager::BrushToolDelegateCImpl();
+    icm_brushtool_delegate icm_brushtool_delegate_construct_custom(icm_brushtool_delegate_hooks hooks) {
+        auto* dcustom = new icCanvasManager::BrushToolDelegateCImpl(hooks);
         auto* d = static_cast<icCanvasManager::BrushTool::Delegate*>(dcustom);
 
         return (void*)d;
@@ -100,15 +101,5 @@ extern "C" {
         auto* dcustom = dynamic_cast<icCanvasManager::BrushToolDelegateCImpl*>(d);
 
         return dcustom != NULL;
-    };
-
-    void icm_brushtool_delegate_set_custom_captured_stroke_func(icm_brushtool_delegate w, icm_brushtool_delegate_captured_stroke_func func, void* user_data) {
-        icCanvasManager::BrushTool::Delegate* d = (icCanvasManager::BrushTool::Delegate*)w;
-        auto* dcustom = dynamic_cast<icCanvasManager::BrushToolDelegateCImpl*>(d);
-
-        if (dcustom) {
-            dcustom->captured_stroke_impl = func;
-            dcustom->captured_stroke_user_data = user_data;
-        }
     };
 }

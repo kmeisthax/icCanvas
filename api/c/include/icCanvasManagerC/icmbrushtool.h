@@ -32,10 +32,6 @@ extern "C" {
     int icm_brushtool_delegate_reference(icm_brushtool_delegate wrap);
     int icm_brushtool_delegate_dereference(icm_brushtool_delegate wrap);
 
-    /*Custom delegates are used to allow C code to be called from C++ code.*/
-    icm_brushtool_delegate icm_brushtool_delegate_construct_custom();
-    bool icm_brushtool_delegate_is_custom(icm_brushtool_delegate wrap);
-
     /*These functions set the function pointers of delegates.
      *Do NOT call them on delegates that return FALSE from is_custom, or your
      *program will crash.
@@ -44,8 +40,17 @@ extern "C" {
      *to store necessary state data. The lifetime of the pointed-to data must
      *extend beyond the life of the custom delegate.
      */
-    typedef void (*icm_brushtool_delegate_captured_stroke_func) (icm_brushstroke stroke, void* user_data);
-    void icm_brushtool_delegate_set_custom_captured_stroke_func(icm_brushtool_delegate w, icm_brushtool_delegate_captured_stroke_func func, void* user_data);
+    typedef void (*icm_captured_stroke_func) (icm_brushstroke stroke, void* user_data);
+
+    typedef struct {
+        icm_captured_stroke_func captured_stroke;
+        void* captured_stroke_context;
+        void (*captured_stroke_free)(void*);
+    } icm_brushtool_delegate_hooks;
+
+    /*Custom delegates are used to allow C code to be called from C++ code.*/
+    icm_brushtool_delegate icm_brushtool_delegate_construct_custom(icm_brushtool_delegate_hooks hooks);
+    bool icm_brushtool_delegate_is_custom(icm_brushtool_delegate wrap);
 
     /*Finally, you can set your delegate here.*/
     void icm_brushtool_set_delegate(icm_brushtool wrap, icm_brushtool_delegate del);
