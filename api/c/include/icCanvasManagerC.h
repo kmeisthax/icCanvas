@@ -6,5 +6,7 @@
 #include "icCanvasManagerC/icmrenderscheduler.h"
 #include "icCanvasManagerC/icmapplication.h"
 #include "icCanvasManagerC/icmcanvasview.h"
+#include "icCanvasManagerC/icmcanvastool.h"
+#include "icCanvasManagerC/icmbrushtool.h"
 
 #endif
