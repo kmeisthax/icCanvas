@@ -67,6 +67,57 @@ namespace icCanvasManager {
         public void set_zoom(double vpixel_size);
     }
     
+    [CCode (cname = "icm_canvastool",
+            cprefix = "icm_canvastool_",
+            ref_function = "icm_canvastool_reference",
+            unref_function = "icm_canvastool_dereference")]
+    [Compact]
+    public class CanvasTool {
+        public void prepare_for_reuse();
+        public void set_size(double width, double height, double ui_scale, double zoom);
+        public void set_scroll_center(double x, double y);
+        
+        public void mouse_down(double x, double y, double deltaX, double deltaY);
+        public void mouse_drag(double x, double y, double deltaX, double deltaY);
+        public void mouse_up(double x, double y, double deltaX, double deltaY);
+    }
+    
+    [CCode (cname = "icm_captured_stroke_func")]
+    public delegate void CapturedStrokeFunc(BrushStroke stroke);
+    
+    [CCode (cname = "icm_brushtool_delegate_hooks")]
+    public struct BrushToolDelegateHooks {
+        [CCode (delegate_target_cname = "captured_stroke_context",
+                delegate_target_destroy_notify_cname = "captured_stroke_free")]
+        public CapturedStrokeFunc captured_stroke;
+    }
+    
+    [CCode (cname = "icm_brushtool_delegate",
+            cprefix = "icm_brushtool_delegate_",
+            ref_function = "icm_brushtool_delegate_reference",
+            unref_function = "icm_brushtool_delegate_dereference")]
+    [Compact]
+    public class BrushToolDelegate {
+        public static BrushToolDelegate construct_custom(BrushToolDelegateHooks hooks);
+        public bool is_custom();
+    }
+    
+    [CCode (cname = "icm_brushtool",
+            cprefix = "icm_brushtool_",
+            ref_function = "icm_brushtool_reference",
+            unref_function = "icm_brushtool_dereference")]
+    [Compact]
+    public class BrushTool {
+        [CCode (cname = "icm_brushtool_construct")]
+        public BrushTool();
+        
+        public static BrushTool? downcast(CanvasTool up_obj);
+        public CanvasTool upcast();
+        
+        public void set_delegate(BrushToolDelegate del);
+        public BrushToolDelegate get_delegate();
+    }
+    
     [CCode (cname = "icm_drawing",
             cprefix = "icm_drawing_",
             ref_function = "icm_drawing_reference",
