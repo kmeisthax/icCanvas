@@ -48,6 +48,7 @@
     NSSize testSize = {1.0, 1.0};
     NSSize scaleSize = [self convertSizeToBacking:testSize];
     
+    [self->internal setSizeWidth:rekt.size.width andHeight:rekt.size.height andUiScale:scaleSize.width];
     [self->current_tool setSizeWidth:rekt.size.width andHeight:rekt.size.height andUiScale:scaleSize.width andZoom:65536]; //TODO: Actually pull correct zoom
 };
 
@@ -85,10 +86,6 @@
     theList.rectangles = cairo_rects;
     theList.num_rectangles = dirty_list_count;
     
-    NSSize testSize = {1.0, 1.0};
-    NSSize scaleSize = [self convertSizeToBacking:testSize];
-    
-    [self->internal setSizeWidth:self.bounds.size.width andHeight:self.bounds.size.height andUiScale:scaleSize.width];
     [self->internal drawWithContext:ctxt intoRects:&theList];
     
     free(cairo_rects);
