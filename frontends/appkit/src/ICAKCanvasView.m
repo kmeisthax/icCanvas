@@ -17,6 +17,7 @@
         self->internal = [[ICMCanvasView alloc] init];
         self->drawing = theDrawing;
         self->current_tool = [[ICMBrushTool alloc] init];
+        self->current_tool.delegate = self;
         
         [self->internal attachDrawing:self->drawing];
     }
@@ -39,6 +40,15 @@
 
 - (BOOL)isFlipped {
     return YES;
+};
+
+- (void)setFrame:(NSRect)rekt {
+    super.frame = rekt;
+    
+    NSSize testSize = {1.0, 1.0};
+    NSSize scaleSize = [self convertSizeToBacking:testSize];
+    
+    [self->current_tool setSizeWidth:rekt.size.width andHeight:rekt.size.height andUiScale:scaleSize.width andZoom:65536]; //TODO: Actually pull correct zoom
 };
 
 - (void)drawRect:(NSRect)dirtyRect {

@@ -1,7 +1,7 @@
 #import <Cocoa/Cocoa.h>
 #import <icCanvasManagerObjC.h>
 
-@interface ICAKCanvasView : NSView
+@interface ICAKCanvasView : NSView <ICMBrushToolDelegate>
 
 - (id)initWithDrawing:(ICMDrawing*) drawing;
 - (id)initWithFrame:(NSRect)frameRect andDrawing:(ICMDrawing*) drawing;
