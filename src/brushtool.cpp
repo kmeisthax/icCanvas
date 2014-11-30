@@ -2,14 +2,14 @@
 
 //icCanvasManager::BrushTool::
 
-icCanvasManager::BrushTool::BrushTool() : _error_threshold(0) {
+icCanvasManager::BrushTool::BrushTool() : _error_threshold(0), _fitter(new icCanvasManager::SplineFitter()) {
 }
 
 icCanvasManager::BrushTool::~BrushTool() {
 }
 
 void icCanvasManager::BrushTool::prepare_for_reuse() {
-    this->_fitter->finish_fitting();
+    this->_fitter->prepare_for_reuse();
 
     this->_is_fitting = false;
     this->_built_stroke = NULL;
@@ -39,6 +39,7 @@ void icCanvasManager::BrushTool::mouse_drag(const double x, const double y, cons
 
 void icCanvasManager::BrushTool::mouse_up(const double x, const double y, const double deltaX, const double deltaY) {
     if (this->_is_fitting) {
+        this->_fitter->finish_fitting();
         if (this->_delegate) this->_delegate->captured_stroke(this->_built_stroke);
         this->prepare_for_reuse();
     }

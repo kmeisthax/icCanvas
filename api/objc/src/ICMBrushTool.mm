@@ -9,7 +9,8 @@ namespace icCanvasManager {
         };
         
         virtual void captured_stroke(RefPtr<BrushStroke> stroke) {
-            ICMBrushStroke* bswrap = [[ICMBrushStroke alloc] initFromWrappedObject:(void*)stroke];
+            BrushStroke *unsafebr = stroke;
+            ICMBrushStroke* bswrap = [[ICMBrushStroke alloc] initFromWrappedObject:(void*)unsafebr];
             [this->_objc_delegate brushToolCapturedStroke:bswrap];
         };
         
