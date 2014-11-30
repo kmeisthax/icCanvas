@@ -100,8 +100,9 @@ class icCanvasManager::Renderer::_DifferentialCurveFunctor {
         _DifferentialCurveFunctor(icCanvasManager::BrushStroke::__Spline::derivative_type& d) : d(d) {};
         float operator() (float t) {
             auto dpt = this->d.evaluate_for_point(t);
+            auto deriv_len = sqrt((float)dpt.x * (float)dpt.x + (float)dpt.y * (float)dpt.y);
             
-            return 1 / sqrt((float)dpt.x * (float)dpt.x + (float)dpt.y * (float)dpt.y);
+            return 1 / deriv_len;
         }
 };
 
@@ -175,6 +176,16 @@ void icCanvasManager::Renderer::drawStroke(icCanvasManager::RefPtr<icCanvasManag
         auto length = this->curve_arc_length(i, derivative);
         int quality = (float)1.0 / this->xscale;
         
+        auto testpt = derivative.evaluate_for_point(i);
+        auto testlen = sqrt((float)testpt.x * (float)testpt.x + (float)testpt.y * (float)testpt.y);
+        if (testlen == 0) {
+            //Special case: If the derivative for this curve is zero,
+            //don't try to draw the whole curve since the below code crahses.
+
+            this->applyBrush(br->_curve.evaluate_for_point(i));
+            continue;
+        }
+
         for (float j = 0; j < length / this->xscale; j += quality) {
             int iterates = 5;
             float this_t = i;
