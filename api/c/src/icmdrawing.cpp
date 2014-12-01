@@ -10,9 +10,11 @@ extern "C" {
         return (icm_drawing*)d;
     };
 
-    int icm_drawing_reference(icm_drawing w) {
+    icm_drawing icm_drawing_reference(icm_drawing w) {
         icCanvasManager::Drawing* d = (icCanvasManager::Drawing*)w;
-        return d->ref();
+        d->ref();
+
+        return w;
     };
 
     int icm_drawing_dereference(icm_drawing w) {

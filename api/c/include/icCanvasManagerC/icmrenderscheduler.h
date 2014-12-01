@@ -10,7 +10,7 @@ extern "C" {
     typedef void *icm_renderscheduler;
 
     icm_renderscheduler icm_renderscheduler_construct();
-    int icm_renderscheduler_reference(icm_renderscheduler wrap);
+    icm_renderscheduler icm_renderscheduler_reference(icm_renderscheduler wrap);
     int icm_renderscheduler_dereference(icm_renderscheduler wrap);
 
     void icm_renderscheduler_request_tile(icm_renderscheduler wrap, icm_drawing d, int x, int y, int size, int time);

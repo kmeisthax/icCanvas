@@ -12,7 +12,7 @@ extern "C" {
     typedef void *icm_brushtool;
 
     icm_brushtool icm_brushtool_construct();
-    int icm_brushtool_reference(icm_brushtool wrap);
+    icm_brushtool icm_brushtool_reference(icm_brushtool wrap);
     int icm_brushtool_dereference(icm_brushtool wrap);
 
     /*Downcast and upcast functions for converting between icm_canvastool and
@@ -29,7 +29,7 @@ extern "C" {
       negative 1. */
     typedef void *icm_brushtool_delegate;
 
-    int icm_brushtool_delegate_reference(icm_brushtool_delegate wrap);
+    icm_brushtool_delegate icm_brushtool_delegate_reference(icm_brushtool_delegate wrap);
     int icm_brushtool_delegate_dereference(icm_brushtool_delegate wrap);
 
     /*These functions set the function pointers of delegates.

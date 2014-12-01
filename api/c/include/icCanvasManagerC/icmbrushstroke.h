@@ -15,7 +15,7 @@ extern "C" {
     const static int ICM_BRUSHSTROKE_TILT_ANGLE_FULL = 129600;
 
     icm_brushstroke icm_brushstroke_construct();
-    int icm_brushstroke_reference(icm_brushstroke wrap);
+    icm_brushstroke icm_brushstroke_reference(icm_brushstroke wrap);
     int icm_brushstroke_dereference(icm_brushstroke wrap);
 
     void icm_brushstroke_pen_begin(icm_brushstroke wrap, int32_t x, int32_t y);

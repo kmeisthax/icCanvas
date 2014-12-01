@@ -31,9 +31,11 @@ extern "C" {
         return (icm_brushtool)d;
     };
 
-    int icm_brushtool_reference(icm_brushtool w) {
+    icm_brushtool icm_brushtool_reference(icm_brushtool w) {
         icCanvasManager::BrushTool* d = (icCanvasManager::BrushTool*)w;
-        return d->ref();
+        d->ref();
+
+        return w;
     };
 
     int icm_brushtool_dereference(icm_brushtool w) {
@@ -61,15 +63,15 @@ extern "C" {
         return (void*)up;
     };
 
-    int icm_brushtool_delegate_reference(icm_brushtool_delegate w) {
+    icm_brushtool_delegate icm_brushtool_delegate_reference(icm_brushtool_delegate w) {
         icCanvasManager::BrushTool::Delegate* d = (icCanvasManager::BrushTool::Delegate*)w;
         icCanvasManager::RefCnt* d_refable = dynamic_cast<icCanvasManager::RefCnt*>(d_refable);
 
         if (d_refable) {
-            return d_refable->ref();
-        } else {
-            return -1;
+            d_refable->ref();
         }
+
+        return w;
     };
 
     int icm_brushtool_delegate_dereference(icm_brushtool_delegate w) {

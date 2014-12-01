@@ -3,9 +3,11 @@
 #include <icCanvasManagerC.h>
 
 extern "C" {
-    int icm_canvastool_reference(icm_canvastool w) {
+    icm_canvastool icm_canvastool_reference(icm_canvastool w) {
         icCanvasManager::CanvasTool* d = (icCanvasManager::CanvasTool*)w;
-        return d->ref();
+        d->ref();
+
+        return w;
     };
 
     int icm_canvastool_dereference(icm_canvastool w) {
