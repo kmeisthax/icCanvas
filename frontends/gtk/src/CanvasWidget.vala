@@ -1,9 +1,12 @@
 class icCanvasGtk.CanvasWidget : Gtk.Widget, Gtk.Scrollable {
     private icCanvasManager.CanvasView cv;
+    private icCanvasManager.CanvasTool ct;
     private Gdk.Window? evtWindow;
     
     private double lastx;
     private double lasty;
+    
+    private weak icCanvasManager.Drawing? _drawing;
     
     public CanvasWidget() {
         this.add_events(Gdk.EventMask.BUTTON_MOTION_MASK | Gdk.EventMask.BUTTON_PRESS_MASK | Gdk.EventMask.BUTTON_RELEASE_MASK);
@@ -13,17 +16,33 @@ class icCanvasGtk.CanvasWidget : Gtk.Widget, Gtk.Scrollable {
         
         this.lastx = 0;
         this.lasty = 0;
+        this._drawing = null;
+        
+        icCanvasManager.BrushTool bt = new icCanvasManager.BrushTool();
+        
+        icCanvasManager.BrushToolDelegateHooks hooks = icCanvasManager.BrushToolDelegateHooks();
+        hooks.captured_stroke = this.captured_stroke;
+        icCanvasManager.BrushToolDelegate btd = icCanvasManager.BrushToolDelegate.construct_custom(hooks);
+        
+        bt.delegate = btd;
+        
+        this.ct = bt.upcast();
     }
     
     public icCanvasManager.Drawing drawing {
         set {
+            this._drawing = value;
             this.cv.attach_drawing(value);
         }
     }
     
+    private void captured_stroke(icCanvasManager.BrushStroke stroke) {
+        this._drawing.append_stroke(stroke);
+    }
+    
     public override void realize() {
         this.set_realized(true);
-
+        
         if (this.evtWindow == null) {
             var attributes = Gdk.WindowAttr();
             
@@ -52,6 +71,7 @@ class icCanvasGtk.CanvasWidget : Gtk.Widget, Gtk.Scrollable {
         if (this.get_realized()) {
             this.evtWindow.move_resize(allocation.x, allocation.y, allocation.width, allocation.height);
             this.cv.set_size(allocation.width, allocation.height, this.get_scale_factor());
+            this.ct.set_size(allocation.width, allocation.height, this.get_scale_factor(), 65536);
         }
     }
     
@@ -68,7 +88,7 @@ class icCanvasGtk.CanvasWidget : Gtk.Widget, Gtk.Scrollable {
     
     public override bool button_press_event(Gdk.EventButton evt) {
         if (evt.type == Gdk.EventType.BUTTON_PRESS) {
-            //this.cv.mouse_down(evt.x, evt.y, 0, 0);
+            this.ct.mouse_down(evt.x, evt.y, 0, 0);
             
             this.lastx = evt.x;
             this.lasty = evt.y;
@@ -78,7 +98,7 @@ class icCanvasGtk.CanvasWidget : Gtk.Widget, Gtk.Scrollable {
     }
     
     public override bool motion_notify_event(Gdk.EventMotion evt) {
-        //this.cv.mouse_drag(evt.x, evt.y, evt.x - this.lastx, evt.y - this.lasty);
+        this.ct.mouse_drag(evt.x, evt.y, evt.x - this.lastx, evt.y - this.lasty);
         
         this.lastx = evt.x;
         this.lasty = evt.y;
@@ -88,7 +108,7 @@ class icCanvasGtk.CanvasWidget : Gtk.Widget, Gtk.Scrollable {
     
     public override bool button_release_event(Gdk.EventButton evt) {
         if (evt.type == Gdk.EventType.BUTTON_RELEASE) {
-            //this.cv.mouse_up(evt.x, evt.y, evt.x - this.lastx, evt.y - this.lasty);
+            this.ct.mouse_up(evt.x, evt.y, evt.x - this.lastx, evt.y - this.lasty);
 
             this.lastx = evt.x;
             this.lasty = evt.y;
@@ -135,6 +155,7 @@ class icCanvasGtk.CanvasWidget : Gtk.Widget, Gtk.Scrollable {
         }
         
         this.cv.set_scroll_center(hval, vval);
+        this.ct.set_scroll_center(hval, vval);
     }
     
     public Gtk.Adjustment hadjustment {
