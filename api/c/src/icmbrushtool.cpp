@@ -7,7 +7,7 @@ namespace icCanvasManager {
         icm_brushtool_delegate_hooks hooks;
 
     public:
-        BrushToolDelegateCImpl(icm_brushtool_delegate_hooks* hooks) : hooks(*hooks) {}
+        BrushToolDelegateCImpl(icm_brushtool_delegate_hooks* hooks) : hooks(*hooks), RefCnt() {}
         virtual ~BrushToolDelegateCImpl() {
             if (this->hooks.captured_stroke_target_destroy_notify) {
                 this->hooks.captured_stroke_target_destroy_notify(this->hooks.captured_stroke_context);
@@ -76,7 +76,7 @@ extern "C" {
 
     int icm_brushtool_delegate_dereference(icm_brushtool_delegate w) {
         icCanvasManager::BrushTool::Delegate* d = (icCanvasManager::BrushTool::Delegate*)w;
-        icCanvasManager::RefCnt* d_refable = dynamic_cast<icCanvasManager::RefCnt*>(d_refable);
+        icCanvasManager::RefCnt* d_refable = dynamic_cast<icCanvasManager::RefCnt*>(d);
 
         if (d_refable) {
             int refcount = d_refable->deref();
@@ -92,8 +92,9 @@ extern "C" {
     };
 
     icm_brushtool_delegate icm_brushtool_delegate_construct_custom(icm_brushtool_delegate_hooks* hooks) {
-        auto* dcustom = new icCanvasManager::BrushToolDelegateCImpl(hooks);
-        auto* d = static_cast<icCanvasManager::BrushTool::Delegate*>(dcustom);
+        icCanvasManager::BrushToolDelegateCImpl* dcustom = new icCanvasManager::BrushToolDelegateCImpl(hooks);
+        icCanvasManager::BrushTool::Delegate* d = dcustom;
+        dcustom->ref();
 
         return (void*)d;
     };
