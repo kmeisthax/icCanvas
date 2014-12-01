@@ -85,7 +85,9 @@ namespace icCanvasManager {
     [CCode (cname = "icm_captured_stroke_func")]
     public delegate void CapturedStrokeFunc(BrushStroke stroke);
     
-    [CCode (cname = "icm_brushtool_delegate_hooks")]
+    [CCode (cname = "icm_brushtool_delegate_hooks",
+            destroy_function = "icm_brushtool_delegate_hooks_destroy",
+            has_type_id = false)]
     public struct BrushToolDelegateHooks {
         [CCode (delegate_target_cname = "captured_stroke_context")]
         public CapturedStrokeFunc captured_stroke;

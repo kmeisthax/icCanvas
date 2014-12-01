@@ -115,4 +115,9 @@ extern "C" {
 
         return (void*)d->get_delegate();
     };
+
+    //This code does nothing in particular that we care about, it's just there to get Vala to generate correct code
+    void icm_brushtool_delegate_hooks_destroy(icm_brushtool_delegate_hooks* blargh) {
+
+    };
 }
