@@ -68,7 +68,7 @@ typedef struct {
     frameRelativeToWindow.origin.y = 0;
     
     ICAKDockingRow* row = [[ICAKDockingRow alloc] initWithFrame:frameRelativeToWindow];
-    row.vertical = YES;
+    row.vertical = dat.row.vertical;
     
     package.contentView = row;
     [row addSubview:view positioned:NSWindowAbove relativeTo:nil];
