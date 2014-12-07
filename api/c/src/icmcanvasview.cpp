@@ -10,9 +10,11 @@ extern "C" {
         return (icm_canvasview)d;
     };
 
-    int icm_canvasview_reference(icm_canvasview w) {
+    icm_canvasview icm_canvasview_reference(icm_canvasview w) {
         icCanvasManager::CanvasView* d = (icCanvasManager::CanvasView*)w;
-        return d->ref();
+        d->ref();
+
+        return w;
     };
 
     int icm_canvasview_dereference(icm_canvasview w) {

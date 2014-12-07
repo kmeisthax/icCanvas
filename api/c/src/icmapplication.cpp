@@ -8,7 +8,8 @@ extern "C" {
         return (icm_application)d;
     };
 
-    int icm_application_reference(icm_application wrap) {
+    icm_application icm_application_reference(icm_application wrap) {
+        return wrap;
     };
     int icm_application_dereference(icm_application wrap) {
     };

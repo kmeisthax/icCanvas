@@ -11,8 +11,8 @@ extern "C" {
 
     typedef void *icm_brushtool;
 
-    icm_drawing icm_brushtool_construct();
-    int icm_brushtool_reference(icm_brushtool wrap);
+    icm_brushtool icm_brushtool_construct();
+    icm_brushtool icm_brushtool_reference(icm_brushtool wrap);
     int icm_brushtool_dereference(icm_brushtool wrap);
 
     /*Downcast and upcast functions for converting between icm_canvastool and
@@ -29,12 +29,8 @@ extern "C" {
       negative 1. */
     typedef void *icm_brushtool_delegate;
 
-    int icm_brushtool_delegate_reference(icm_brushtool_delegate wrap);
+    icm_brushtool_delegate icm_brushtool_delegate_reference(icm_brushtool_delegate wrap);
     int icm_brushtool_delegate_dereference(icm_brushtool_delegate wrap);
-
-    /*Custom delegates are used to allow C code to be called from C++ code.*/
-    icm_brushtool_delegate icm_brushtool_delegate_construct_custom();
-    bool icm_brushtool_delegate_is_custom(icm_brushtool_delegate wrap);
 
     /*These functions set the function pointers of delegates.
      *Do NOT call them on delegates that return FALSE from is_custom, or your
@@ -44,8 +40,17 @@ extern "C" {
      *to store necessary state data. The lifetime of the pointed-to data must
      *extend beyond the life of the custom delegate.
      */
-    typedef void (*icm_brushtool_delegate_captured_stroke_func) (void* user_data, icm_brushstroke stroke);
-    void icm_brushtool_delegate_set_custom_captured_stroke_func(icm_brushtool_delegate w, icm_brushtool_delegate_captured_stroke_func func, void* user_data);
+    typedef void (*icm_captured_stroke_func) (icm_brushstroke stroke, void* user_data);
+
+    typedef struct {
+        icm_captured_stroke_func captured_stroke;
+        void* captured_stroke_context;
+        void (*captured_stroke_target_destroy_notify)(void*);
+    } icm_brushtool_delegate_hooks;
+
+    /*Custom delegates are used to allow C code to be called from C++ code.*/
+    icm_brushtool_delegate icm_brushtool_delegate_construct_custom(icm_brushtool_delegate_hooks* hooks);
+    bool icm_brushtool_delegate_is_custom(icm_brushtool_delegate wrap);
 
     /*Finally, you can set your delegate here.*/
     void icm_brushtool_set_delegate(icm_brushtool wrap, icm_brushtool_delegate del);

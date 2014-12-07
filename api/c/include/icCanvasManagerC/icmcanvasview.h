@@ -12,7 +12,7 @@ extern "C" {
     typedef void *icm_canvasview;
 
     icm_canvasview icm_canvasview_construct();
-    int icm_canvasview_reference(icm_canvasview wrap);
+    icm_canvasview icm_canvasview_reference(icm_canvasview wrap);
     int icm_canvasview_dereference(icm_canvasview wrap);
 
     void icm_canvasview_attach_drawing(icm_canvasview wrap, icm_drawing drawing);

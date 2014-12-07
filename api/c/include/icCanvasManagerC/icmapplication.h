@@ -11,7 +11,7 @@ extern "C" {
 
     icm_application icm_application_get_instance();
 
-    int icm_application_reference(icm_application wrap);
+    icm_application icm_application_reference(icm_application wrap);
     int icm_application_dereference(icm_application wrap);
 
     void icm_application_background_tick(icm_application wrap);

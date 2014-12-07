@@ -191,7 +191,7 @@ class icCanvasGtk.DockableToolbar : Gtk.Bin, Gtk.Orientable, icCanvasGtk.Dockabl
     public override void remove (Gtk.Widget widget) {
         if (this._child == widget) {
             this._child = null;
-            this._child.set_parent(null);
+            this._child.unparent();
         }
     }
     

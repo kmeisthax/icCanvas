@@ -10,9 +10,11 @@ extern "C" {
         return (icm_brushstroke)d;
     };
 
-    int icm_brushstroke_reference(icm_brushstroke w) {
+    icm_brushstroke icm_brushstroke_reference(icm_brushstroke w) {
         icCanvasManager::BrushStroke* d = (icCanvasManager::BrushStroke*)w;
-        return d->ref();
+        d->ref();
+
+        return w;
     };
     int icm_brushstroke_dereference(icm_brushstroke w) {
         icCanvasManager::BrushStroke* d = (icCanvasManager::BrushStroke*)w;

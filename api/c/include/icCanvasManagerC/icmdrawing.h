@@ -10,7 +10,7 @@ extern "C" {
     typedef void* icm_drawing;
 
     icm_drawing icm_drawing_construct();
-    int icm_drawing_reference(icm_drawing wrap);
+    icm_drawing icm_drawing_reference(icm_drawing wrap);
     int icm_drawing_dereference(icm_drawing wrap);
 
     icm_brushstroke icm_drawing_stroke_at_time(icm_drawing wrap, int time);

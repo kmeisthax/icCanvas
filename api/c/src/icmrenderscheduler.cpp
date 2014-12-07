@@ -10,9 +10,11 @@ extern "C" {
         return (icm_renderscheduler)d;
     };
 
-    int icm_renderscheduler_reference(icm_renderscheduler w) {
+    icm_renderscheduler icm_renderscheduler_reference(icm_renderscheduler w) {
         icCanvasManager::RenderScheduler* d = (icCanvasManager::RenderScheduler*)w;
-        return d->ref();
+        d->ref();
+
+        return w;
     };
 
     int icm_renderscheduler_dereference(icm_renderscheduler w) {
