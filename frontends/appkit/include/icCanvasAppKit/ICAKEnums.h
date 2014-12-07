@@ -20,7 +20,8 @@ typedef NS_ENUM(NSInteger, ICAKDockableToolbarBehavior) {
 static const CGFloat ICAKDockableViewPanelMargins = 15.0f;
 static const CGFloat ICAKDockableViewMinPanelSize = 240.0f;
 
-static const CGFloat ICAKDockableViewToolbarTopMargin = 10.0f;
+static const CGFloat ICAKDockableViewToolbarTopMargin = 5.0f;
+static const CGFloat ICAKDockableViewToolbarGripLength = 10.0f;
 static const CGFloat ICAKDockableViewToolbarSideMargin = 5.0f;
 static const CGFloat ICAKDockableViewToolbarBottomMargin = 5.0f;
 static const CGFloat ICAKDockableViewToolbarControlMargin = 3.0f;

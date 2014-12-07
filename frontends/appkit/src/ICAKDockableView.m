@@ -88,6 +88,7 @@
 };
 - (void)setVertical:(BOOL)isVertical {
     self->_is_vertical = isVertical;
+    self.needsLayout = YES;
 };
 
 @end

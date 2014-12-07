@@ -85,11 +85,16 @@
     btn.buttonType = type;
 };
 
+- (void)setVertical:(BOOL)isVertical {
+    [super setVertical:isVertical];
+    [self recalculateIntrinsicSize];
+};
+
 - (void)recalculateIntrinsicSize {
-    CGFloat main_length = ICAKDockableViewToolbarTopMargin + ICAKDockableViewToolbarBottomMargin + (ICAKDockableViewToolbarControlLength * self.subviews.count) + (ICAKDockableViewToolbarControlMargin * self.subviews.count);
+    CGFloat main_length = ICAKDockableViewToolbarTopMargin + ICAKDockableViewToolbarGripLength + ICAKDockableViewToolbarBottomMargin + (ICAKDockableViewToolbarControlLength * self.subviews.count) + (ICAKDockableViewToolbarControlMargin * self.subviews.count);
     CGFloat cross_length = ICAKDockableViewMinToolbarSize;
     
-    if (!self.vertical) {
+    if (self.vertical) {
         self->_intrinsic_height.constant = main_length;
         self->_intrinsic_width.constant = cross_length;
     } else {
@@ -119,8 +124,8 @@
             subframe.origin.x = ICAKDockableViewToolbarSideMargin + ICAKDockableViewToolbarControlLength * countCross;
             subframe.origin.y = ICAKDockableViewToolbarBottomMargin + subframe.size.height * (colMain - countMain - 1) + ICAKDockableViewToolbarControlMargin * (colMain - countMain - 1);
         } else {
-            subframe.origin.x = ICAKDockableViewToolbarTopMargin + ICAKDockableViewToolbarControlLength * countMain + ICAKDockableViewToolbarControlMargin * countMain;
-            subframe.origin.y = self.frame.size.height - ICAKDockableViewToolbarSideMargin - ICAKDockableViewToolbarControlLength * (countCross + 1);
+            subframe.origin.x = ICAKDockableViewToolbarTopMargin + ICAKDockableViewToolbarGripLength + ICAKDockableViewToolbarControlLength * countMain + ICAKDockableViewToolbarControlMargin * countMain;
+            subframe.origin.y = ICAKDockableViewToolbarSideMargin + subframe.size.height * countCross;
         }
         
         subview.frame = subframe;
@@ -133,6 +138,27 @@
     }
     
     [super layout];
+};
+
+- (void)drawRect:(NSRect)rekt {
+    NSRect handleRekt;
+    
+    if (self.vertical) {
+        handleRekt.origin.x = ICAKDockableViewToolbarSideMargin;
+        handleRekt.origin.y = self.frame.size.height - ICAKDockableViewToolbarTopMargin - ICAKDockableViewToolbarGripLength;
+        handleRekt.size.height = ICAKDockableViewToolbarGripLength;
+        handleRekt.size.width = self.frame.size.width - ICAKDockableViewToolbarSideMargin * 2;
+    } else {
+        handleRekt.origin.x = ICAKDockableViewToolbarTopMargin;
+        handleRekt.origin.y = ICAKDockableViewToolbarSideMargin;
+        handleRekt.size.height = self.frame.size.height - ICAKDockableViewToolbarSideMargin * 2;
+        handleRekt.size.width = ICAKDockableViewToolbarGripLength;
+    }
+    
+    [NSColor.highlightColor setFill];
+    NSRectFill(handleRekt);
+    
+    [super drawRect:rekt];
 };
 
 @end
