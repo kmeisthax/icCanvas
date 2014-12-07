@@ -43,11 +43,11 @@
     btn.translatesAutoresizingMaskIntoConstraints = NO;
     
     [self addSubview:btn];
-    [self recalculateIntrinsicSize];
     [self setNeedsLayout:YES];
     
     [self addConstraint:[NSLayoutConstraint constraintWithItem:btn attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationGreaterThanOrEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0 constant:ICAKDockableViewToolbarControlLength]];
     [self addConstraint:[NSLayoutConstraint constraintWithItem:btn attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationGreaterThanOrEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0 constant:ICAKDockableViewToolbarControlLength]];
+    [self recalculateIntrinsicSize];
     
     return self.buttonCount - 1;
 };
@@ -58,11 +58,11 @@
     btn.translatesAutoresizingMaskIntoConstraints = NO;
     
     [self addSubview:btn positioned:NSWindowBelow relativeTo:[self.subviews objectAtIndex:button]];
-    [self recalculateIntrinsicSize];
     [self setNeedsLayout:YES];
     
     [self addConstraint:[NSLayoutConstraint constraintWithItem:btn attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationGreaterThanOrEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0 constant:ICAKDockableViewToolbarControlLength]];
     [self addConstraint:[NSLayoutConstraint constraintWithItem:btn attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationGreaterThanOrEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0 constant:ICAKDockableViewToolbarControlLength]];
+    [self recalculateIntrinsicSize];
     
     return self.buttonCount - 1;
 };
@@ -87,13 +87,15 @@
     CGFloat main_length = ICAKDockableViewToolbarTopMargin + ICAKDockableViewToolbarBottomMargin + (ICAKDockableViewToolbarControlLength * self.subviews.count) + (ICAKDockableViewToolbarControlMargin * self.subviews.count);
     CGFloat cross_length = ICAKDockableViewMinToolbarSize;
     
-    if (self.vertical) {
+    if (!self.vertical) {
         self->_intrinsic_height.constant = main_length;
         self->_intrinsic_width.constant = cross_length;
     } else {
         self->_intrinsic_width.constant = main_length;
         self->_intrinsic_height.constant = cross_length;
     }
+    
+    NSLog(@"New minimum size %fx%f", self->_intrinsic_height.constant, self->_intrinsic_width.constant);
 }
 
 - (void)layout {
@@ -111,11 +113,14 @@
         
         if (self.vertical) {
             subframe.origin.x = ICAKDockableViewToolbarSideMargin + ICAKDockableViewToolbarControlLength * countCross;
-            subframe.origin.y = self.bounds.size.height - (ICAKDockableViewToolbarTopMargin + ICAKDockableViewToolbarControlLength * countMain + ICAKDockableViewToolbarControlMargin * countMain);
+            subframe.origin.y = self.frame.size.height - (ICAKDockableViewToolbarTopMargin + ICAKDockableViewToolbarControlIconSize * countMain + ICAKDockableViewToolbarControlMargin * countMain);
         } else {
             subframe.origin.x = ICAKDockableViewToolbarTopMargin + ICAKDockableViewToolbarControlLength * countMain + ICAKDockableViewToolbarControlMargin * countMain;
-            subframe.origin.y = self.bounds.size.height - ICAKDockableViewToolbarSideMargin - ICAKDockableViewToolbarControlLength * (countCross + 1);
+            subframe.origin.y = self.frame.size.height - ICAKDockableViewToolbarSideMargin - ICAKDockableViewToolbarControlLength * (countCross + 1);
         }
+        
+        subframe.size.width = ICAKDockableViewToolbarControlLength;
+        subframe.size.height = ICAKDockableViewToolbarControlIconSize;
         
         NSLog(@"New frame %fx%f size %fx%f", subframe.origin.x, subframe.origin.y, subframe.size.width, subframe.size.height);
         

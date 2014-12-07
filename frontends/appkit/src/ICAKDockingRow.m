@@ -70,6 +70,10 @@ static const NSInteger _MARGINS = 15;
 };
 - (void)setVertical:(BOOL)isVertical {
     self->_is_vertical = isVertical;
+    
+    for (ICAKDockableView* subview in self.subviews) {
+        subview.vertical = isVertical;
+    }
 };
 
 - (BOOL)canAcceptDockableView:(ICAKDockableView*)dview {
@@ -176,13 +180,18 @@ static const NSInteger _MARGINS = 15;
     //Add margins
     NSLayoutAttribute attr1 = NSLayoutAttributeTop;
     NSLayoutAttribute attr2 = NSLayoutAttributeBottom;
+    CGFloat margin = _MARGINS;
     if (self->_is_vertical) {
         attr1 = NSLayoutAttributeLeft;
         attr2 = NSLayoutAttributeRight;
     }
     
-    [self addConstraint:[NSLayoutConstraint constraintWithItem:subview attribute:attr1 relatedBy:NSLayoutRelationEqual toItem:self attribute:attr1 multiplier:1.0 constant:_MARGINS]];
-    [self addConstraint:[NSLayoutConstraint constraintWithItem:subview attribute:attr2 relatedBy:NSLayoutRelationEqual toItem:self attribute:attr2 multiplier:1.0 constant:_MARGINS * -1.0]];
+    if (self->_prevailing_style == ICAKDockableViewStyleToolbar) {
+        margin = 0;
+    }
+    
+    [self addConstraint:[NSLayoutConstraint constraintWithItem:subview attribute:attr1 relatedBy:NSLayoutRelationEqual toItem:self attribute:attr1 multiplier:1.0 constant:margin]];
+    [self addConstraint:[NSLayoutConstraint constraintWithItem:subview attribute:attr2 relatedBy:NSLayoutRelationEqual toItem:self attribute:attr2 multiplier:1.0 constant:margin * -1.0]];
 };
 
 - (NSLayoutConstraint*)createConstraintStapleView:(NSView*)view1 toView:(NSView*)view2 {
@@ -220,6 +229,10 @@ static const NSInteger _MARGINS = 15;
     [self removePreviousSpaceReservation];
     [self addMarginConstraintsForView:subview];
     [self regenerateSpacingConstraints];
+    
+    if ([subview respondsToSelector:@selector(setVertical:)]) {
+        [((id)subview) setVertical:self->_is_vertical];
+    }
 };
 
 - (void)willRemoveSubview:(NSView*)subview {

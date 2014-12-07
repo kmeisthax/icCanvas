@@ -1,0 +1,178 @@
+Serialization format for icCanvas:
+
+Data types:
+
+    integer (vary: bitwidth, signedness)
+      - may vary by width and signedness
+        
+        Integers are notated as such:
+        
+            int(bitwidth, signedness)
+            
+            where bitwidth is one of 8, 16, 32, or 64
+            and signedness is one of "signed", "unsigned"
+            
+            If omitted, signedness is "signed" and bitwidth is 64.
+    
+    floating-point (vary: bitwidth)
+    
+        Floating point numbers are notated as such:
+        
+            float(bitwidth)
+            
+            where bitwidth is one of 32, 64
+            
+            If omitted, bitwidth is 64.
+    
+    string, blob
+      - string is always UTF-8 encoded, blob may store arbitrary data
+      - length is stored as int(64, signed) and counts bytes in string/blob
+      
+        Strings and blobs are notated as such;
+            
+            string
+            blob
+    
+    uuid
+      - 16-byte binary encoded
+        
+        UUIDs are always notated as uuid; with no type arguments.
+    
+    structs (collection of a fixed number of arbitrary types)
+      - each field in a struct has a name
+      - field values may be base or compound types
+      
+        Structs are notated in this document as such:
+      
+            struct(field1: type1, field2: type2, ..., fieldN: typeN)
+            
+            where field1, field2, ..., fieldN are arbitrary strings
+            and type1, type2, ..., typeN are valid type specifiers
+    
+    arrays (collection of an arbitrary number of fixed types)
+      - length of array stored as uint64
+      - stores multiple instances of a single base or compound type
+        
+        Arrays are notated as such:
+        
+            array(type)
+            
+            where type is any valid type specifier
+    
+    references (pointers to arbitrary data in the catalog)
+      - specialization of the uuid base data type
+      - may be resolved in another file
+      - referred data may be restricted to a particular type
+      
+        References may be notated as such:
+            
+            ref(typename)
+            
+            where typename is any registered type's name.
+            
+            The special typename "any" allows reference to any data.
+            
+            If omitted, typename is "any".
+    
+    classes (descriptions of data formats)
+      - contains a name
+      - contains versioned type information for deserialization
+      - registered in the type catalog
+      - necessary to store data
+      
+        Classes may be notated as such:
+            
+            class
+
+The catalog:
+
+    icCanvas serialized data is stored in one or more catalog files, which
+bundle raw binary data with type information necessary to decode across systems
+whatever data is inside.
+
+    A catalog file looks like this:
+    
+    Magic number "BSCATLOG"
+        Identifies the datastream as a catalog file.
+        
+        While this is stated as a string, it should be treated as a 64-bit
+        constant stored in the byte order of the host that wrote the file in
+        question. All integer data types should be written in the same order
+        as the magic number was written in.
+    
+    Version number x.y (Two 16-bit numbers)
+        Version number of the catalog file format.
+        
+        The version number is used to determine if a particular catalog file
+        can be read or written to. It's segmented into a major (first) and
+        minor (second) version number. The major version number indicates
+        incompatible changes to the catalog file format, while the minor
+        version indicates compatible changes to the catalog file format.
+        
+        For a particular version of the catalog library, x.y; trying to read a
+        catalog file of version w.z, the following rules apply:
+        
+        If the library major version x is less than the file major version w:
+            Cease processing the catalog file.
+            Report unknown version error to client code.
+        If the library major version x is equal to the file major version w:
+            If the library minor version y is less than the file minor version z:
+                Process the file, skipping foreign data sections.
+                Retain foreign data sections on save when possible.
+            Otherwise:
+                Process the file normally.
+                
+                If the library minor version y is greater than the file minor version z:
+                    Transparently upgrade obsolete data sections on save.
+                    Set the minor version number to the library's minor version.
+        If the library major version x is greater than the file major version w:
+            Indicate to client code that the catalog must be upgraded.
+            Upgrade the catalog, if allowed. Otherwise, error out.
+    
+    Sections (since version 0.0)
+        
+        Version 0.0:
+            Each data section consists of a four-character code, a 64-bit
+            length field, followed by that many bytes of data.
+            
+            The structure of the four-character code broadly follows the
+            structure of PNG four-character codes. The four-character code must
+            consist of US ASCII characters only encoded as eight bit bytes
+            restricted to uppercase and lowercase Latin characters only. (e.g.
+            0x41-0x5A and 0x61-0x7A).
+            
+            The uppercase or lowercase state of a particular "letter" of the
+            fourcc may indicate additional information.
+            
+            First letter lowercase: Section skippable
+                Readers of a lower minor version than the minor version of the
+                file may skip processing this section.
+                
+                Minor version updates are expected to only introduce new
+                skippable sections. Major version updates are allowed to
+                introduce unskippable sections.
+            
+            Second letter lowercase: Private
+                Section type is private to the application which generated the
+                catalog.
+            
+            Fourth letter lowercase: Section blind-copyable
+                Readers of a lower minor version who have skipped processing a
+                section may wish to also update a file containing unknown data.
+                In this case, they would normally erase the section in question
+                but setting this letter lowercase instead causes the section to
+                be copied verbatim.
+    
+    Type catalog (since version 0.0)
+        Section code: TCAT (unskippable, public, uncopyable)
+        
+        Version 0.0:
+            Type catalog is a linear array of classes.
+            
+            Format is a 64-bit integer indicating number of clases
+        
+        Lists all of the valid types stored in the catalog. Each piece of data
+        stored within the data catalog must reference a particular type in the
+        type catalog.
+        
+    
