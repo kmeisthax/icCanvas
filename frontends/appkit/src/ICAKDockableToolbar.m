@@ -96,35 +96,32 @@
         self->_intrinsic_width.constant = main_length;
         self->_intrinsic_height.constant = cross_length;
     }
-    
-    NSLog(@"New minimum size %fx%f", self->_intrinsic_height.constant, self->_intrinsic_width.constant);
 }
 
 - (void)layout {
     NSInteger colCross, colMain, countCross = 0, countMain = 0;
     if (self.vertical) {
         colCross = floor(self.frame.size.width / ICAKDockableViewToolbarControlLength);
-        colMain = floor(self.frame.size.height / ICAKDockableViewToolbarControlLength);
     } else {
-        colMain = floor(self.frame.size.width / ICAKDockableViewToolbarControlLength);
         colCross = floor(self.frame.size.height / ICAKDockableViewToolbarControlLength);
     }
+    
+    if (colCross == 0) colCross = 1;
+    colMain = floor(self.subviews.count / colCross);
     
     for (NSView* subview in self.subviews) {
         NSRect subframe = subview.frame;
         
+        subframe.size.width = ICAKDockableViewToolbarControlLength;
+        subframe.size.height = ICAKDockableViewToolbarControlLength;
+        
         if (self.vertical) {
             subframe.origin.x = ICAKDockableViewToolbarSideMargin + ICAKDockableViewToolbarControlLength * countCross;
-            subframe.origin.y = self.frame.size.height - (ICAKDockableViewToolbarTopMargin + ICAKDockableViewToolbarControlLength * countMain + ICAKDockableViewToolbarControlMargin * countMain);
+            subframe.origin.y = ICAKDockableViewToolbarBottomMargin + subframe.size.height * (colMain - countMain - 1) + ICAKDockableViewToolbarControlMargin * (colMain - countMain - 1);
         } else {
             subframe.origin.x = ICAKDockableViewToolbarTopMargin + ICAKDockableViewToolbarControlLength * countMain + ICAKDockableViewToolbarControlMargin * countMain;
             subframe.origin.y = self.frame.size.height - ICAKDockableViewToolbarSideMargin - ICAKDockableViewToolbarControlLength * (countCross + 1);
         }
-        
-        subframe.size.width = ICAKDockableViewToolbarControlLength;
-        subframe.size.height = ICAKDockableViewToolbarControlLength;
-        
-        NSLog(@"New frame %fx%f size %fx%f", subframe.origin.x, subframe.origin.y, subframe.size.width, subframe.size.height);
         
         subview.frame = subframe;
         
