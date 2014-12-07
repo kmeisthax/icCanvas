@@ -39,8 +39,8 @@
 - (int)addButton {
     NSButton* btn = [[NSButton alloc] init];
     
-    btn.buttonType = NSTexturedSquareBezelStyle;
-    btn.bezelStyle = NSTexturedRoundedBezelStyle;
+    btn.buttonType = NSMomentaryPushInButton;
+    btn.bezelStyle = NSTexturedSquareBezelStyle;
     btn.translatesAutoresizingMaskIntoConstraints = NO;
     
     [self addSubview:btn];
@@ -55,8 +55,8 @@
 - (int)addButtonBeforeButton:(int)button {
     NSButton* btn = [[NSButton alloc] init];
     
-    btn.buttonType = NSTexturedSquareBezelStyle;
-    btn.bezelStyle = NSTexturedRoundedBezelStyle;
+    btn.buttonType = NSMomentaryPushInButton;
+    btn.bezelStyle = NSTexturedSquareBezelStyle;
     btn.translatesAutoresizingMaskIntoConstraints = NO;
     
     [self addSubview:btn positioned:NSWindowBelow relativeTo:[self.subviews objectAtIndex:button]];
@@ -115,14 +115,14 @@
         
         if (self.vertical) {
             subframe.origin.x = ICAKDockableViewToolbarSideMargin + ICAKDockableViewToolbarControlLength * countCross;
-            subframe.origin.y = self.frame.size.height - (ICAKDockableViewToolbarTopMargin + ICAKDockableViewToolbarControlIconSize * countMain + ICAKDockableViewToolbarControlMargin * countMain);
+            subframe.origin.y = self.frame.size.height - (ICAKDockableViewToolbarTopMargin + ICAKDockableViewToolbarControlLength * countMain + ICAKDockableViewToolbarControlMargin * countMain);
         } else {
             subframe.origin.x = ICAKDockableViewToolbarTopMargin + ICAKDockableViewToolbarControlLength * countMain + ICAKDockableViewToolbarControlMargin * countMain;
             subframe.origin.y = self.frame.size.height - ICAKDockableViewToolbarSideMargin - ICAKDockableViewToolbarControlLength * (countCross + 1);
         }
         
         subframe.size.width = ICAKDockableViewToolbarControlLength;
-        subframe.size.height = ICAKDockableViewToolbarControlIconSize;
+        subframe.size.height = ICAKDockableViewToolbarControlLength;
         
         NSLog(@"New frame %fx%f size %fx%f", subframe.origin.x, subframe.origin.y, subframe.size.width, subframe.size.height);
         
