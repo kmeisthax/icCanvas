@@ -71,6 +71,7 @@
             NSButton* btn = [[NSButton alloc] init];
             btn.title = [NSString stringWithFormat:@"Action %d", i + 1];
             btn.buttonType = NSMomentaryPushInButton;
+            btn.bezelStyle = NSTexturedRoundedBezelStyle;
             
             pnl.contentView = btn;
 

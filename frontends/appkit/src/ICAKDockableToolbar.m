@@ -40,6 +40,7 @@
     NSButton* btn = [[NSButton alloc] init];
     
     btn.buttonType = NSTexturedSquareBezelStyle;
+    btn.bezelStyle = NSTexturedRoundedBezelStyle;
     btn.translatesAutoresizingMaskIntoConstraints = NO;
     
     [self addSubview:btn];
@@ -55,6 +56,7 @@
     NSButton* btn = [[NSButton alloc] init];
     
     btn.buttonType = NSTexturedSquareBezelStyle;
+    btn.bezelStyle = NSTexturedRoundedBezelStyle;
     btn.translatesAutoresizingMaskIntoConstraints = NO;
     
     [self addSubview:btn positioned:NSWindowBelow relativeTo:[self.subviews objectAtIndex:button]];
