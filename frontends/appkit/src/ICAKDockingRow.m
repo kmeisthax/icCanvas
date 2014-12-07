@@ -230,6 +230,9 @@ static const NSInteger _MARGINS = 15;
     [self addMarginConstraintsForView:subview];
     [self regenerateSpacingConstraints];
     
+    NSLayoutConstraint *dont_hit_titlebar = [NSLayoutConstraint constraintWithItem:subview attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationGreaterThanOrEqual toItem:self.window.contentLayoutGuide attribute:NSLayoutAttributeTop multiplier:1 constant:0];
+    dont_hit_titlebar.active = true;
+    
     if ([subview respondsToSelector:@selector(setVertical:)]) {
         [((id)subview) setVertical:self->_is_vertical];
     }
