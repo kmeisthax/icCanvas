@@ -84,7 +84,7 @@
             [tbl setButton:i image:[NSImage imageNamed:NSImageNameActionTemplate]];
             [tbl setButton:i type:NSMomentaryPushInButton];
         }
-        [self->dk attachDockableView:tbl toEdge:ICAKDockEdgeLeft];
+        [self->dk attachDockableView:tbl toEdge:ICAKDockEdgeTop];
     }
     
     return self;
