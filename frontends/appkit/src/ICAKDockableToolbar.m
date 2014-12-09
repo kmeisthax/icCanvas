@@ -98,8 +98,8 @@
         self->_intrinsic_height.constant = main_length;
         self->_intrinsic_width.constant = cross_length;
     } else {
-        self->_intrinsic_width.constant = main_length;
         self->_intrinsic_height.constant = cross_length;
+        self->_intrinsic_width.constant = main_length;
     }
 }
 
@@ -112,7 +112,9 @@
     }
     
     if (colCross == 0) colCross = 1;
-    colMain = floor(self.subviews.count / colCross);
+    colMain = ceil(self.subviews.count / colCross);
+    
+    [super layout];
     
     for (NSView* subview in self.subviews) {
         NSRect subframe = subview.frame;
@@ -124,7 +126,7 @@
             subframe.origin.x = ICAKDockableViewToolbarSideMargin + ICAKDockableViewToolbarControlLength * countCross;
             subframe.origin.y = ICAKDockableViewToolbarBottomMargin + subframe.size.height * (colMain - countMain - 1) + ICAKDockableViewToolbarControlMargin * (colMain - countMain - 1);
         } else {
-            subframe.origin.x = ICAKDockableViewToolbarTopMargin + ICAKDockableViewToolbarGripLength + ICAKDockableViewToolbarControlLength * countMain + ICAKDockableViewToolbarControlMargin * countMain;
+            subframe.origin.x = ICAKDockableViewToolbarTopMargin + ICAKDockableViewToolbarGripLength + subframe.size.width * countMain + ICAKDockableViewToolbarControlMargin * countMain;
             subframe.origin.y = ICAKDockableViewToolbarSideMargin + subframe.size.height * countCross;
         }
         
@@ -136,8 +138,6 @@
             countMain++;
         }
     }
-    
-    [super layout];
 };
 
 - (void)drawRect:(NSRect)rekt {
@@ -145,11 +145,11 @@
     
     if (self.vertical) {
         handleRekt.origin.x = ICAKDockableViewToolbarSideMargin;
-        handleRekt.origin.y = self.frame.size.height - ICAKDockableViewToolbarTopMargin - ICAKDockableViewToolbarGripLength;
+        handleRekt.origin.y = self.frame.size.height - ICAKDockableViewToolbarGripLength;
         handleRekt.size.height = ICAKDockableViewToolbarGripLength;
         handleRekt.size.width = self.frame.size.width - ICAKDockableViewToolbarSideMargin * 2;
     } else {
-        handleRekt.origin.x = ICAKDockableViewToolbarTopMargin;
+        handleRekt.origin.x = 0.0f;
         handleRekt.origin.y = ICAKDockableViewToolbarSideMargin;
         handleRekt.size.height = self.frame.size.height - ICAKDockableViewToolbarSideMargin * 2;
         handleRekt.size.width = ICAKDockableViewToolbarGripLength;
