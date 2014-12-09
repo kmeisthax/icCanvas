@@ -212,11 +212,15 @@ static const NSInteger _MARGINS = 15;
 };
 
 - (NSLayoutConstraint*)createConstraintTopMarginForView:(NSView*)view1 {
+    NSLayoutConstraint* out;
     if (!self->_is_vertical) {
-        return [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:view1 attribute:NSLayoutAttributeLeft multiplier:1.0 constant:_MARGINS * -1.0];
+        out = [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:view1 attribute:NSLayoutAttributeLeft multiplier:1.0 constant:_MARGINS * -1.0];
     } else {
-        return [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:view1 attribute:NSLayoutAttributeTop multiplier:1.0 constant:_MARGINS * -1.0];
+        out = [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:view1 attribute:NSLayoutAttributeTop multiplier:1.0 constant:_MARGINS * -1.0];
     }
+    
+    out.priority = NSLayoutPriorityDefaultLow;
+    return out;
 }
 
 - (void)didAddSubview:(NSView*)subview {
