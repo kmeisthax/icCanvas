@@ -14,10 +14,12 @@ class icCanvasGtk.DockingController : GLib.Object {
     }
     
     private Gee.Map<weak Gtk.Widget, DockingData?> _data;
+    private weak Gtk.Window? _active_wnd;
     
     public DockingController() {
         this._data = new Gee.HashMap<weak Gtk.Widget, DockingData?>();
         this._docks = new GLib.List<icCanvasGtk.Dock>();
+        this._active_wnd = null;
     }
     
     public void add_panel(icCanvasGtk.FloatingPanelDock panel) {
@@ -28,6 +30,11 @@ class icCanvasGtk.DockingController : GLib.Object {
     public void add_dock(icCanvasGtk.WindowDock dock) {
         this._docks.append(dock);
         dock.added_dockable.connect(this.add_dockable);
+        (dock.get_toplevel() as Gtk.Window).set_focus.connect_after(this.focus_was_set);
+    }
+    
+    public void focus_was_set(Gtk.Window wnd, Gtk.Widget? focus) {
+        this._active_wnd = wnd;
     }
     
     public void remove_dock(icCanvasGtk.Dock dock) {
@@ -291,5 +298,22 @@ class icCanvasGtk.DockingController : GLib.Object {
         dockable.detached.connect(this.detached);
         dockable.dragged_window.connect(this.dragged_window);
         dockable.released.connect(this.released);
+    }
+    
+    /* Resolve the target of a dockable UI widget.
+     * 
+     * Actions are first resolved on the window the dockable is attached to.
+     * If the dockable is not attached to a window, then it resolves to the
+     * first 
+     */
+    
+    public Gtk.Window? action_target_for_dockable(icCanvasGtk.Dockable dockable) {
+        DockingData? dat = this._data.@get(dockable as Gtk.Widget);
+        
+        if (dat.dock != null && dat.dock is icCanvasGtk.WindowDock) {
+            return (dat.dock as Gtk.Widget).get_toplevel() as Gtk.Window;
+        }
+        
+        return this._active_wnd;
     }
 }
