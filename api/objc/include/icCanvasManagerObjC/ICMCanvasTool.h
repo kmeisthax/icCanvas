@@ -4,6 +4,8 @@
 
 - (id)initFromWrappedObject:(void*)optr;
 
+- (void)prepareForReuse;
+
 - (void)setSizeWidth:(const double)width andHeight:(const double)height andUiScale:(const double)ui_scale andZoom:(const double)zoom;
 - (void)setScrollCenterX:(const double)x andY:(const double)y;
 

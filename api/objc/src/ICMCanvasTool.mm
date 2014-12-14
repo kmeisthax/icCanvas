@@ -15,6 +15,9 @@
     return self;
 };
 
+- (void)prepareForReuse {
+    self->_wrapped->prepare_for_reuse();
+};
 
 - (void)setSizeWidth:(const double)width andHeight:(const double)height andUiScale:(const double)ui_scale andZoom:(const double)zoom {
     self->_wrapped->set_size(width, height, ui_scale, zoom);

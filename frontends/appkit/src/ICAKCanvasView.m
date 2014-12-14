@@ -16,8 +16,7 @@
     if (self != nil) {
         self->internal = [[ICMCanvasView alloc] init];
         self->drawing = theDrawing;
-        self->current_tool = [[ICMBrushTool alloc] init];
-        self->current_tool.delegate = self;
+        self->current_tool = nil;
         
         [self->internal attachDrawing:self->drawing];
     }
@@ -49,7 +48,10 @@
     NSSize scaleSize = [self convertSizeToBacking:testSize];
     
     [self->internal setSizeWidth:rekt.size.width andHeight:rekt.size.height andUiScale:scaleSize.width];
-    [self->current_tool setSizeWidth:rekt.size.width andHeight:rekt.size.height andUiScale:scaleSize.width andZoom:65536]; //TODO: Actually pull correct zoom
+    
+    if (self->current_tool != nil) {
+        [self->current_tool setSizeWidth:rekt.size.width andHeight:rekt.size.height andUiScale:scaleSize.width andZoom:65536]; //TODO: Actually pull correct zoom
+    }
 };
 
 - (void)drawRect:(NSRect)dirtyRect {
@@ -100,25 +102,27 @@
     NSPoint event_location = [theEvent locationInWindow];
     NSPoint local_point = [self convertPoint:event_location fromView:nil];
     
-    [self->current_tool mouseDownWithX:local_point.x andY:local_point.y andDeltaX:theEvent.deltaX andDeltaY:theEvent.deltaY];
+    if (self->current_tool != nil) {
+        [self->current_tool mouseDownWithX:local_point.x andY:local_point.y andDeltaX:theEvent.deltaX andDeltaY:theEvent.deltaY];
+    }
 };
 
 - (void)mouseDragged:(NSEvent*)theEvent {
     NSPoint event_location = [theEvent locationInWindow];
     NSPoint local_point = [self convertPoint:event_location fromView:nil];
     
-    [self->current_tool mouseDragWithX:local_point.x andY:local_point.y andDeltaX:theEvent.deltaX andDeltaY:theEvent.deltaY];
+    if (self->current_tool != nil) {
+        [self->current_tool mouseDragWithX:local_point.x andY:local_point.y andDeltaX:theEvent.deltaX andDeltaY:theEvent.deltaY];
+    }
 };
 
 - (void)mouseUp:(NSEvent*)theEvent {
     NSPoint event_location = [theEvent locationInWindow];
     NSPoint local_point = [self convertPoint:event_location fromView:nil];
     
-    [self->current_tool mouseUpWithX:local_point.x andY:local_point.y andDeltaX:theEvent.deltaX andDeltaY:theEvent.deltaY];
-};
-
-- (void)brushToolCapturedStroke:(ICMBrushStroke*)stroke {
-    [self->drawing appendStroke:stroke];
+    if (self->current_tool != nil) {
+        [self->current_tool mouseUpWithX:local_point.x andY:local_point.y andDeltaX:theEvent.deltaX andDeltaY:theEvent.deltaY];
+    }
 };
 
 - (void)sizeToFitCanvas {
@@ -152,6 +156,12 @@
     double maxscale;
     [self->internal getScaleExtentsMinimum:NULL andMaximum:&maxscale];
     return maxscale;
+};
+
+- (void)setCanvasTool:(ICMCanvasTool*)ctool {
+    self->current_tool = ctool;
+    
+    [self->current_tool prepareForReuse];
 };
 
 @end
