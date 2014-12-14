@@ -5,6 +5,7 @@ typedef struct {
     __unsafe_unretained ICAKDock* dock;
     __unsafe_unretained NSPanel* panel;
     __unsafe_unretained ICAKDockingRow* row;
+    __unsafe_unretained NSWindowController* controller;
     
     BOOL has_selected_target;
     
@@ -20,11 +21,17 @@ typedef struct {
     NSInteger selected_pos;
 } ICAKDockingControllerDockData;
 
+typedef struct {
+    __unsafe_unretained NSWindowController* controller;
+} ICAKDockingControllerControllerData;
+
 @implementation ICAKDockingController {
     NSMutableArray* _panels;
     NSMutableArray* _docks;
+    NSMutableArray* _controllers;
     
     NSMutableDictionary* _docknfo;
+    NSMutableDictionary* _ctrlnfo;
 }
 
 - (id)init {
@@ -33,7 +40,10 @@ typedef struct {
     if (self != nil) {
         self->_panels = [NSMutableArray arrayWithCapacity:10];
         self->_docks = [NSMutableArray arrayWithCapacity:10];
+        self->_controllers = [NSMutableArray arrayWithCapacity:10];
+        
         self->_docknfo = [[NSMutableDictionary alloc] init];
+        self->_ctrlnfo = [[NSMutableDictionary alloc] init];
     }
     
     return self;
@@ -207,13 +217,24 @@ typedef struct {
     [self->_panels addObject:panel];
 };
 
-- (void)addDock:(ICAKDock*)dock {
+- (void)addDock:(ICAKDock*)dock fromWindowController:(NSWindowController*)controller {
     [self->_docks addObject:dock];
+    [self->_controllers addObject:controller];
     dock.dockingController = self;
+    
+    ICAKDockingControllerControllerData dat;
+    NSValue* maybeDat = [self->_ctrlnfo objectForKey:[NSValue valueWithNonretainedObject:dock]];
+    if (maybeDat != nil) {
+        [maybeDat getValue:&dat];
+    }
+    
+    dat.controller = controller;
+    
+    [self->_ctrlnfo setObject:[NSValue valueWithBytes:&dat objCType:@encode(ICAKDockingControllerControllerData)] forKey:[NSValue valueWithNonretainedObject:dock]];
 };
 
 - (void)addDrawingController:(ICAKDrawingController*)dc {
-    [self addDock:dc.dock];
+    [self addDock:dc.dock fromWindowController:dc];
 };
 
 - (void)didAddDockable:(ICAKDockableView*)view toDock:(ICAKDock*)dock onRow:(ICAKDockingRow*)row {
@@ -224,10 +245,17 @@ typedef struct {
         [maybeDat getValue:&dat];
     }
     
+    ICAKDockingControllerControllerData ctrldat;
+    NSValue* maybeCtrlDat = [self->_ctrlnfo objectForKey:[NSValue valueWithNonretainedObject:dock]];
+    if (maybeCtrlDat != nil) {
+        [maybeCtrlDat getValue:&ctrldat];
+    }
+    
     dat.dockable = view;
     dat.dock = dock;
     dat.panel = nil;
     dat.row = row;
+    dat.controller = maybeCtrlDat != nil ? ctrldat.controller : nil;
     
     [self->_docknfo setObject:[NSValue valueWithBytes:&dat objCType:@encode(ICAKDockingControllerDockData)] forKey:[NSValue valueWithNonretainedObject:view]];
 };
@@ -244,8 +272,29 @@ typedef struct {
     dat.dock = nil;
     dat.panel = panel;
     dat.row = row;
+    dat.controller = nil;
     
     [self->_docknfo setObject:[NSValue valueWithBytes:&dat objCType:@encode(ICAKDockingControllerDockData)] forKey:[NSValue valueWithNonretainedObject:view]];
 };
 
+- (NSWindowController*)findActionTargetForDockable:(ICAKDockableView*)dv {
+    ICAKDockingControllerDockData dat;
+    
+    NSValue* maybeDat = [self->_docknfo objectForKey:[NSValue valueWithNonretainedObject:dv]];
+    if (maybeDat != nil) {
+        [maybeDat getValue:&dat];
+        
+        if (dat.controller != nil) {
+            return dat.controller;
+        }
+    }
+    
+    for (NSWindowController* controller in self->_controllers) {
+        if (controller.window.isMainWindow) {
+            return controller;
+        }
+    }
+    
+    return nil;
+};
 @end
