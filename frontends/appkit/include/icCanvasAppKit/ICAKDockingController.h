@@ -12,10 +12,12 @@
 - (void)dockableViewWasReleased:(ICAKDockableView*)view;
 
 - (void)addPanel:(NSPanel*)panel;
-- (void)addDock:(ICAKDock*)dock;
+- (void)addDock:(ICAKDock*)dock fromWindowController:(NSWindowController*)controller;
 - (void)addDrawingController:(ICAKDrawingController*)dc;
 
 - (void)didAddDockable:(ICAKDockableView*)view toDock:(ICAKDock*)dock onRow:(ICAKDockingRow*)row;
 - (void)didAddDockable:(ICAKDockableView*)view toPanel:(NSPanel*)panel onRow:(ICAKDockingRow*)row;
+
+- (NSWindowController*)findActionTargetForDockable:(ICAKDockableView*)dv;
 
 @end
