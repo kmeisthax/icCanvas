@@ -304,7 +304,7 @@ class icCanvasGtk.DockingController : GLib.Object {
      * 
      * Actions are first resolved on the window the dockable is attached to.
      * If the dockable is not attached to a window, then it resolves to the
-     * first 
+     * first focused toplevel window in the docking controller.
      */
     
     public Gtk.Window? action_target_for_dockable(icCanvasGtk.Dockable dockable) {
