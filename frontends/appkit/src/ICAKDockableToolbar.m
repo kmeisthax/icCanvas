@@ -1,12 +1,19 @@
 #import <icCanvasAppKit.h>
 
-@interface ICAKDockableToolbar ()
+typedef struct {
+    SEL button_selector;
+    __unsafe_unretained id button_target;
+} ICAKDockableToolbarButtonState;
+
+@interface ICAKDockableToolbar (Private)
 - (void)recalculateIntrinsicSize;
+- (void)didPressButton:(id)sender;
 @end
 
 @implementation ICAKDockableToolbar {
     ICAKDockableToolbarBehavior _behavior;
     NSLayoutConstraint *_intrinsic_height, *_intrinsic_width;
+    NSMutableDictionary *_button_actions;
 }
 
 - (id)init {
@@ -21,6 +28,8 @@
         
         [self addConstraint:self->_intrinsic_height];
         [self addConstraint:self->_intrinsic_width];
+        
+        self->_button_actions = [[NSMutableDictionary alloc] init];
     }
     
     return self;
@@ -42,6 +51,9 @@
     btn.buttonType = NSMomentaryPushInButton;
     btn.bezelStyle = NSTexturedSquareBezelStyle;
     btn.translatesAutoresizingMaskIntoConstraints = NO;
+    btn.tag = self.buttonCount;
+    btn.action = @selector(didPressButton:);
+    btn.target = self;
     
     [self addSubview:btn];
     [self setNeedsLayout:YES];
@@ -50,7 +62,7 @@
     [self addConstraint:[NSLayoutConstraint constraintWithItem:btn attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationGreaterThanOrEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0 constant:ICAKDockableViewToolbarControlLength]];
     [self recalculateIntrinsicSize];
     
-    return self.buttonCount - 1;
+    return self.buttonCount - 1; //-1 since we already added the button
 };
 - (int)addButtonBeforeButton:(int)button {
     NSButton* btn = [[NSButton alloc] init];
@@ -58,6 +70,9 @@
     btn.buttonType = NSMomentaryPushInButton;
     btn.bezelStyle = NSTexturedSquareBezelStyle;
     btn.translatesAutoresizingMaskIntoConstraints = NO;
+    btn.tag = self.buttonCount;
+    btn.action = @selector(didPressButton:);
+    btn.target = self;
     
     [self addSubview:btn positioned:NSWindowBelow relativeTo:[self.subviews objectAtIndex:button]];
     [self setNeedsLayout:YES];
@@ -68,19 +83,27 @@
     
     return self.buttonCount - 1;
 };
-- (void)setButton:(int)btnCount action:(SEL)action andTarget:(id)target {
-    NSButton* btn = [self.subviews objectAtIndex:btnCount];
+- (void)setButton:(int)btnTag action:(SEL)action andTarget:(id)target {
+    NSButton* btn = [self.subviews objectAtIndex:btnTag];
+    ICAKDockableToolbarButtonState dat;
     
-    btn.action = action;
-    btn.target = target;
+    NSValue* maybeDat = [self->_button_actions objectForKey:[NSValue value:&btnTag withObjCType:@encode(NSInteger)]];
+    if (maybeDat != nil) {
+        [maybeDat getValue:&dat];
+    }
+    
+    dat.button_selector = action;
+    dat.button_target = target;
+    
+    [self->_button_actions setObject:[NSValue valueWithBytes:&dat objCType:@encode(ICAKDockableToolbarButtonState)] forKey:[NSValue value:&btnTag withObjCType:@encode(NSInteger)]];
 };
-- (void)setButton:(int)btnCount image:(NSImage*)img {
-    NSButton* btn = [self.subviews objectAtIndex:btnCount];
+- (void)setButton:(int)btnTag image:(NSImage*)img {
+    NSButton* btn = [self.subviews objectAtIndex:btnTag];
     
     btn.image = img;
 };
-- (void)setButton:(int)btnCount type:(NSButtonType)type {
-    NSButton* btn = [self.subviews objectAtIndex:btnCount];
+- (void)setButton:(int)btnTag type:(NSButtonType)type {
+    NSButton* btn = [self.subviews objectAtIndex:btnTag];
     
     btn.buttonType = type;
 };
@@ -89,6 +112,8 @@
     [super setVertical:isVertical];
     [self recalculateIntrinsicSize];
 };
+
+//Private methods
 
 - (void)recalculateIntrinsicSize {
     CGFloat main_length = ICAKDockableViewToolbarTopMargin + ICAKDockableViewToolbarGripLength + ICAKDockableViewToolbarBottomMargin + (ICAKDockableViewToolbarControlLength * self.subviews.count) + (ICAKDockableViewToolbarControlMargin * self.subviews.count);
@@ -102,6 +127,30 @@
         self->_intrinsic_width.constant = main_length;
     }
 }
+
+- (void)didPressButton:(NSButton*)sender {
+    NSInteger tag = sender.tag;
+    ICAKDockableToolbarButtonState dat;
+    
+    NSValue* maybeDat = [self->_button_actions objectForKey:[NSValue value:&tag withObjCType:@encode(NSInteger)]];
+    if (maybeDat != nil) {
+        [maybeDat getValue:&dat];
+        
+        NSInvocation* inv = [NSInvocation invocationWithMethodSignature:[dat.button_target methodSignatureForSelector:dat.button_selector]];
+        NSInteger argCount = inv.methodSignature.numberOfArguments;
+        
+        if (argCount > 2) { //one argument, counting the hidden IMP arguments
+            __unsafe_unretained id unsafe_self = self;
+            [inv setArgument:&unsafe_self atIndex:2];
+        }
+        
+        if (argCount > 3) { //two arguments, counting the hidden IMP arguments
+            [inv setArgument:&tag atIndex:3];
+        }
+        
+        [inv invoke];
+    }
+};
 
 - (void)layout {
     NSInteger colCross, colMain, countCross = 0, countMain = 0;
