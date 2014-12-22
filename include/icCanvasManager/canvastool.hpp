@@ -21,6 +21,9 @@ namespace icCanvasManager {
         float _ui_scale;
 
     protected:
+        void _window_size(double *width, double *height);
+        void _window_zoom(double *zoom);
+
         /* Convert positions between window-space coordinates and canvas coordinates. */
         void _window_to_coordspace(const int32_t x, const int32_t y, int32_t* out_tx, int32_t* out_ty);
         void _coord_to_windowspace(const int32_t x, const int32_t y, int32_t* out_tx, int32_t* out_ty);

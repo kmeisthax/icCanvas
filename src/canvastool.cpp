@@ -3,6 +3,15 @@
 icCanvasManager::CanvasTool::CanvasTool() {};
 icCanvasManager::CanvasTool::~CanvasTool() {};
 
+void icCanvasManager::CanvasTool::_window_size(double *width, double *height) {
+    if (width) *width = this->_width;
+    if (height) *height = this->_height;
+};
+
+void icCanvasManager::CanvasTool::_window_zoom(double *zoom) {
+    if (zoom) *zoom = this->_zoom;
+};
+
 void icCanvasManager::CanvasTool::_window_to_coordspace(const int32_t x, const int32_t y, int32_t* out_tx, int32_t* out_ty) {
     if (out_tx) *out_tx = (int)((float)x * this->_zoom + this->_x_scroll);
     if (out_ty) *out_ty = (int)((float)y * this->_zoom + this->_y_scroll);
