@@ -10,7 +10,7 @@ class icCanvasGtk.Application : Gtk.Application {
     public Application (string s, GLib.ApplicationFlags f) {
         this._drawing_list = new GLib.List<icCanvasGtk.Drawing>();
         this.docking_ctrl = new icCanvasGtk.DockingController();
-        this._tctrl = new icCanvasGtk.ToolController();
+        this._tctrl = new icCanvasGtk.ToolController(this.docking_ctrl);
     }
     
     public icCanvasGtk.Drawing new_drawing() {
