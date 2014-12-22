@@ -46,7 +46,7 @@ namespace icCanvasManager {
          * units. Set_scroll_center allows for setting the tool's scroll center.
          *
          * The protected section includes utility functions for converting
-         * between
+         * between canvas and window space using these parameters.
          */
         virtual void set_size(const double width, const double height, const double ui_scale, const double zoom);
         virtual void set_scroll_center(const double x, const double y);
