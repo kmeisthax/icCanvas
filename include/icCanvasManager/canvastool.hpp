@@ -21,6 +21,8 @@ namespace icCanvasManager {
         float _ui_scale;
 
     protected:
+        void _canvas_centerpt(int *x_center, int *y_center);
+
         void _window_size(double *width, double *height);
         void _window_zoom(double *zoom);
 
