@@ -59,6 +59,10 @@
     self->_wrapped->set_scroll_center(x, y);
 };
 
+- (const double)zoom {
+    return self->_wrapped->get_zoom();
+};
+
 - (void)setZoom:(const double)vpixel_size {
     self->_wrapped->set_zoom(vpixel_size);
 };

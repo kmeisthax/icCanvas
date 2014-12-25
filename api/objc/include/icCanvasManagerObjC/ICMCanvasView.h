@@ -16,6 +16,7 @@
 - (void)getMaximumSizeWidth:(double*)out_width andHeight:(double*)out_height;
 - (void)getScaleExtentsMinimum:(double*)out_minscale andMaximum:(double*)out_maxscale;
 - (void)setScrollCenterX:(const double)x andY:(const double)y;
+- (const double)zoom;
 - (void)setZoom:(const double)vpixel_size;
 
 - (void*)getWrappedObject;

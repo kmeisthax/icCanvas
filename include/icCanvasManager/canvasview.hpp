@@ -96,6 +96,7 @@ namespace icCanvasManager {
          * of the provided drawing context up or down, e.g. conflating it with
          * the physical pixel scale factor. In that case, do not call set_zoom.
          */
+        double get_zoom();
         void set_zoom(const double vpixel_size);
     };
 }
