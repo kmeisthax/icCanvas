@@ -13,6 +13,8 @@
 - (void)backgroundTick;
 
 - (ICMDrawing*)drawing;
+
 - (void)setDockingController:(ICAKDockingController*)dock_ctrl;
+- (void)setToolPaletteController:(ICAKToolPaletteController*)tpal_ctrl;
 
 @end

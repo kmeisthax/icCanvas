@@ -1,11 +1,16 @@
 #include <icCanvasAppKit.h>
 
 @implementation ICAKDrawingController {
+    ICMDrawing *drawing;
     ICAKCanvasView *cv;
     NSScrollView *scv;
     ICAKDock *dk;
     
     ICAKDockablePanel *panel1;
+    
+    //Individual CanvasTool impls
+    ICMBrushTool *btool;
+    ICMZoomTool *ztool;
 }
 
 - (id)init {
@@ -21,9 +26,9 @@
         [window setCollectionBehavior:(window.collectionBehavior|NSWindowCollectionBehaviorFullScreenPrimary)];
         window.titlebarAppearsTransparent = YES;
         
-        ICMDrawing* drawing = [[ICMDrawing alloc] init];
-
-        self->cv = [[ICAKCanvasView alloc] initWithDrawing: drawing];
+        self->drawing = [[ICMDrawing alloc] init];
+        
+        self->cv = [[ICAKCanvasView alloc] initWithDrawing: self->drawing];
         self->scv = [[NSScrollView alloc] initWithFrame: [[self.window contentView] frame]];
         self->dk = [[ICAKDock alloc] init];
         
@@ -64,34 +69,21 @@
 
         [window setContentView:self->dk];
         
-        for (int i = 0; i < 5; i++) {
-            ICAKDockablePanel* pnl = [[ICAKDockablePanel alloc] init];
-            pnl.label = [NSString stringWithFormat:@"Panel test %d", i + 1];
-            
-            NSButton* btn = [[NSButton alloc] init];
-            btn.title = [NSString stringWithFormat:@"Action %d", i + 1];
-            btn.buttonType = NSMomentaryPushInButton;
-            btn.bezelStyle = NSTexturedRoundedBezelStyle;
-            
-            pnl.contentView = btn;
-
-            [self->dk attachDockableView:pnl toEdge:ICAKDockEdgeLeft];
-        }
+        self->btool = [[ICMBrushTool alloc] init];
+        self->btool.delegate = self;
         
-        ICAKDockableToolbar* tbl = [[ICAKDockableToolbar alloc] init];
-        for (int i = 0; i < 5; i++) {
-            [tbl addButton];
-            [tbl setButton:i image:[NSImage imageNamed:NSImageNameActionTemplate]];
-            [tbl setButton:i type:NSMomentaryPushInButton];
-        }
-        [self->dk attachDockableView:tbl toEdge:ICAKDockEdgeTop];
+        self->ztool = [[ICMZoomTool alloc] init];
+        self->ztool.delegate = self;
     }
     
     return self;
 }
 
 - (void)setDocument:(NSDocument *)document {
-    [self->cv setDrawing:[(id)document drawing]];
+    if ([document isKindOfClass:ICAKDrawing.class]) {
+        self->drawing = [(ICAKDrawing*)document drawing];
+        [self->cv setDrawing:[(ICAKDrawing*)document drawing]];
+    }
 };
 
 - (void)rendererDidRenderTiles {
@@ -100,6 +92,25 @@
 
 - (ICAKDock*)dock {
     return self->dk;
+};
+
+// Canvas tool selector methods
+- (void)selectBrushTool {
+    [self->btool prepareForReuse];
+    self->cv.canvasTool = self->btool;
+};
+- (void)selectZoomTool {
+    [self->ztool prepareForReuse];
+    self->cv.canvasTool = self->ztool;
+};
+
+//Various CanvasTool delegate impls
+- (void)brushToolCapturedStroke:(ICMBrushStroke*)stroke {
+    [self->drawing appendStroke:stroke];
+};
+
+- (void)changedScrollX:(const double)x andY:(const double)y andZoom:(const double)zoom {
+    
 };
 
 @end

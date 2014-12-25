@@ -3,7 +3,9 @@
 @implementation ICAKDrawing {
     ICMDrawing* internal_drawing;
     NSTimer* background_timer;
+    
     ICAKDockingController* _dock_ctrl;
+    ICAKToolPaletteController* _tpal_ctrl;
 }
 
 - (id)init {
@@ -43,6 +45,7 @@
     ICAKDrawingController* dc = [[ICAKDrawingController alloc] init];
     [dc setDocument:self];
     [self addWindowController:dc];
+    [dc.dock attachDockableView:[self->_tpal_ctrl createToolPaletteView] toEdge:ICAKDockEdgeTop];
     
     [self->_dock_ctrl addDrawingController:dc];
 }
@@ -53,6 +56,10 @@
 
 - (void)setDockingController:(ICAKDockingController*)dock_ctrl {
     self->_dock_ctrl = dock_ctrl;
+}
+
+- (void)setToolPaletteController:(ICAKToolPaletteController*)tpal_ctrl {
+    self->_tpal_ctrl = tpal_ctrl;
 }
 
 @end

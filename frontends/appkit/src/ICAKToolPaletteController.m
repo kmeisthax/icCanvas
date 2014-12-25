@@ -51,8 +51,14 @@
     }
 };
 
-- (void)didSelectZoomTool {
-    //TODO: Wire in zoom tool
+- (void)didSelectZoomTool:(ICAKDockableToolbar*)toolbar {
+    NSWindowController* controller = [self->_dock findActionTargetForDockable:toolbar];
+    
+    if (controller != nil) {
+        if ([controller isKindOfClass:ICAKDrawingController.class]) {
+            [(ICAKDrawingController*)controller selectZoomTool];
+        }
+    }
 };
 
 @end

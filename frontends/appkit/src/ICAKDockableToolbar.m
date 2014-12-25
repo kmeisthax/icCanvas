@@ -5,6 +5,10 @@ typedef struct {
     __unsafe_unretained id button_target;
 } ICAKDockableToolbarButtonState;
 
+typedef struct {
+    NSInteger tag;
+} ICAKDockableToolbarTag;
+
 @interface ICAKDockableToolbar (Private)
 - (void)recalculateIntrinsicSize;
 - (void)didPressButton:(id)sender;
@@ -86,8 +90,9 @@ typedef struct {
 - (void)setButton:(int)btnTag action:(SEL)action andTarget:(id)target {
     NSButton* btn = [self.subviews objectAtIndex:btnTag];
     ICAKDockableToolbarButtonState dat;
+    ICAKDockableToolbarTag tag = {btnTag};
     
-    NSValue* maybeDat = [self->_button_actions objectForKey:[NSValue value:&btnTag withObjCType:@encode(NSInteger)]];
+    NSValue* maybeDat = [self->_button_actions objectForKey:[NSValue value:&tag withObjCType:@encode(ICAKDockableToolbarTag)]];
     if (maybeDat != nil) {
         [maybeDat getValue:&dat];
     }
@@ -95,7 +100,7 @@ typedef struct {
     dat.button_selector = action;
     dat.button_target = target;
     
-    [self->_button_actions setObject:[NSValue valueWithBytes:&dat objCType:@encode(ICAKDockableToolbarButtonState)] forKey:[NSValue value:&btnTag withObjCType:@encode(NSInteger)]];
+    [self->_button_actions setObject:[NSValue valueWithBytes:&dat objCType:@encode(ICAKDockableToolbarButtonState)] forKey:[NSValue value:&tag withObjCType:@encode(ICAKDockableToolbarTag)]];
 };
 - (void)setButton:(int)btnTag image:(NSImage*)img {
     NSButton* btn = [self.subviews objectAtIndex:btnTag];
@@ -129,10 +134,10 @@ typedef struct {
 }
 
 - (void)didPressButton:(NSButton*)sender {
-    NSInteger tag = sender.tag;
+    ICAKDockableToolbarTag tag = {sender.tag};
     ICAKDockableToolbarButtonState dat;
     
-    NSValue* maybeDat = [self->_button_actions objectForKey:[NSValue value:&tag withObjCType:@encode(NSInteger)]];
+    NSValue* maybeDat = [self->_button_actions objectForKey:[NSValue value:&tag withObjCType:@encode(ICAKDockableToolbarTag)]];
     if (maybeDat != nil) {
         [maybeDat getValue:&dat];
         
@@ -149,6 +154,8 @@ typedef struct {
         }
         
         [inv invoke];
+    } else {
+        NSLog(@"Got a button press for a button with no action set!");
     }
 };
 

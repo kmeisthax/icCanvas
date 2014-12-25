@@ -8,6 +8,9 @@
 #import "icCanvasAppKit/ICAKDockableToolbar.h"
 #import "icCanvasAppKit/ICAKCanvasView.h"
 
+//Dockable view factories/controllers
+#import "icCanvasAppKit/ICAKToolPaletteController.h"
+
 #import "icCanvasAppKit/ICAKDrawing.h"
 #import "icCanvasAppKit/ICAKDrawingController.h"
 

@@ -11,6 +11,7 @@
     ICMApplication* coreApp;
     
     ICAKDockingController* _dock_ctrl;
+    ICAKToolPaletteController* _tpal_ctrl;
 }
 
 - (id)init {
@@ -19,6 +20,9 @@
     if (self != nil) {
         self->coreApp = [ICMApplication getInstance];
         self->_dock_ctrl = [[ICAKDockingController alloc] init];
+        self->_tpal_ctrl = [[ICAKToolPaletteController alloc] init];
+        
+        self->_tpal_ctrl.dockingController = self->_dock_ctrl;
     }
     
     return self;
@@ -47,6 +51,7 @@
     if ([doc isKindOfClass:ICAKDrawing.class]) {
         ICAKDrawing* draw = (ICAKDrawing*)doc;
         draw.dockingController = self->_dock_ctrl;
+        draw.toolPaletteController = self->_tpal_ctrl;
     }
     
     [doc makeWindowControllers];
