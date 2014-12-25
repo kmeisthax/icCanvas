@@ -21,6 +21,11 @@ namespace icCanvasManager {
         float _ui_scale;
 
     protected:
+        void _canvas_centerpt(int *x_center, int *y_center);
+
+        void _window_size(double *width, double *height);
+        void _window_zoom(double *zoom);
+
         /* Convert positions between window-space coordinates and canvas coordinates. */
         void _window_to_coordspace(const int32_t x, const int32_t y, int32_t* out_tx, int32_t* out_ty);
         void _coord_to_windowspace(const int32_t x, const int32_t y, int32_t* out_tx, int32_t* out_ty);
@@ -46,7 +51,7 @@ namespace icCanvasManager {
          * units. Set_scroll_center allows for setting the tool's scroll center.
          *
          * The protected section includes utility functions for converting
-         * between
+         * between canvas and window space using these parameters.
          */
         virtual void set_size(const double width, const double height, const double ui_scale, const double zoom);
         virtual void set_scroll_center(const double x, const double y);

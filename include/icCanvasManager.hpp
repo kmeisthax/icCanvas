@@ -16,5 +16,6 @@
 #include "icCanvasManager/application.hpp"
 #include "icCanvasManager/canvastool.hpp"
 #include "icCanvasManager/brushtool.hpp"
+#include "icCanvasManager/zoomtool.hpp"
 
 #endif

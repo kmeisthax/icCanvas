@@ -3,11 +3,14 @@ using icCanvasManager;
 
 class icCanvasGtk.Application : Gtk.Application {
     private GLib.List<icCanvasGtk.Drawing> _drawing_list;
+    private icCanvasGtk.ToolController _tctrl;
+    
     public icCanvasGtk.DockingController docking_ctrl { get; set; }
     
     public Application (string s, GLib.ApplicationFlags f) {
         this._drawing_list = new GLib.List<icCanvasGtk.Drawing>();
         this.docking_ctrl = new icCanvasGtk.DockingController();
+        this._tctrl = new icCanvasGtk.ToolController(this.docking_ctrl);
     }
     
     public icCanvasGtk.Drawing new_drawing() {
@@ -25,7 +28,7 @@ class icCanvasGtk.Application : Gtk.Application {
         
         wnd.docking_controller = this.docking_ctrl;
         wnd.add_dockable(this.new_file_toolbar(), icCanvasGtk.Dock.Edge.TOP);
-        wnd.add_dockable(this.new_tools_toolbar(), icCanvasGtk.Dock.Edge.LEFT);
+        wnd.add_dockable(this._tctrl.new_tools_toolbar(), icCanvasGtk.Dock.Edge.LEFT);
         
         wnd.show_all();
         
@@ -43,24 +46,6 @@ class icCanvasGtk.Application : Gtk.Application {
         Gtk.Image tb_openimg = new Gtk.Image.from_icon_name("document-open", Gtk.IconSize.SMALL_TOOLBAR);
         Gtk.ToolButton tb_open = new Gtk.ToolButton(tb_openimg, null);
         tb.add(tb_open);
-        db.add(tb);
-        
-        return db;
-    }
-    
-    public icCanvasGtk.Dockable new_tools_toolbar() {
-        icCanvasGtk.DockableToolbar db = new icCanvasGtk.DockableToolbar();
-        Gtk.Toolbar tb = new Gtk.Toolbar();
-        
-        Gtk.Image tb_newimg = new Gtk.Image.from_icon_name("document-new", Gtk.IconSize.SMALL_TOOLBAR);
-        Gtk.RadioToolButton tb_new = new Gtk.RadioToolButton(null);
-        tb_new.set_icon_widget(tb_newimg);
-        tb.add(tb_new);
-        
-        Gtk.Image tb_zoomimg = new Gtk.Image.from_icon_name("zoom-in", Gtk.IconSize.SMALL_TOOLBAR);
-        Gtk.ToolButton tb_zoom = new Gtk.RadioToolButton(tb_new.get_group());
-        tb_zoom.set_icon_widget(tb_zoomimg);
-        tb.add(tb_zoom);
         db.add(tb);
         
         return db;
