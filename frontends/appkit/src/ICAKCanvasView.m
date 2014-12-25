@@ -7,7 +7,7 @@
 @implementation ICAKCanvasView {
     ICMCanvasView* internal;
     ICMDrawing* drawing;
-    ICMBrushTool* current_tool;
+    ICMCanvasTool* current_tool;
 }
 
 - (id)initWithDrawing:(ICMDrawing*) theDrawing {
@@ -50,7 +50,7 @@
     [self->internal setSizeWidth:rekt.size.width andHeight:rekt.size.height andUiScale:scaleSize.width];
     
     if (self->current_tool != nil) {
-        [self->current_tool setSizeWidth:rekt.size.width andHeight:rekt.size.height andUiScale:scaleSize.width andZoom:65536]; //TODO: Actually pull correct zoom
+        [self->current_tool setSizeWidth:rekt.size.width andHeight:rekt.size.height andUiScale:scaleSize.width andZoom:self->internal.zoom];
     }
 };
 
