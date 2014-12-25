@@ -9,3 +9,5 @@
 #import "icCanvasManagerObjc/ICMCanvasTool.h"
 #import "icCanvasManagerObjc/ICMBrushToolDelegate.h"
 #import "icCanvasManagerObjc/ICMBrushTool.h"
+#import "icCanvasManagerObjc/ICMZoomToolDelegate.h"
+#import "icCanvasManagerObjc/ICMZoomTool.h"

@@ -2,30 +2,30 @@
 #include <icCanvasManager.hpp>
 
 namespace icCanvasManager {
-    class BrushToolObjCDelegate : public icCanvasManager::BrushTool::Delegate, public icCanvasManager::RefCnt {
-        id<ICMBrushToolDelegate> __strong _objc_delegate;
+    class ZoomToolObjCDelegate : public icCanvasManager::ZoomTool::Delegate, public icCanvasManager::RefCnt {
+        id<ICMZoomToolDelegate> __strong _objc_delegate;
     public:
-        BrushToolObjCDelegate(id<ICMBrushToolDelegate> objc_delegate) : _objc_delegate(objc_delegate) {
+        ZoomToolObjCDelegate(id<ICMZoomToolDelegate> objc_delegate) : _objc_delegate(objc_delegate) {
         };
         
-        virtual void captured_stroke(RefPtr<BrushStroke> stroke) override {
+        virtual void changed_scroll_and_zoom(const double x, const double y, const double zoom) override {
             BrushStroke *unsafebr = stroke;
             ICMBrushStroke* bswrap = [[ICMBrushStroke alloc] initFromWrappedObject:(void*)unsafebr];
-            [this->_objc_delegate brushToolCapturedStroke:bswrap];
+            [this->_objc_delegate changedScrollX:x andY:y andZoom:zoom];
         };
         
-        id<ICMBrushToolDelegate> get_wrapped_object() {
+        id<ICMZoomToolDelegate> get_wrapped_object() {
             return this->_objc_delegate;
         }
     };
 }
 
-@implementation ICMBrushTool {
-    icCanvasManager::RefPtr<icCanvasManager::BrushTool> _wrapped;
+@implementation ICMZoomTool {
+    icCanvasManager::RefPtr<icCanvasManager::ZoomTool> _wrapped;
 }
 
 - (id)init {
-    auto* btptr = new icCanvasManager::BrushTool();
+    auto* btptr = new icCanvasManager::ZoomTool();
     
     self = [super initFromWrappedObject:(void*)static_cast<icCanvasManager::CanvasTool*>(btptr)];
     
@@ -40,20 +40,20 @@ namespace icCanvasManager {
     self = [super initFromWrappedObject:optr];
     
     if (self != nil) {
-        self->_wrapped = (icCanvasManager::BrushTool*)optr;
+        self->_wrapped = (icCanvasManager::ZoomTool*)optr;
     }
     
     return self;
 };
 
-- (void)setDelegate:(id <ICMBrushToolDelegate>)del {
-    auto* cppdel = new icCanvasManager::BrushToolObjCDelegate(del);
+- (void)setDelegate:(id <ICMZoomToolDelegate>)del {
+    auto* cppdel = new icCanvasManager::ZoomToolObjCDelegate(del);
     self->_wrapped->set_delegate(cppdel);
 };
-- (id <ICMBrushToolDelegate>)delegate {
+- (id <ICMZoomToolDelegate>)delegate {
     auto* cppdel = self->_wrapped->get_delegate();
     
-    auto* objcwrap = dynamic_cast<icCanvasManager::BrushToolObjCDelegate*>(cppdel);
+    auto* objcwrap = dynamic_cast<icCanvasManager::ZoomToolObjCDelegate*>(cppdel);
     if (objcwrap) {
         return objcwrap->get_wrapped_object();
     } else {
