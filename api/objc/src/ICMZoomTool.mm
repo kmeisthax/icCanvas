@@ -9,8 +9,6 @@ namespace icCanvasManager {
         };
         
         virtual void changed_scroll_and_zoom(const double x, const double y, const double zoom) override {
-            BrushStroke *unsafebr = stroke;
-            ICMBrushStroke* bswrap = [[ICMBrushStroke alloc] initFromWrappedObject:(void*)unsafebr];
             [this->_objc_delegate changedScrollX:x andY:y andZoom:zoom];
         };
         
