@@ -18,7 +18,6 @@ void icCanvasManager::ZoomTool::prepare_for_reuse() {
 };
 
 void icCanvasManager::ZoomTool::set_size(const double width, const double height, const double ui_scale, const double zoom) {
-    this->_error_threshold = width * zoom;
     icCanvasManager::CanvasTool::set_size(width, height, ui_scale, zoom);
 };
 
@@ -36,7 +35,7 @@ void icCanvasManager::ZoomTool::mouse_down(const double x, const double y, const
 
 void icCanvasManager::ZoomTool::mouse_drag(const double x, const double y, const double deltaX, const double deltaY) {
     if (this->_is_tracking_click) {
-        double distance = sqrt(pow(x - this->_initial_x) + pow(y - this->_initial_y));
+        double distance = sqrt(pow(x - this->_initial_x, 2.0f) + pow(y - this->_initial_y, 2.0f));
 
         if (distance > 15.0f) {
             this->_is_tracking_click = false;
@@ -50,8 +49,8 @@ void icCanvasManager::ZoomTool::mouse_drag(const double x, const double y, const
         //Drags to the left accomplish zoom-out.
         //Drags to the right accomplish zoom-in.
         double is_zoom_negative = this->_breaking_x >= this->_initial_x ? 1.0f : -1.0f;
-        double initial_dist = sqrt(pow(this->_breaking_x - this->_initial_x) + pow(this->_breaking_y - this->_initial_y));
-        double current_dist = sqrt(pow(                x - this->_initial_x) + pow(                y - this->_initial_y));
+        double initial_dist = sqrt(pow(this->_breaking_x - this->_initial_x, 2.0f) + pow(this->_breaking_y - this->_initial_y, 2.0f));
+        double current_dist = sqrt(pow(                x - this->_initial_x, 2.0f) + pow(                y - this->_initial_y, 2.0f));
         double zoom_factor = current_dist / initial_dist * is_zoom_negative;
 
         int pixel_zoom_factor = this->_initial_zoom * zoom_factor;
