@@ -50,6 +50,9 @@ namespace icCanvasManager {
          * units. The zoom parameter translates window-space units to canvas
          * units. Set_scroll_center allows for setting the tool's scroll center.
          *
+         * The scroll center is in window-space units; scaled by the current
+         * zoom factor.
+         *
          * The protected section includes utility functions for converting
          * between canvas and window space using these parameters.
          */

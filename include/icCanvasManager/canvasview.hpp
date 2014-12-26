@@ -83,6 +83,10 @@ namespace icCanvasManager {
 
         /* Set the current center point on the canvas to render from.
          *
+         * Scroll center points are in window-space and are scaled by the set
+         * zoom factor, seen below. The range of valid scroll centers is
+         * determined by get_maximum_size, seen above.
+         *
          * Some UI toolkits handle scrolling by allowing the widget to size
          * itself as needed and using the clip rectangle and coordinate
          * transforms to place the view coordinate space in the correct area.
