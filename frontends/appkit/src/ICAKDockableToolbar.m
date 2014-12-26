@@ -142,6 +142,8 @@ typedef struct {
         [maybeDat getValue:&dat];
         
         NSInvocation* inv = [NSInvocation invocationWithMethodSignature:[dat.button_target methodSignatureForSelector:dat.button_selector]];
+        inv.selector = dat.button_selector;
+        
         NSInteger argCount = inv.methodSignature.numberOfArguments;
         
         if (argCount > 2) { //one argument, counting the hidden IMP arguments
@@ -153,7 +155,7 @@ typedef struct {
             [inv setArgument:&tag atIndex:3];
         }
         
-        [inv invoke];
+        [inv invokeWithTarget:dat.button_target];
     } else {
         NSLog(@"Got a button press for a button with no action set!");
     }
