@@ -196,9 +196,11 @@ typedef struct {
     ICAKDockingControllerDockData dat;
     
     NSValue* maybeDat = [self->_docknfo objectForKey:[NSValue valueWithNonretainedObject:view]];
-    if (maybeDat != nil) {
-        [maybeDat getValue:&dat];
+    if (maybeDat == nil) {
+        return;
     }
+    
+    [maybeDat getValue:&dat];
     
     if (dat.has_selected_target) {
         if (dat.selected_dock) {
