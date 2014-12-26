@@ -232,7 +232,7 @@
     [self->internal setSizeUiScale:scaleSize.width];
     [self->internal getSizeWidth:&pwidth andHeight:&pheight andUiScale:NULL];
     
-    NSRect bounds = {-pwidth/2.0, -pheight/2.0, pwidth/2.0, pheight/2.0};
+    NSRect bounds = {-pwidth/2.0, -pheight/2.0, pwidth, pheight};
     
     [self setFrame: bounds];
 };
