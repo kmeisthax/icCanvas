@@ -74,6 +74,8 @@
         
         self->ztool = [[ICMZoomTool alloc] init];
         self->ztool.delegate = self;
+        
+        [self selectBrushTool];
     }
     
     return self;
