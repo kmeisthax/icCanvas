@@ -6,6 +6,8 @@
 
 @interface ICAKCanvasView (Private)
 
+- (double)windowScaleFactor;
+
 - (void)scrollPointDidChange:(NSNotification*)notification;
 - (void)updateCurrentToolWithVisibleRect:(NSRect)rect andMagnification:(CGFloat)zoom;
 
@@ -58,6 +60,12 @@
     return YES;
 };
 
+- (double)windowScaleFactor {
+    NSSize testSize = {1.0, 1.0};
+    NSSize scaleSize = [self.window.contentView convertSizeToBacking:testSize];
+    return scaleSize.width;
+};
+
 - (void)viewWillMoveToSuperview:(NSView*)new_superview {
     if (self->_is_scrolling_view) {
         [NSNotificationCenter.defaultCenter removeObserver:self name:NSViewBoundsDidChangeNotification object:self.superview];
@@ -108,11 +116,7 @@
 
 - (void)setFrame:(NSRect)rekt {
     super.frame = rekt;
-    
-    NSSize testSize = {1.0, 1.0};
-    NSSize scaleSize = [self convertSizeToBacking:testSize];
-    
-    [self->internal setSizeWidth:rekt.size.width andHeight:rekt.size.height andUiScale:scaleSize.width];
+    [self->internal setSizeWidth:rekt.size.width andHeight:rekt.size.height andUiScale:self.windowScaleFactor];
     
     if (self->current_tool != nil) {
         //Determine if the CanvasView is scrolling or not
@@ -129,7 +133,7 @@
             [self updateCurrentToolWithVisibleRect:windowRect andMagnification:magnification];
         } else {
             //Some other kind of superview. Let's use frame parameters.
-            [self->current_tool setSizeWidth:rekt.size.width andHeight:rekt.size.height andUiScale:scaleSize.width andZoom:self->internal.zoom];
+            [self->current_tool setSizeWidth:rekt.size.width andHeight:rekt.size.height andUiScale:self.windowScaleFactor andZoom:self->internal.zoom];
         }
     }
 };
@@ -146,10 +150,7 @@
     centerPt.x = (self.frame.size.width / -2.0 + centerPt.x + rect.size.width / 2.0f) * zoom;
     centerPt.y = (self.frame.size.height / -2.0 + centerPt.y + rect.size.height / 2.0f) * zoom;
     
-    NSSize testSize = {1.0, 1.0};
-    NSSize scaleSize = [self convertSizeToBacking:testSize];
-    
-    [self->current_tool setSizeWidth:trueSize.width andHeight:trueSize.height andUiScale:scaleSize.width andZoom:self->internal.zoom / zoom];
+    [self->current_tool setSizeWidth:trueSize.width andHeight:trueSize.height andUiScale:self.windowScaleFactor andZoom:self->internal.zoom / zoom];
     [self->current_tool setScrollCenterX:centerPt.x andY:centerPt.y];
 }
 
