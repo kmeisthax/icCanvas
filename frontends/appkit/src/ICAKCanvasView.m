@@ -4,10 +4,19 @@
 #include <cairo.h>
 #include <cairo-quartz.h>
 
+@interface ICAKCanvasView (Private)
+
+- (void)scrollPointDidChange:(NSNotification*)notification;
+- (void)updateCurrentToolWithVisibleRect:(NSRect)rect andMagnification:(CGFloat)zoom;
+
+@end
+
 @implementation ICAKCanvasView {
     ICMCanvasView* internal;
     ICMDrawing* drawing;
     ICMCanvasTool* current_tool;
+    
+    BOOL _is_scrolling_view;
 }
 
 - (id)initWithDrawing:(ICMDrawing*) theDrawing {
@@ -19,6 +28,8 @@
         self->current_tool = nil;
         
         [self->internal attachDrawing:self->drawing];
+        
+        self->_is_scrolling_view = FALSE;
     }
     
     return self;
@@ -32,14 +43,68 @@
         self->drawing = theDrawing;
         
         [self->internal attachDrawing:self->drawing];
+        
+        self->_is_scrolling_view = FALSE;
     }
     
     return self;
 };
 
+- (void)dealloc {
+    [NSNotificationCenter.defaultCenter removeObserver:self];
+};
+
 - (BOOL)isFlipped {
     return YES;
 };
+
+- (void)viewWillMoveToSuperview:(NSView*)new_superview {
+    if (self->_is_scrolling_view) {
+        [NSNotificationCenter.defaultCenter removeObserver:self name:NSViewBoundsDidChangeNotification object:self.superview];
+        
+        if ([self.superview.superview isKindOfClass:NSScrollView.class]) {
+            [NSNotificationCenter.defaultCenter removeObserver:self name:NSScrollViewDidEndLiveMagnifyNotification
+ object:self.superview.superview];
+        }
+    }
+    
+    if (new_superview == nil) {
+        self->_is_scrolling_view = FALSE;
+        return;
+    }
+    
+    self->_is_scrolling_view = [new_superview isKindOfClass:NSClipView.class];
+    if (self->_is_scrolling_view) {
+        [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(scrollPointDidChange:) name:NSViewBoundsDidChangeNotification object:new_superview];
+        
+        if ([self.superview.superview isKindOfClass:NSScrollView.class]) {
+            [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(magnificationDidChange:) name:NSScrollViewDidEndLiveMagnifyNotification object:new_superview.superview];
+        }
+    }
+}
+
+- (void)scrollPointDidChange:(NSNotification*)notification {
+    NSClipView* clip_view = notification.object;
+    
+    NSRect windowRect = clip_view.documentVisibleRect;
+    CGFloat magnification = 1.0f;
+    
+    if ([clip_view.superview isKindOfClass:NSScrollView.class]) {
+        magnification = ((NSScrollView*)clip_view.superview).magnification;
+    }
+    
+    [self updateCurrentToolWithVisibleRect:windowRect andMagnification:magnification];
+};
+
+- (void)magnificationDidChange:(NSNotification*)notification {
+    NSScrollView* scroll_view = notification.object;
+    NSClipView* clip_view = scroll_view.contentView;
+    
+    NSRect windowRect = clip_view.documentVisibleRect;
+    CGFloat magnification = scroll_view.magnification;
+    
+    [self updateCurrentToolWithVisibleRect:windowRect andMagnification:magnification];
+}
 
 - (void)setFrame:(NSRect)rekt {
     super.frame = rekt;
@@ -50,9 +115,43 @@
     [self->internal setSizeWidth:rekt.size.width andHeight:rekt.size.height andUiScale:scaleSize.width];
     
     if (self->current_tool != nil) {
-        [self->current_tool setSizeWidth:rekt.size.width andHeight:rekt.size.height andUiScale:scaleSize.width andZoom:self->internal.zoom];
+        //Determine if the CanvasView is scrolling or not
+        if ([self.superview isKindOfClass:NSClipView.class]) {
+            NSClipView* clip_view = (NSClipView*)self.superview;
+            
+            NSRect windowRect = clip_view.documentVisibleRect;
+            CGFloat magnification = 1.0f;
+            
+            if ([clip_view.superview isKindOfClass:NSScrollView.class]) {
+                magnification = ((NSScrollView*)clip_view.superview).magnification;
+            }
+            
+            [self updateCurrentToolWithVisibleRect:windowRect andMagnification:magnification];
+        } else {
+            //Some other kind of superview. Let's use frame parameters.
+            [self->current_tool setSizeWidth:rekt.size.width andHeight:rekt.size.height andUiScale:scaleSize.width andZoom:self->internal.zoom];
+        }
     }
 };
+
+- (void)updateCurrentToolWithVisibleRect:(NSRect)rect andMagnification:(CGFloat)zoom {
+    //HINTS: The visible rect takes into account the zoom factor.
+    //Multiply by zoom to get the rect the user sees.
+    
+    NSSize trueSize = rect.size;
+    trueSize.width *= zoom;
+    trueSize.height *= zoom;
+    
+    NSPoint centerPt = rect.origin;
+    centerPt.x = (self.frame.size.width / -2.0 + centerPt.x + rect.size.width / 2.0f) * zoom;
+    centerPt.y = (self.frame.size.height / -2.0 + centerPt.y + rect.size.height / 2.0f) * zoom;
+    
+    NSSize testSize = {1.0, 1.0};
+    NSSize scaleSize = [self convertSizeToBacking:testSize];
+    
+    [self->current_tool setSizeWidth:trueSize.width andHeight:trueSize.height andUiScale:scaleSize.width andZoom:self->internal.zoom / zoom];
+    [self->current_tool setScrollCenterX:centerPt.x andY:centerPt.y];
+}
 
 - (void)drawRect:(NSRect)dirtyRect {
     //Not-so-toll-free bridging
