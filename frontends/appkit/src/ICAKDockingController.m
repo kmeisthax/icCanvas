@@ -258,6 +258,7 @@ typedef struct {
     dat.panel = nil;
     dat.row = row;
     dat.controller = maybeCtrlDat != nil ? ctrldat.controller : nil;
+    dat.has_selected_target = NO;
     
     [self->_docknfo setObject:[NSValue valueWithBytes:&dat objCType:@encode(ICAKDockingControllerDockData)] forKey:[NSValue valueWithNonretainedObject:view]];
 };
@@ -275,6 +276,7 @@ typedef struct {
     dat.panel = panel;
     dat.row = row;
     dat.controller = nil;
+    dat.has_selected_target = NO;
     
     [self->_docknfo setObject:[NSValue valueWithBytes:&dat objCType:@encode(ICAKDockingControllerDockData)] forKey:[NSValue valueWithNonretainedObject:view]];
 };
