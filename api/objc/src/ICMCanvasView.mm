@@ -67,6 +67,10 @@
     self->_wrapped->set_zoom(vpixel_size);
 };
 
+- (int)highestZoom {
+    return self->_wrapped->highest_zoom();
+};
+
 - (void*)getWrappedObject {
     return (void*)self->_wrapped;
 };

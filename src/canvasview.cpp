@@ -19,8 +19,12 @@ void icCanvasManager::CanvasView::attach_drawing(icCanvasManager::RefPtr<icCanva
     this->drawing = drawing;
 };
 
+int icCanvasManager::CanvasView::highest_zoom() {
+    return std::ceil(31 - log2(icCanvasManager::TileCache::TILE_SIZE * this->zoom / this->ui_scale));
+}
+
 void icCanvasManager::CanvasView::request_tiles(cairo_rectangle_t* rect) {
-    int highest_zoom = std::ceil(31 - log2(icCanvasManager::TileCache::TILE_SIZE * this->zoom / this->ui_scale));
+    int highest_zoom = this->highest_zoom();
     auto renderscheduler = icCanvasManager::Application::get_instance().get_render_scheduler();
 
     cairo_rectangle_t canvas_rect = *rect;

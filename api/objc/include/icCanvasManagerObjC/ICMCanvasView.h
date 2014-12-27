@@ -18,6 +18,7 @@
 - (void)setScrollCenterX:(const double)x andY:(const double)y;
 - (const double)zoom;
 - (void)setZoom:(const double)vpixel_size;
+- (int)highestZoom;
 
 - (void*)getWrappedObject;
 

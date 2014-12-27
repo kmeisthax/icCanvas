@@ -102,6 +102,11 @@ namespace icCanvasManager {
          */
         double get_zoom();
         void set_zoom(const double vpixel_size);
+
+        /* Calculate the highest canvas zoom factor that is feasible to render
+         * at given the current canvas zoom and window system UI scale.
+         */
+        int highest_zoom();
     };
 }
 
