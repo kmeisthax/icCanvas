@@ -11,6 +11,8 @@
 - (void)scrollPointDidChange:(NSNotification*)notification;
 - (void)updateCurrentToolWithVisibleRect:(NSRect)rect andMagnification:(CGFloat)zoom;
 
+- (NSPoint)convertViewPointToToolSpace:(NSPoint)pt;
+
 @end
 
 @implementation ICAKCanvasView {
@@ -19,6 +21,9 @@
     ICMCanvasTool* current_tool;
     
     BOOL _is_scrolling_view;
+    
+    NSRect _current_tool_rect;
+    CGFloat _current_tool_zoom;
 }
 
 - (id)initWithDrawing:(ICMDrawing*) theDrawing {
@@ -152,6 +157,9 @@
     
     [self->current_tool setSizeWidth:trueSize.width andHeight:trueSize.height andUiScale:self.windowScaleFactor andZoom:self->internal.zoom / zoom];
     [self->current_tool setScrollCenterX:centerPt.x andY:centerPt.y];
+    
+    self->_current_tool_rect = rect;
+    self->_current_tool_zoom = zoom;
 }
 
 - (void)drawRect:(NSRect)dirtyRect {
@@ -198,30 +206,42 @@
     cairo_surface_destroy(xrsurf);
 };
 
+- (NSPoint)convertViewPointToToolSpace:(NSPoint)pt {
+    NSPoint outpt;
+    
+    outpt.x = (((pt.x - self.frame.size.width / 2.0f) * self->internal.zoom) - self->_current_tool_rect.origin.x) / self->_current_tool_zoom;
+    outpt.y = (((pt.y - self.frame.size.width / 2.0f) * self->internal.zoom) - self->_current_tool_rect.origin.y) / self->_current_tool_zoom;
+    
+    return outpt;
+};
+
 - (void)mouseDown:(NSEvent*)theEvent {
     NSPoint event_location = [theEvent locationInWindow];
     NSPoint local_point = [self convertPoint:event_location fromView:nil];
+    NSPoint tool_point = [self convertViewPointToToolSpace:local_point];
     
     if (self->current_tool != nil) {
-        [self->current_tool mouseDownWithX:local_point.x andY:local_point.y andDeltaX:theEvent.deltaX andDeltaY:theEvent.deltaY];
+        [self->current_tool mouseDownWithX:tool_point.x andY:tool_point.y andDeltaX:theEvent.deltaX andDeltaY:theEvent.deltaY];
     }
 };
 
 - (void)mouseDragged:(NSEvent*)theEvent {
     NSPoint event_location = [theEvent locationInWindow];
     NSPoint local_point = [self convertPoint:event_location fromView:nil];
+    NSPoint tool_point = [self convertViewPointToToolSpace:local_point];
     
     if (self->current_tool != nil) {
-        [self->current_tool mouseDragWithX:local_point.x andY:local_point.y andDeltaX:theEvent.deltaX andDeltaY:theEvent.deltaY];
+        [self->current_tool mouseDragWithX:tool_point.x andY:tool_point.y andDeltaX:theEvent.deltaX andDeltaY:theEvent.deltaY];
     }
 };
 
 - (void)mouseUp:(NSEvent*)theEvent {
     NSPoint event_location = [theEvent locationInWindow];
     NSPoint local_point = [self convertPoint:event_location fromView:nil];
+    NSPoint tool_point = [self convertViewPointToToolSpace:local_point];
     
     if (self->current_tool != nil) {
-        [self->current_tool mouseUpWithX:local_point.x andY:local_point.y andDeltaX:theEvent.deltaX andDeltaY:theEvent.deltaY];
+        [self->current_tool mouseUpWithX:tool_point.x andY:tool_point.y andDeltaX:theEvent.deltaX andDeltaY:theEvent.deltaY];
     }
 };
 
