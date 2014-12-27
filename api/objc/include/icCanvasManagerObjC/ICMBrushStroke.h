@@ -1,5 +1,7 @@
 #import <Cocoa/Cocoa.h>
 
+#include <cairo.h>
+
 @interface ICMBrushStroke : NSObject
 
 - (id)init;
@@ -15,6 +17,8 @@
 - (void)penToFromControlPointDeltaX:(int32_t)fromcp_delta_x andDeltaY:(int32_t)fromcp_delta_y toControlPointDeltaX:(int32_t)tocp_delta_x andDeltaY:(int32_t)tocp_delta_y toDeltaX:(int32_t)to_delta_x andDeltaY:(int32_t)to_delta_y;
 - (void)penExtendWithContinuityLevel:(int) lvl;
 - (void)penBack;
+
+- (cairo_rectangle_t)boundingBox;
 
 - (void*)getWrappedObject;
 

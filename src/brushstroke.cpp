@@ -148,3 +148,95 @@ void icCanvasManager::BrushStroke::pen_back() {
 icCanvasManager::BrushStroke::spline_size_type icCanvasManager::BrushStroke::count_segments() {
     return this->_curve.count_points();
 };
+
+class icCanvasManager::BrushStroke::__DerivFunctor {
+    icCanvasManager::BrushStroke::__Spline::derivative_type& d;
+    int segment;
+    public:
+        __DerivFunctor(icCanvasManager::BrushStroke::__Spline::derivative_type& d, int segment) : d(d), segment(segment) {};
+        icCanvasManager::BrushStroke::__ControlPoint operator() (float t) {
+            return this->d.evaluate_for_point(t + segment, segment);
+        }
+};
+class icCanvasManager::BrushStroke::__SecondDerivFunctor {
+    icCanvasManager::BrushStroke::__Spline::derivative_type::derivative_type& d;
+    int segment;
+    public:
+        __SecondDerivFunctor(icCanvasManager::BrushStroke::__Spline::derivative_type::derivative_type& d, int segment) : d(d), segment(segment) {};
+        icCanvasManager::BrushStroke::__ControlPoint operator() (float t) {
+            return this->d.evaluate_for_point(t + segment, segment);
+        }
+};
+
+/* Run root-finding for the X and Y parameters of a control point on the range [0, 1) */
+template <typename Functor, typename DerivFunctor>
+static void newtonian_roots(Functor f, DerivFunctor fprime, std::vector<float>& x_roots, std::vector<float>& y_roots) {
+    for (float i = 0.0f; i < 1.0f; i += 0.1f) {
+        float t = i;
+
+        while (fabs(f(t).x) > 0.0001f) {
+            t = t - (f(t).x / fprime(t).x);
+            if (t < 0.0f || t > 1.0f) break;
+        }
+
+        if (t < 0.0f || t > 1.0f) {
+        } else if (x_roots.size() == 0 || fabs(x_roots.back() - t) > 0.001f) x_roots.push_back(t);
+
+        t = i;
+        while (fabs(f(t).y) > 0.0001f) {
+            t = t - (f(t).y / fprime(t).y);
+        }
+
+        if (t < 0.0f || t > 1.0f) {
+        } else if (y_roots.size() == 0 || fabs(y_roots.back() - t) > 0.001f) y_roots.push_back(t);
+    }
+}
+
+cairo_rectangle_t icCanvasManager::BrushStroke::bounding_box() {
+    cairo_rectangle_t out_bbox;
+    auto first_derivative = this->_curve.derivative();
+    auto second_derivative = first_derivative.derivative();
+
+    int xmin = INT32_MAX, xmax = INT32_MIN, ymin = INT32_MAX, ymax = INT32_MIN;
+
+    for (int i = 0; i < this->_curve.count_points(); i++) {
+        icCanvasManager::BrushStroke::__DerivFunctor fprime(first_derivative, i);
+        icCanvasManager::BrushStroke::__SecondDerivFunctor f2prime(second_derivative, i);
+        std::vector<float> fprime_x_roots, fprime_y_roots;
+
+        fprime_x_roots.push_back(0.0f);
+        fprime_y_roots.push_back(0.0f);
+
+        ::newtonian_roots(fprime, f2prime, fprime_x_roots, fprime_y_roots);
+
+        fprime_x_roots.push_back(1.0f);
+        fprime_y_roots.push_back(1.0f);
+
+        for (float t : fprime_x_roots) {
+            if (t < 0.0f || t > 1.0f) continue;
+
+            auto pt = this->_curve.evaluate_for_point(i + t, i);
+            if (pt.x < xmin) xmin = pt.x;
+            if (pt.x > xmax) xmax = pt.x;
+            if (pt.y < ymin) ymin = pt.y;
+            if (pt.y > ymax) ymax = pt.y;
+        }
+
+        for (float t : fprime_y_roots) {
+            if (t < 0.0f || t > 1.0f) continue;
+
+            auto pt = this->_curve.evaluate_for_point(i + t, i);
+            if (pt.x < xmin) xmin = pt.x;
+            if (pt.x > xmax) xmax = pt.x;
+            if (pt.y < ymin) ymin = pt.y;
+            if (pt.y > ymax) ymax = pt.y;
+        }
+    }
+
+    out_bbox.x = xmin;
+    out_bbox.y = ymin;
+    out_bbox.width = xmax - xmin;
+    out_bbox.height = ymax - ymin;
+
+    return out_bbox;
+};

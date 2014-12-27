@@ -65,6 +65,10 @@
     self->_wrapped->pen_back();
 };
 
+- (cairo_rectangle_t)boundingBox; {
+    return self->_wrapped->bounding_box();
+}
+
 - (void*)getWrappedObject {
     return (void*)self->_wrapped;
 };

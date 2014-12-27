@@ -6,6 +6,8 @@
 #include <vector>
 #include <cstdint>
 
+#include <cairo.h>
+
 namespace icCanvasManager {
     class Renderer;
     class SplineFitter;
@@ -35,6 +37,9 @@ namespace icCanvasManager {
         typedef TMVBeizer<__ControlPoint, 3> __Spline;
         __Spline _curve;
         __Spline::size_type pos;
+
+        class __DerivFunctor;
+        class __SecondDerivFunctor;
     public:
         typedef __Spline::size_type spline_size_type;
         
@@ -99,6 +104,9 @@ namespace icCanvasManager {
         
         //Count the number of spline segments.
         spline_size_type count_segments();
+
+        /* Calculate the bounding-box of the curve. */
+        cairo_rectangle_t bounding_box();
 
         friend class Renderer;
         friend class SplineFitter;
