@@ -26,17 +26,17 @@ void icCanvasManager::RenderScheduler::request_tiles(icCanvasManager::RefPtr<icC
 
     //Special-case for zoom factor 0 because I can't be arsed to deal with overflow crap
     if (size == 0) {
-        renderscheduler->request_tile(this->drawing, 0, 0, 0, this->drawing->strokes_count());
+        this->request_tile(d, 0, 0, 0, time);
         return;
     }
 
     int request_size = (UINT32_MAX >> size) + 1;
-    int rect_x_scroll = rect->x;
-    int rect_y_scroll = rect->y;
+    int rect_x_scroll = rect.x;
+    int rect_y_scroll = rect.y;
     int base_x = rect_x_scroll - rect_x_scroll % request_size - (request_size / 2);
     int base_y = rect_y_scroll - rect_y_scroll % request_size - (request_size / 2);
-    int x_tile_count = std::ceil(rect->width / (float)request_size);
-    int y_tile_count = std::ceil(rect->height / (float)request_size);
+    int x_tile_count = std::ceil(rect.width / (float)request_size);
+    int y_tile_count = std::ceil(rect.height / (float)request_size);
 
     for (int i = 0; i <= x_tile_count; i++) {
         for (int j = 0; j <= y_tile_count; j++) {
@@ -49,7 +49,7 @@ void icCanvasManager::RenderScheduler::request_tiles(icCanvasManager::RefPtr<icC
             if ((base_x > 0) && (base_x > INT32_MAX - ((int)request_size * i))) continue;
             if ((base_y > 0) && (base_y > INT32_MAX - ((int)request_size * j))) continue;
 
-            renderscheduler->request_tile(d, base_x + ((int)request_size * i), base_y + ((int)request_size * j), size, time);
+            this->request_tile(d, base_x + ((int)request_size * i), base_y + ((int)request_size * j), size, time);
         }
     }
 };
