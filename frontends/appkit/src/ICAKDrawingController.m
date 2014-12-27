@@ -109,6 +109,7 @@
 //Various CanvasTool delegate impls
 - (void)brushToolCapturedStroke:(ICMBrushStroke*)stroke {
     [self->drawing appendStroke:stroke];
+    [[[ICMApplication getInstance] renderScheduler] requestTilesOnDrawing:self->drawing inRect:stroke.boundingBox atSize:self->cv.internal.highestZoom atTime:self->drawing.strokesCount];
 };
 
 - (void)changedScrollX:(const double)x andY:(const double)y andZoom:(const double)zoom {
