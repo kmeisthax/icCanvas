@@ -31,6 +31,11 @@
     self->_wrapped->request_tile(inner_d, x, y, size, time);
 };
 
+- (void)requestTilesOnDrawing:(ICMDrawing*)d inRect:(cairo_rectangle_t)rect atSize:(int)size atTime:(int)time {
+    icCanvasManager::RefPtr<icCanvasManager::Drawing> inner_d = (icCanvasManager::Drawing*)[d getWrappedObject];
+    self->_wrapped->request_tiles(inner_d, rect, size, time);
+};
+
 - (void)backgroundTick {
     self->_wrapped->background_tick();
 };

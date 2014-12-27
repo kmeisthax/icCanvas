@@ -36,6 +36,9 @@ namespace icCanvasManager {
         /* Put a request for a tile to be rendered. */
         void request_tile(RefPtr<Drawing> d, int x, int y, int size, int time);
 
+        /* Put a request for a rectangle of tiles, at a particular size, to be rendered. */
+        void request_tiles(RefPtr<Drawing> d, cairo_rectangle_t rect, int size, int time);
+
         /* Revoke previously made requests in a particular canvas rectangle.
          *
          * Already filled requests (or those currently in processing) cannot be

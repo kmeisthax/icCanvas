@@ -23,38 +23,13 @@ void icCanvasManager::CanvasView::request_tiles(cairo_rectangle_t* rect) {
     int highest_zoom = std::ceil(31 - log2(icCanvasManager::TileCache::TILE_SIZE * this->zoom / this->ui_scale));
     auto renderscheduler = icCanvasManager::Application::get_instance().get_render_scheduler();
 
-    if (highest_zoom < 0) {
-        highest_zoom = 0;
-    }
+    cairo_rectangle_t canvas_rect = *rect;
+    canvas_rect.x = this->x_scroll + (canvas_rect.x * this->zoom);
+    canvas_rect.y = this->y_scroll + (canvas_rect.y * this->zoom);
+    canvas_rect.width = canvas_rect.width * this->zoom;
+    canvas_rect.height = canvas_rect.height * this->zoom;
 
-    //Special-case for zoom factor 0 because I can't be arsed to deal with overflow crap
-    if (highest_zoom == 0) {
-        renderscheduler->request_tile(this->drawing, 0, 0, 0, this->drawing->strokes_count());
-        return;
-    }
-
-    int request_size = (UINT32_MAX >> highest_zoom) + 1;
-    int rect_x_scroll = this->x_scroll + (rect->x * this->zoom);
-    int rect_y_scroll = this->y_scroll + (rect->y * this->zoom);
-    int base_x = rect_x_scroll - rect_x_scroll % request_size - (request_size / 2);
-    int base_y = rect_y_scroll - rect_y_scroll % request_size - (request_size / 2);
-    int x_tile_count = std::ceil((rect->width * this->zoom) / (float)request_size);
-    int y_tile_count = std::ceil((rect->height * this->zoom) / (float)request_size);
-
-    for (int i = 0; i <= x_tile_count; i++) {
-        for (int j = 0; j <= y_tile_count; j++) {
-            //Don't request out-of-bounds tiles.
-            //This is complicated by the fact that C integer behaviors blow chunks.
-            if ((int)request_size != 0) { //Intel divide-by-zero behavior ALSO blows chunks.
-                if ((INT32_MAX / (int)request_size) < i) continue;
-                if ((INT32_MAX / (int)request_size) < j) continue;
-            }
-            if ((base_x > 0) && (base_x > INT32_MAX - ((int)request_size * i))) continue;
-            if ((base_y > 0) && (base_y > INT32_MAX - ((int)request_size * j))) continue;
-
-            renderscheduler->request_tile(this->drawing, base_x + ((int)request_size * i), base_y + ((int)request_size * j), highest_zoom, this->drawing->strokes_count());
-        }
-    }
+    renderscheduler->request_tiles(this->drawing, canvas_rect, highest_zoom, this->drawing->strokes_count());
 };
 
 void icCanvasManager::CanvasView::draw_tiles(cairo_t* ctxt, cairo_rectangle_t* rect) {
