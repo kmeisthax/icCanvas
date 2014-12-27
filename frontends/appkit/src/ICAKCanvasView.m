@@ -267,6 +267,10 @@
     return self->drawing;
 };
 
+- (ICMCanvasView*)internal {
+    return self->internal;
+};
+
 - (double)minimumMagnification {
     double minscale;
     [self->internal getScaleExtentsMinimum:&minscale andMaximum:NULL];

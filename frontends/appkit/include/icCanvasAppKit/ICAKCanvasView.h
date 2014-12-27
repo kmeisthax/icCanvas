@@ -13,6 +13,7 @@
 
 - (void)setDrawing:(ICMDrawing*)drawing;
 - (ICMDrawing*)drawing;
+- (ICMCanvasView*)internal;
 
 - (void)sizeToFitCanvas;
 
