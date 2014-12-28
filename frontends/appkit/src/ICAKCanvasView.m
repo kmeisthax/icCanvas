@@ -299,4 +299,13 @@
     [self->current_tool prepareForReuse];
 };
 
+- (void)setNeedsDisplayInCanvasRect:(NSRect)rect {
+    rect.origin.x = rect.origin.x / self->internal.zoom + self.frame.size.width / 2.0f;
+    rect.origin.y = rect.origin.y / self->internal.zoom + self.frame.size.height / 2.0f;
+    rect.size.width = rect.size.width / self->internal.zoom;
+    rect.size.height = rect.size.height / self->internal.zoom;
+    
+    [self setNeedsDisplayInRect:rect];
+};
+
 @end

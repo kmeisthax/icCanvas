@@ -21,4 +21,6 @@
 - (double)maximumMagnification;
 
 - (void)setCanvasTool:(ICMCanvasTool*)ctool;
+
+- (void)setNeedsDisplayInCanvasRect:(NSRect)rect;
 @end

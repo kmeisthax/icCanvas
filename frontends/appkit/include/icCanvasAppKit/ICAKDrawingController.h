@@ -7,7 +7,7 @@
 - (void)setDocument:(NSDocument *)document;
 - (ICAKDock*)dock;
 
-- (void)rendererDidRenderTiles;
+- (void)rendererDidRenderTilesOnCanvasRect:(NSRect)rect;
 
 - (void)selectBrushTool;
 - (void)selectZoomTool;

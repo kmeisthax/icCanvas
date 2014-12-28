@@ -88,8 +88,8 @@
     }
 };
 
-- (void)rendererDidRenderTiles {
-    [self->cv setNeedsDisplayInRect:self->cv.frame];
+- (void)rendererDidRenderTilesOnCanvasRect:(NSRect)rect {
+    [self->cv setNeedsDisplayInCanvasRect:rect];
 };
 
 - (ICAKDock*)dock {

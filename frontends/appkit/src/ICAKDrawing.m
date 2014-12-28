@@ -32,12 +32,22 @@
 }
 
 - (void)backgroundTick {
-    int num_rendered = [[[ICMApplication getInstance] renderScheduler] collectRequestsForDrawing:self->internal_drawing];
+    cairo_rectangle_t canvasRect;
+    NSRect convertedRect;
+    int num_rendered = [[[ICMApplication getInstance] renderScheduler] collectRequestForDrawing:self->internal_drawing canvasTileRect:&canvasRect];
     
-    if (num_rendered != 0) {
+    while (num_rendered > 0) {
+        convertedRect.origin.x = canvasRect.x;
+        convertedRect.origin.y = canvasRect.y;
+        convertedRect.size.width = canvasRect.width;
+        convertedRect.size.height = canvasRect.height;
+        
         for (id windowController in self.windowControllers) {
-            [windowController rendererDidRenderTiles];
+            
+            [windowController rendererDidRenderTilesOnCanvasRect:convertedRect];
         }
+        
+        num_rendered = [[[ICMApplication getInstance] renderScheduler] collectRequestForDrawing:self->internal_drawing canvasTileRect:&canvasRect];
     }
 }
 
