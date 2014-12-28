@@ -173,9 +173,11 @@ template <typename Functor, typename DerivFunctor>
 static void newtonian_roots(Functor f, DerivFunctor fprime, std::vector<float>& x_roots, std::vector<float>& y_roots) {
     for (float i = 0.0f; i < 1.0f; i += 0.1f) {
         float t = i;
+        auto divergence = fabs(f(t).x);
 
-        while (fabs(f(t).x) > 0.0001f) {
-            t = t - (f(t).x / fprime(t).x);
+        while (divergence > 0.0001f) {
+            t = t - ((double)f(t).x / (double)fprime(t).x);
+            divergence = fabs(f(t).x);
             if (t < 0.0f || t > 1.0f) break;
         }
 
@@ -183,8 +185,11 @@ static void newtonian_roots(Functor f, DerivFunctor fprime, std::vector<float>& 
         } else if (x_roots.size() == 0 || fabs(x_roots.back() - t) > 0.001f) x_roots.push_back(t);
 
         t = i;
-        while (fabs(f(t).y) > 0.0001f) {
-            t = t - (f(t).y / fprime(t).y);
+        divergence = fabs(f(t).y);
+        while (divergence > 0.0001f) {
+            t = t - ((double)f(t).y / (double)fprime(t).y);
+            divergence = fabs(f(t).y);
+            if (t < 0.0f || t > 1.0f) break;
         }
 
         if (t < 0.0f || t > 1.0f) {
