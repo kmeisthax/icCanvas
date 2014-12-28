@@ -167,6 +167,15 @@ class icCanvasManager::BrushStroke::__SecondDerivFunctor {
             return this->d.evaluate_for_point(t + segment, segment);
         }
 };
+class icCanvasManager::BrushStroke::__ThirdDerivFunctor {
+    icCanvasManager::BrushStroke::__Spline::derivative_type::derivative_type::derivative_type& d;
+    int segment;
+    public:
+        __ThirdDerivFunctor(icCanvasManager::BrushStroke::__Spline::derivative_type::derivative_type::derivative_type& d, int segment) : d(d), segment(segment) {};
+        icCanvasManager::BrushStroke::__ControlPoint operator() (float t) {
+            return this->d.evaluate_for_point(t + segment, segment);
+        }
+};
 
 /* Run root-finding for the X and Y parameters of a control point on the range [0, 1) */
 template <typename Functor, typename DerivFunctor>
@@ -204,18 +213,21 @@ cairo_rectangle_t icCanvasManager::BrushStroke::bounding_box() {
     cairo_rectangle_t out_bbox;
     auto first_derivative = this->_curve.derivative();
     auto second_derivative = first_derivative.derivative();
+    auto third_derivative = second_derivative.derivative();
 
     int xmin = INT32_MAX, xmax = INT32_MIN, ymin = INT32_MAX, ymax = INT32_MIN;
 
     for (int i = 0; i < this->_curve.count_points(); i++) {
         icCanvasManager::BrushStroke::__DerivFunctor fprime(first_derivative, i);
         icCanvasManager::BrushStroke::__SecondDerivFunctor f2prime(second_derivative, i);
+        icCanvasManager::BrushStroke::__ThirdDerivFunctor f3prime(third_derivative, i);
         std::vector<float> fprime_x_roots, fprime_y_roots;
 
         fprime_x_roots.push_back(0.0f);
         fprime_y_roots.push_back(0.0f);
 
         ::newtonian_roots(fprime, f2prime, fprime_x_roots, fprime_y_roots);
+        ::newtonian_roots(f2prime, f3prime, fprime_x_roots, fprime_y_roots);
 
         fprime_x_roots.push_back(1.0f);
         fprime_y_roots.push_back(1.0f);
