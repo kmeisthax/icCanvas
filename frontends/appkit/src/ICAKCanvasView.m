@@ -10,6 +10,7 @@
 
 - (void)scrollPointDidChange:(NSNotification*)notification;
 - (void)updateCurrentToolWithVisibleRect:(NSRect)rect andMagnification:(CGFloat)zoom;
+- (void)updateInternalViewWithVisibleRect:(NSRect)rect andMagnification:(CGFloat)zoom;
 
 - (NSPoint)convertViewPointToToolSpace:(NSPoint)pt;
 
@@ -106,6 +107,7 @@
         magnification = ((NSScrollView*)clip_view.superview).magnification;
     }
     
+    [self updateInternalViewWithVisibleRect:self.frame andMagnification:magnification];
     [self updateCurrentToolWithVisibleRect:windowRect andMagnification:magnification];
 };
 
@@ -116,12 +118,17 @@
     NSRect windowRect = clip_view.documentVisibleRect;
     CGFloat magnification = scroll_view.magnification;
     
+    [self updateInternalViewWithVisibleRect:self.frame andMagnification:magnification];
     [self updateCurrentToolWithVisibleRect:windowRect andMagnification:magnification];
 }
 
 - (void)setFrame:(NSRect)rekt {
     super.frame = rekt;
-    [self->internal setSizeWidth:rekt.size.width andHeight:rekt.size.height andUiScale:self.windowScaleFactor];
+    if ([self.superview isKindOfClass:NSClipView.class] && [self.superview.superview isKindOfClass:NSScrollView.class]) {
+        [self updateInternalViewWithVisibleRect:rekt andMagnification:((NSScrollView*)self.superview.superview).magnification];
+    } else {
+        [self updateInternalViewWithVisibleRect:rekt andMagnification:1.0f];
+    }
     
     if (self->current_tool != nil) {
         //Determine if the CanvasView is scrolling or not
@@ -161,6 +168,10 @@
     self->_current_tool_rect = rect;
     self->_current_tool_zoom = zoom;
 }
+
+- (void)updateInternalViewWithVisibleRect:(NSRect)rect andMagnification:(CGFloat)zoom {
+    [self->internal setSizeWidth:rect.size.width andHeight:rect.size.height andUiScale:self.windowScaleFactor * zoom];
+};
 
 - (void)drawRect:(NSRect)dirtyRect {
     //Not-so-toll-free bridging
