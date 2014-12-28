@@ -89,7 +89,7 @@
 };
 
 - (void)rendererDidRenderTiles {
-    [self->scv setNeedsDisplay:YES];
+    [self->cv setNeedsDisplayInRect:self->cv.frame];
 };
 
 - (ICAKDock*)dock {
@@ -108,8 +108,10 @@
 
 //Various CanvasTool delegate impls
 - (void)brushToolCapturedStroke:(ICMBrushStroke*)stroke {
+    cairo_rectangle_t bbox = stroke.boundingBox;
+    
     [self->drawing appendStroke:stroke];
-    [[[ICMApplication getInstance] renderScheduler] requestTilesOnDrawing:self->drawing inRect:stroke.boundingBox atSize:self->cv.internal.highestZoom atTime:self->drawing.strokesCount];
+    [[[ICMApplication getInstance] renderScheduler] requestTilesOnDrawing:self->drawing inRect:bbox atSize:self->cv.internal.highestZoom atTime:self->drawing.strokesCount];
 };
 
 - (void)changedScrollX:(const double)x andY:(const double)y andZoom:(const double)zoom {
