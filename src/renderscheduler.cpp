@@ -88,7 +88,7 @@ void icCanvasManager::RenderScheduler::background_tick() {
     }
 };
 
-int icCanvasManager::RenderScheduler::collect_requests(icCanvasManager::RefPtr<icCanvasManager::Drawing> d) {
+int icCanvasManager::RenderScheduler::collect_request(icCanvasManager::RefPtr<icCanvasManager::Drawing> d, cairo_rectangle_t *out_tile_rect) {
     int count = 0;
 
     auto i = this->_uncollected.begin();
@@ -98,7 +98,17 @@ int icCanvasManager::RenderScheduler::collect_requests(icCanvasManager::RefPtr<i
             cairo_surface_destroy(i->tile);
             i = this->_uncollected.erase(i);
 
+            if (out_tile_rect) {
+                int size_canvas_units = (UINT32_MAX >> i->size) + 1;
+
+                out_tile_rect->x = i->x - size_canvas_units / 2.0f;
+                out_tile_rect->y = i->y - size_canvas_units / 2.0f;
+                out_tile_rect->width = size_canvas_units;
+                out_tile_rect->height = size_canvas_units;
+            }
+
             count++;
+            return count;
         } else {
             i++;
         }

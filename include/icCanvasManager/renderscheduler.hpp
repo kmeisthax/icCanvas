@@ -53,7 +53,10 @@ namespace icCanvasManager {
          */
         void background_tick();
 
-        /* Collect fulfilled requests into a drawing's TileCache.
+        /* Collect a fulfilled request into a drawing's TileCache.
+         *
+         * The out_tile_rect parameter will be filled with the canvas-space
+         * rectangle of the collected tile.
          *
          * Since a RenderScheduler can be responsible for rendering more than
          * one drawing at a time, you must collect each drawing's tiles
@@ -63,9 +66,9 @@ namespace icCanvasManager {
          * a drawing's tile cache) in order to ensure completed renders hit the
          * drawing's tile cache.
          *
-         * Returns number of tiles collected - 0 if none were rendered.
+         * Returns 0 if no requests could be collected, otherwise 1.
          */
-        int collect_requests(RefPtr<Drawing> d);
+        int collect_request(RefPtr<Drawing> d, cairo_rectangle_t *out_tile_rect);
     };
 }
 

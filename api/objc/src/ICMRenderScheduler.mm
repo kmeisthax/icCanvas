@@ -40,9 +40,9 @@
     self->_wrapped->background_tick();
 };
 
-- (int)collectRequestsForDrawing:(ICMDrawing*)d {
+- (int)collectRequestForDrawing:(ICMDrawing*)d canvasTileRect:(cairo_rectangle_t*)out_tile_rect {
     icCanvasManager::RefPtr<icCanvasManager::Drawing> inner_d = (icCanvasManager::Drawing*)[d getWrappedObject];
-    return self->_wrapped->collect_requests(inner_d);
+    return self->_wrapped->collect_request(inner_d, out_tile_rect);
 };
 
 - (void*)getWrappedObject {

@@ -9,7 +9,7 @@
 - (void)requestTileOnDrawing:(ICMDrawing*)d atX:(int)x andY:(int)y atSize:(int)size atTime:(int)time;
 - (void)requestTilesOnDrawing:(ICMDrawing*)d inRect:(cairo_rectangle_t)rect atSize:(int)size atTime:(int)time;
 - (void)backgroundTick;
-- (int)collectRequestsForDrawing:(ICMDrawing*)d;
+- (int)collectRequestForDrawing:(ICMDrawing*)d canvasTileRect:(cairo_rectangle_t*)out_tile_rect;
 
 - (void*)getWrappedObject;
 
