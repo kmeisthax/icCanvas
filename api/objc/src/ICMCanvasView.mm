@@ -43,6 +43,10 @@
     self->_wrapped->set_size(ui_scale);
 };
 
+- (void)setUiScale:(const double)ui_scale {
+    self->_wrapped->set_ui_scale(ui_scale);
+};
+
 - (void)getSizeWidth:(double*)out_width andHeight:(double*)out_height andUiScale:(double*)out_ui_scale {
     self->_wrapped->get_size(out_width, out_height, out_ui_scale);
 };

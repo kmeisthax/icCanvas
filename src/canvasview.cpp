@@ -139,6 +139,10 @@ void icCanvasManager::CanvasView::set_size(const double ui_scale) {
     this->y_scroll = this->y_center - (height * this->zoom / 2.0);
 };
 
+void icCanvasManager::CanvasView::set_ui_scale(const double ui_scale) {
+    this->ui_scale = ui_scale;
+};
+
 void icCanvasManager::CanvasView::get_size(double *out_width, double *out_height, double *out_ui_scale) {
     if (out_width) *out_width = this->width;
     if (out_height) *out_height = this->height;

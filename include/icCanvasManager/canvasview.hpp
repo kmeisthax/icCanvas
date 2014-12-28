@@ -63,6 +63,14 @@ namespace icCanvasManager {
          */
         void set_size(const double ui_scale);
 
+        /* Set the mapping between pixels on the draw method's context and
+         * pixels on the physical display device.
+         *
+         * This factor is used to calculate how much detail should be rendered
+         * by the canvas view.
+         */
+        void set_ui_scale(const double ui_scale);
+
         /* Get the currently configured size.
          *
          * The maximum_size function returns the maximum extent of the view.
