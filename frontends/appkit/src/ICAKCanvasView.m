@@ -209,8 +209,8 @@
 - (NSPoint)convertViewPointToToolSpace:(NSPoint)pt {
     NSPoint outpt;
     
-    outpt.x = (((pt.x - self.frame.size.width / 2.0f) * self->internal.zoom) - self->_current_tool_rect.origin.x) / self->_current_tool_zoom;
-    outpt.y = (((pt.y - self.frame.size.width / 2.0f) * self->internal.zoom) - self->_current_tool_rect.origin.y) / self->_current_tool_zoom;
+    outpt.x = ((pt.x) - self->_current_tool_rect.origin.x) * self->_current_tool_zoom;
+    outpt.y = ((pt.y) - self->_current_tool_rect.origin.y) * self->_current_tool_zoom;
     
     return outpt;
 };
