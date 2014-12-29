@@ -133,7 +133,7 @@ class icCanvasGtk.CanvasWidget : Gtk.Widget, Gtk.Scrollable {
         
         adjust.page_increment = 1;
         adjust.page_size = 1;
-        adjust.step_increment = 1;
+        adjust.step_increment = this.cv.zoom;
         
         adjust.value_changed.connect(this.update_adjustments);
     }
