@@ -155,6 +155,7 @@ namespace icCanvasManager {
         public RenderScheduler();
         
         public void request_tile(Drawing d, int x, int y, int size, int time);
+        public void request_tiles(Drawing d, Cairo.Rectangle rect, int size, int time);
         public void revoke_request(Drawing d, int x_min, int y_min, int x_max, int y_max);
         
         public void background_tick();

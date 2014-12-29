@@ -34,6 +34,12 @@ extern "C" {
         theSched->request_tile(theDrawing, x, y, size, time);
     };
 
+    void icm_renderscheduler_request_tiles(icm_renderscheduler w, icm_drawing d, cairo_rectangle_t rect, int size, int time) {
+        icCanvasManager::RenderScheduler* theSched = (icCanvasManager::RenderScheduler*)w;
+        icCanvasManager::Drawing* theDrawing = (icCanvasManager::Drawing*)d;
+        theSched->request_tiles(theDrawing, rect, size, time);
+    };
+
     void icm_renderscheduler_revoke_request(icm_renderscheduler w, icm_drawing d, int x_min, int y_min, int x_max, int y_max) {
         icCanvasManager::RenderScheduler* theSched = (icCanvasManager::RenderScheduler*)w;
         icCanvasManager::Drawing* theDrawing = (icCanvasManager::Drawing*)d;
