@@ -2,7 +2,6 @@
 
 #include <cmath>
 #include <algorithm>
-#include <iostream>
 
 icCanvasManager::CanvasView::CanvasView() {
     this->renderer = new icCanvasManager::Renderer();
@@ -135,8 +134,8 @@ void icCanvasManager::CanvasView::set_size(const double ui_scale) {
 
     this->x_size = this->width * this->zoom;
     this->y_size = this->height * this->zoom;
-    this->x_scroll = this->x_center - (width * this->zoom / 2.0);
-    this->y_scroll = this->y_center - (height * this->zoom / 2.0);
+    this->x_scroll = this->x_center - (this->width * this->zoom / 2.0);
+    this->y_scroll = this->y_center - (this->height * this->zoom / 2.0);
 };
 
 void icCanvasManager::CanvasView::set_ui_scale(const double ui_scale) {
@@ -187,11 +186,11 @@ void icCanvasManager::CanvasView::set_zoom(const double vpixel_size) {
 };
 
 void icCanvasManager::CanvasView::windowToCoordspace(const int32_t x, const int32_t y, int32_t* out_tx, int32_t* out_ty) {
-    if (out_tx) *out_tx = (int)((float)x * this->zoom + this->x_scroll);
-    if (out_ty) *out_ty = (int)((float)y * this->zoom + this->y_scroll);
+    if (out_tx) *out_tx = (int)((float)x * this->zoom + (long long int)this->x_scroll);
+    if (out_ty) *out_ty = (int)((float)y * this->zoom + (long long int)this->y_scroll);
 };
 
 void icCanvasManager::CanvasView::coordToWindowspace(const int32_t x, const int32_t y, int32_t* out_tx, int32_t* out_ty) {
-    if (out_tx) *out_tx = (int)((float)(x - this->x_scroll) / this->zoom);
-    if (out_ty) *out_ty = (int)((float)(y - this->y_scroll) / this->zoom);
+    if (out_tx) *out_tx = (int)((float)(x - (long long int)this->x_scroll) / this->zoom);
+    if (out_ty) *out_ty = (int)((float)(y - (long long int)this->y_scroll) / this->zoom);
 };
