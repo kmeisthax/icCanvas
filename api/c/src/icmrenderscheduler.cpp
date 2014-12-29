@@ -45,9 +45,9 @@ extern "C" {
         d->background_tick();
     };
 
-    int icm_renderscheduler_collect_requests(icm_renderscheduler w, icm_drawing d) {
+    int icm_renderscheduler_collect_request(icm_renderscheduler w, icm_drawing d, cairo_rectangle_t* out_tile_rect) {
         icCanvasManager::RenderScheduler* theSched = (icCanvasManager::RenderScheduler*)w;
         icCanvasManager::Drawing* theDrawing = (icCanvasManager::Drawing*)d;
-        return theSched->collect_requests(theDrawing);
+        return theSched->collect_request(theDrawing, out_tile_rect);
     };
 }

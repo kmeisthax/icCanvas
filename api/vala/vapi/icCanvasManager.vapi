@@ -150,6 +150,6 @@ namespace icCanvasManager {
         
         public void background_tick();
         
-        public int collect_requests(Drawing d);
+        public int collect_request(Drawing d, out Cairo.Rectangle tile_rect);
     }
 }
