@@ -45,6 +45,8 @@ namespace icCanvasManager {
         public void pen_back();
 
         public size_t count_segments();
+        
+        public Cairo.Rectangle bounding_box();
     }
     
     [CCode (cname = "icm_canvasview",

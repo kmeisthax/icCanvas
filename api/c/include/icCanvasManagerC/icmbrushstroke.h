@@ -44,6 +44,8 @@ extern "C" {
 
     size_t icm_brushstroke_count_segments(icm_brushstroke wrap);
 
+    cairo_rectangle_t icm_brushstroke_bounding_box(icm_brushstroke wrap);
+
 #ifdef __cplusplus
 }
 #endif

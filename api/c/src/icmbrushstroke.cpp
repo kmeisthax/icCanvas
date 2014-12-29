@@ -85,4 +85,9 @@ extern "C" {
         icCanvasManager::BrushStroke* d = (icCanvasManager::BrushStroke*)w;
         return d->count_segments();
     };
+
+    cairo_rectangle_t icm_brushstroke_bounding_box(icm_brushstroke wrap) {
+        icCanvasManager::BrushStroke* d = (icCanvasManager::BrushStroke*)w;
+        return d->bounding_box();
+    };
 }
