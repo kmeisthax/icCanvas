@@ -17,12 +17,15 @@ class icCanvasGtk.Drawing {
     public bool on_idle() {
         var app = icCanvasManager.Application.get_instance();
         var rsched = app.get_render_scheduler();
-        var numreqs = rsched.collect_requests(this._drawing);
+        Cairo.Rectangle rect;
+        var numreqs = rsched.collect_request(this._drawing, out rect);
         
-        if (numreqs > 0) {
+        while (numreqs > 0) {
             this._windows.foreach((wnd) => {
-                wnd.tile_rendered();
+                wnd.tile_rendered(rect);
             });
+            
+            numreqs = rsched.collect_request(this._drawing, out rect);
         }
         
         return true;

@@ -32,8 +32,8 @@ class icCanvasGtk.DrawingWindow : Gtk.ApplicationWindow {
         }
     }
     
-    public void tile_rendered() {
-        this.canvaswdgt.queue_draw();
+    public void tile_rendered(Cairo.Rectangle where) {
+        this.canvaswdgt.queue_draw_by_canvasrect(where);
     }
     
     public void add_dockable(icCanvasGtk.Dockable dk, icCanvasGtk.Dock.Edge edge) {
