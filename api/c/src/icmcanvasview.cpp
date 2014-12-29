@@ -50,6 +50,11 @@ extern "C" {
         d->set_size(ui_scale);
     };
 
+    void icm_canvasview_set_ui_scale(icm_canvasview w, const double ui_scale) {
+        icCanvasManager::CanvasView* d = (icCanvasManager::CanvasView*)w;
+        d->set_ui_scale(ui_scale);
+    };
+
     void icm_canvasview_get_size(icm_canvasview w, double *out_width, double *out_height, double *out_ui_scale) {
         icCanvasManager::CanvasView* d = (icCanvasManager::CanvasView*)w;
         d->get_size(out_width, out_height, out_ui_scale);
@@ -73,5 +78,15 @@ extern "C" {
     void icm_canvasview_set_zoom(icm_canvasview w, const double vpixel_size) {
         icCanvasManager::CanvasView* d = (icCanvasManager::CanvasView*)w;
         d->set_zoom(vpixel_size);
+    };
+
+    double icm_canvasview_get_zoom(icm_canvasview w) {
+        icCanvasManager::CanvasView* d = (icCanvasManager::CanvasView*)w;
+        return d->get_zoom();
+    };
+
+    int icm_canvasview_highest_zoom(icm_canvasview w) {
+        icCanvasManager::CanvasView* d = (icCanvasManager::CanvasView*)w;
+        return d->highest_zoom();
     };
 }

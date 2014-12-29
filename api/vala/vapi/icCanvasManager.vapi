@@ -60,11 +60,18 @@ namespace icCanvasManager {
         public void draw(Cairo.Context ctxt, Cairo.RectangleList rectList);
         public void set_size(double width, double height, double ui_scale);
         public void set_size_default(double ui_scale);
+        public void set_ui_scale(double ui_scale);
         public void get_size(out double width, out double height, out double ui_scale);
         public void get_maximum_size(out double width, out double height);
         public void get_scale_extents(out double minscale, out double maxscale);
         public void set_scroll_center(double x, double y);
-        public void set_zoom(double vpixel_size);
+        
+        public double zoom {
+            [CCode (cname = "icm_canvasview_get_zoom")] get;
+            [CCode (cname = "icm_canvasview_set_zoom")] set;
+        }
+        
+        public double highest_zoom();
     }
     
     [CCode (cname = "icm_canvastool",
