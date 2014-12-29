@@ -37,7 +37,10 @@ class icCanvasGtk.CanvasWidget : Gtk.Widget, Gtk.Scrollable {
     }
     
     private void captured_stroke(icCanvasManager.BrushStroke stroke) {
+        Cairo.Rectangle bbox = stroke.bounding_box();
+        
         this._drawing.append_stroke(stroke);
+        icCanvasManager.Application.get_instance().get_render_scheduler().request_tiles(this._drawing, bbox, (int)this.cv.highest_zoom(), this._drawing.strokes_count());
     }
     
     public override void realize() {
