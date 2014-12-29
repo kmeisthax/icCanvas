@@ -159,6 +159,8 @@ class icCanvasGtk.CanvasWidget : Gtk.Widget, Gtk.Scrollable {
         
         this.cv.set_scroll_center(hval, vval);
         this.ct.set_scroll_center(hval, vval);
+        
+        this.queue_draw();
     }
     
     public Gtk.Adjustment hadjustment {
