@@ -4,8 +4,8 @@ icCanvasManager::CanvasTool::CanvasTool() {};
 icCanvasManager::CanvasTool::~CanvasTool() {};
 
 void icCanvasManager::CanvasTool::_canvas_centerpt(int *x_center, int *y_center) {
-    if (x_center) *x_center = this->_x_scroll;
-    if (y_center) *y_center = this->_y_scroll;
+    if (x_center) *x_center = this->_x_center;
+    if (y_center) *y_center = this->_y_center;
 };
 
 void icCanvasManager::CanvasTool::_window_size(double *width, double *height) {
