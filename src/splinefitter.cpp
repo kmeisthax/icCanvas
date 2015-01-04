@@ -98,7 +98,7 @@ void icCanvasManager::SplineFitter::add_fit_point(int x, int y, int pressure, in
         return;
     }
 
-    if (ptsize > 3) { //We need a minimum point count to start splitting polybeizers
+    if (ptsize > 4) { //We need a minimum point count to start splitting polybeizers
         icCanvasManager::SplineFitter::__ErrorPoint errorPt = this->measure_fitting_error();
         float max_error = std::max(errorPt.x, std::max(errorPt.y, std::max(errorPt.pressure, std::max(errorPt.tilt, std::max(errorPt.angle, std::max(errorPt.dx, errorPt.dy))))));
 
