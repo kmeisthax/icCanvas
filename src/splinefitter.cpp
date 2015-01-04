@@ -107,12 +107,19 @@ void icCanvasManager::SplineFitter::add_fit_point(int x, int y, int pressure, in
             auto lastcp = this->unfitted_points.back();
             this->unfitted_points.clear();
             this->unfitted_points.push_back(lastcp);
+            this->unfitted_points.push_back(cp);
+
+            int xDelta = cp.x - lastcp.x, yDelta = cp.y - lastcp.y;
+            int segDist = (int)sqrt((float)xDelta * (float)xDelta + (float)yDelta * (float)yDelta);
 
             this->distances.clear();
             this->distances.push_back(0);
+            this->distances.push_back(segDist);
 
             this->target_curve->pen_extend();
             this->unfitted_id++;
+
+            this->fit_curve(2);
 
             return;
         }
