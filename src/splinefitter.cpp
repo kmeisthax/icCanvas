@@ -2,6 +2,7 @@
 
 #include <cmath>
 #include <iostream>
+#include <algorithm>
 
 icCanvasManager::SplineFitter::SplineFitter() : beizer_4_coeff(4,4) {
     this->beizer_4_coeff << -1.0,  3.0, -3.0, 1.0,
@@ -22,53 +23,9 @@ void icCanvasManager::SplineFitter::begin_fitting(icCanvasManager::RefPtr<icCanv
     this->error_threshold = error_threshold;
 };
 
-void icCanvasManager::SplineFitter::add_fit_point(int x, int y, int pressure, int tilt, int angle, int dx, int dy) {
-    icCanvasManager::BrushStroke::__ControlPoint cp;
-    
-    cp.x = x;
-    cp.y = y;
-    cp.pressure = pressure;
-    cp.tilt = tilt;
-    cp.angle = angle;
-    cp.dx = dx;
-    cp.dy = dy;
-
-    auto ptsize = this->unfitted_points.size();
-    if (ptsize < 1) {
-        this->distances.push_back(0);
-        this->unfitted_points.push_back(cp);
-        return;
-    }
-
-    if (ptsize > 3) { //We need a minimum point count to start splitting polybeizers
-        icCanvasManager::SplineFitter::__ErrorPoint errorPt = this->measure_fitting_error();
-        float max_error = std::max(errorPt.x, std::max(errorPt.y, std::max(errorPt.pressure, std::max(errorPt.tilt, std::max(errorPt.angle, std::max(errorPt.dx, errorPt.dy))))));
-
-        if (max_error > (float)this->error_threshold) {
-            //Curve exceeds the desired error, time to split
-            auto lastcp = this->unfitted_points.back();
-            this->unfitted_points.clear();
-            this->unfitted_points.push_back(lastcp);
-
-            this->distances.clear();
-            this->distances.push_back(0);
-
-            this->target_curve->pen_extend();
-            this->unfitted_id++;
-
-            return;
-        }
-    }
-
-    auto lastcp = this->unfitted_points.back();
-    int lastDist = this->distances.back();
-    this->unfitted_points.push_back(cp);
-    ptsize++;
-
-    int xDelta = cp.x - lastcp.x, yDelta = cp.y - lastcp.y;
-    int segDist = (int)sqrt((float)xDelta * (float)xDelta + (float)yDelta * (float)yDelta);
-    int newTotalDist = lastDist + segDist;
-    this->distances.push_back(newTotalDist);
+void icCanvasManager::SplineFitter::fit_curve(int max_pts) {
+    auto ptsize = std::min((decltype(this->unfitted_points.size()))max_pts, this->unfitted_points.size());
+    int newTotalDist = this->distances.at(ptsize - 1);
     
     Eigen::Matrix<float, Eigen::Dynamic, 4> b_indexes(ptsize, 4);
     Eigen::Matrix<float, Eigen::Dynamic, 1> xposVec(ptsize, 1), yposVec(ptsize, 1), pressureVec(ptsize, 1), tiltVec(ptsize, 1), angleVec(ptsize, 1), xdeltaVec(ptsize, 1), ydeltaVec(ptsize, 1);
@@ -121,6 +78,64 @@ void icCanvasManager::SplineFitter::add_fit_point(int x, int y, int pressure, in
     this->target_curve->pen_to_pressure(curve_pressure(1,0), curve_pressure(2,0), curve_pressure(3,0));
     this->target_curve->pen_to_tilt(curve_tilt(1,0), curve_angle(1,0), curve_tilt(2,0), curve_angle(2,0), curve_tilt(3,0), curve_angle(3,0));
     this->target_curve->pen_to_velocity(curve_xdelta(1,0), curve_ydelta(1,0), curve_xdelta(2,0), curve_ydelta(2,0), curve_xdelta(3,0), curve_ydelta(3,0));
+};
+
+void icCanvasManager::SplineFitter::add_fit_point(int x, int y, int pressure, int tilt, int angle, int dx, int dy) {
+    icCanvasManager::BrushStroke::__ControlPoint cp;
+
+    cp.x = x;
+    cp.y = y;
+    cp.pressure = pressure;
+    cp.tilt = tilt;
+    cp.angle = angle;
+    cp.dx = dx;
+    cp.dy = dy;
+
+    auto ptsize = this->unfitted_points.size();
+    if (ptsize < 1) {
+        this->distances.push_back(0);
+        this->unfitted_points.push_back(cp);
+        return;
+    }
+
+    if (ptsize > 4) { //We need a minimum point count to start splitting polybeizers
+        icCanvasManager::SplineFitter::__ErrorPoint errorPt = this->measure_fitting_error();
+        float max_error = std::max(errorPt.x, std::max(errorPt.y, std::max(errorPt.pressure, std::max(errorPt.tilt, std::max(errorPt.angle, std::max(errorPt.dx, errorPt.dy))))));
+
+        if (max_error > (float)this->error_threshold) {
+            //Curve exceeds the desired error, time to split
+            auto lastcp = this->unfitted_points.back();
+            this->unfitted_points.clear();
+            this->unfitted_points.push_back(lastcp);
+            this->unfitted_points.push_back(cp);
+
+            int xDelta = cp.x - lastcp.x, yDelta = cp.y - lastcp.y;
+            int segDist = (int)sqrt((float)xDelta * (float)xDelta + (float)yDelta * (float)yDelta);
+
+            this->distances.clear();
+            this->distances.push_back(0);
+            this->distances.push_back(segDist);
+
+            this->target_curve->pen_extend();
+            this->unfitted_id++;
+
+            this->fit_curve(2);
+
+            return;
+        }
+    }
+
+    auto lastcp = this->unfitted_points.back();
+    int lastDist = this->distances.back();
+    this->unfitted_points.push_back(cp);
+    ptsize++;
+
+    int xDelta = cp.x - lastcp.x, yDelta = cp.y - lastcp.y;
+    int segDist = (int)sqrt((float)xDelta * (float)xDelta + (float)yDelta * (float)yDelta);
+    int newTotalDist = lastDist + segDist;
+    this->distances.push_back(newTotalDist);
+
+    this->fit_curve(ptsize);
 };
 
 void icCanvasManager::SplineFitter::finish_fitting() {

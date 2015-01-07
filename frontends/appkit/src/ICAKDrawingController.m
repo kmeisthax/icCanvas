@@ -115,7 +115,18 @@
 };
 
 - (void)changedScrollX:(const double)x andY:(const double)y andZoom:(const double)zoom {
+    double dscale = self->cv.internal.zoom;
+    CGFloat mag_factor = dscale / zoom;
     
+    self->scv.magnification = mag_factor;
+    
+    NSPoint newScrollPoint;
+    NSRect dVisRect = self->scv.contentView.documentVisibleRect;
+    
+    newScrollPoint.x = (x / dscale) - (dVisRect.size.width / 2.0f);
+    newScrollPoint.y = (y / dscale) - (dVisRect.size.height / 2.0f);
+    
+    [self->scv.contentView scrollToPoint:newScrollPoint];
 };
 
 @end

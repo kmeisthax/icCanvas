@@ -16,7 +16,7 @@ void icCanvasManager::BrushTool::prepare_for_reuse() {
 };
 
 void icCanvasManager::BrushTool::set_size(const double width, const double height, const double ui_scale, const double zoom) {
-    this->_error_threshold = width * zoom;
+    this->_error_threshold = 5 * zoom;
     icCanvasManager::CanvasTool::set_size(width, height, ui_scale, zoom);
 };
 

@@ -31,6 +31,7 @@ void icCanvasManager::ZoomTool::mouse_down(const double x, const double y, const
 
     this->_window_zoom(&this->_initial_zoom);
     this->_canvas_centerpt(&this->_initial_scroll_x, &this->_initial_scroll_y);
+    this->_window_to_coordspace(x, y, &this->_target_scroll_x, &this->_target_scroll_y);
 };
 
 void icCanvasManager::ZoomTool::mouse_drag(const double x, const double y, const double deltaX, const double deltaY) {
@@ -48,20 +49,19 @@ void icCanvasManager::ZoomTool::mouse_drag(const double x, const double y, const
     if (this->_is_tracking_zoom) {
         //Drags to the left accomplish zoom-out.
         //Drags to the right accomplish zoom-in.
-        double is_zoom_negative = this->_breaking_x >= this->_initial_x ? 1.0f : -1.0f;
-        double initial_dist = sqrt(pow(this->_breaking_x - this->_initial_x, 2.0f) + pow(this->_breaking_y - this->_initial_y, 2.0f));
-        double current_dist = sqrt(pow(                x - this->_initial_x, 2.0f) + pow(                y - this->_initial_y, 2.0f));
-        double zoom_factor = current_dist / initial_dist * is_zoom_negative;
+        double initial_dist = this->_breaking_x - this->_initial_x;
+        double current_dist = x - this->_initial_x;
+        double zoom_factor = this->_breaking_x < this->_initial_x ? current_dist / initial_dist : initial_dist / current_dist;
+
+        if (zoom_factor <= 0) return;
 
         int pixel_zoom_factor = this->_initial_zoom * zoom_factor;
-        double window_width, window_height;
-        this->_window_size(&window_width, &window_height);
 
-        double counterscroll_x = (x - (window_width / 2.0f))  * zoom_factor - (x - (window_width / 2.0f)),
-               counterscroll_y = (y - (window_height / 2.0f)) * zoom_factor - (y - (window_height / 2.0f));
+        double counterscroll_x = (this->_target_scroll_x - this->_initial_scroll_x) - (this->_target_scroll_x - this->_initial_scroll_x) * zoom_factor;
+        double counterscroll_y = (this->_target_scroll_y - this->_initial_scroll_y) - (this->_target_scroll_y - this->_initial_scroll_y) * zoom_factor;
 
-        this->_delegate->changed_scroll_and_zoom(this->_initial_scroll_x + (counterscroll_x * this->_initial_zoom),
-                                                 this->_initial_scroll_y + (counterscroll_y * this->_initial_zoom),
+        this->_delegate->changed_scroll_and_zoom(this->_initial_scroll_x + counterscroll_x,
+                                                 this->_initial_scroll_y + counterscroll_y,
                                                  pixel_zoom_factor);
     }
 };

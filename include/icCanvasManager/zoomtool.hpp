@@ -29,7 +29,7 @@ namespace icCanvasManager {
         RefPtr<RefCnt> _delegate_lifetime;
 
         bool _is_tracking_click, _is_tracking_zoom;
-        int _initial_scroll_x, _initial_scroll_y;
+        int _initial_scroll_x, _initial_scroll_y, _target_scroll_x, _target_scroll_y;
         double _initial_x, _initial_y, _breaking_x, _breaking_y, _initial_zoom;
     public:
         ZoomTool();

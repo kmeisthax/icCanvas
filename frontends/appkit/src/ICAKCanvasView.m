@@ -297,6 +297,8 @@
     self->current_tool = ctool;
     
     [self->current_tool prepareForReuse];
+    
+    [self updateCurrentToolWithVisibleRect:self->_current_tool_rect andMagnification:self->_current_tool_zoom];
 };
 
 - (void)setNeedsDisplayInCanvasRect:(NSRect)rect {

@@ -29,6 +29,14 @@ namespace icCanvasManager {
             float dx, dy;
         };
         __ErrorPoint measure_fitting_error();
+
+        /* Run the (expensive?) curve fitting operation on the current unfit
+         * point set.
+         *
+         * The max_pts parameter determines how many points to include in the
+         * fitting operation.
+         */
+        void fit_curve(int max_pts);
     public:
         SplineFitter();
         virtual ~SplineFitter();
