@@ -230,10 +230,11 @@ std::vector<int> icCanvasManager::TileCache::execute(icCanvasManager::TileCache:
     if (query.time_cond_limit) time_limit = query.time_limit;
 
     int current_level_size = 0;
-    std::vector<int> current_level, next_level;
+    std::vector<int> current_level, current_level_timemin, next_level, next_level_timemin;
     std::vector<int> results;
 
     current_level.push_back(0);
+    current_level_timemin.push_back(minimum_time);
 
     //Walk the quadtree index.
     while (current_level_size < maximum_quadtree_level) {
@@ -245,15 +246,23 @@ std::vector<int> icCanvasManager::TileCache::execute(icCanvasManager::TileCache:
             nexvrect_y_max = visrect_y_max + tile_size;
 
         //Walk each tile in current_level
-        for (auto i = current_level.begin(); i != current_level.end(); i++) {
+        auto i = current_level.begin();
+        for (auto j = current_level_timemin.begin();
+                  i != current_level.end() && j != current_level_timemin.end();
+                  i++, j++) {
             //If within the query rectangle, fill next_level with child treenodes
             auto& current_treenode = this->_quadtreeIndex.at(*i);
+            int next_timemin = *j;
+            if (current_level_size >= minimum_quadtree_level && current_treenode.tindex != -1) {
+                next_timemin = std::max(*j, this->_storage.at(current_treenode.tindex).time);
+            }
 
             if (current_treenode.tl != -1) {
                 auto& tl = this->_quadtreeIndex.at(current_treenode.tl);
                 if (nexvrect_x_min <= tl.x && tl.x < nexvrect_x_max &&
                     nexvrect_y_min <= tl.y && tl.y < nexvrect_y_max) {
                     next_level.push_back(current_treenode.tl);
+                    next_level_timemin.push_back(next_timemin);
                 }
             }
 
@@ -262,6 +271,7 @@ std::vector<int> icCanvasManager::TileCache::execute(icCanvasManager::TileCache:
                 if (nexvrect_x_min <= tr.x && tr.x < nexvrect_x_max &&
                     nexvrect_y_min <= tr.y && tr.y < nexvrect_y_max) {
                     next_level.push_back(current_treenode.tr);
+                    next_level_timemin.push_back(next_timemin);
                 }
             }
 
@@ -270,6 +280,7 @@ std::vector<int> icCanvasManager::TileCache::execute(icCanvasManager::TileCache:
                 if (nexvrect_x_min <= bl.x && bl.x < nexvrect_x_max &&
                     nexvrect_y_min <= bl.y && bl.y < nexvrect_y_max) {
                     next_level.push_back(current_treenode.bl);
+                    next_level_timemin.push_back(next_timemin);
                 }
             }
 
@@ -278,6 +289,7 @@ std::vector<int> icCanvasManager::TileCache::execute(icCanvasManager::TileCache:
                 if (nexvrect_x_min <= br.x && br.x < nexvrect_x_max &&
                     nexvrect_y_min <= br.y && br.y < nexvrect_y_max) {
                     next_level.push_back(current_treenode.br);
+                    next_level_timemin.push_back(next_timemin);
                 }
             }
 
@@ -288,8 +300,9 @@ std::vector<int> icCanvasManager::TileCache::execute(icCanvasManager::TileCache:
 
                 while (found_tiles < time_limit) {
                     auto& tile = this->_storage.at(current_time_tile);
+                    auto effective_tmin = *j;
 
-                    if (minimum_time <= tile.time && tile.time < maximum_time) {
+                    if (effective_tmin <= tile.time && tile.time < maximum_time) {
                         results.push_back(current_time_tile);
                         found_tiles++;
                     } else if (tile.time >= maximum_time) {
@@ -308,8 +321,10 @@ std::vector<int> icCanvasManager::TileCache::execute(icCanvasManager::TileCache:
 
         //Enter the next level of the quadtree.
         current_level = next_level;
+        current_level_timemin = next_level_timemin;
         current_level_size++;
         next_level.clear();
+        next_level_timemin.clear();
     }
 
     return results;
