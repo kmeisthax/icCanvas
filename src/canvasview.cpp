@@ -19,7 +19,7 @@ void icCanvasManager::CanvasView::attach_drawing(icCanvasManager::RefPtr<icCanva
 };
 
 int icCanvasManager::CanvasView::highest_zoom() {
-    return std::ceil(31 - log2(icCanvasManager::TileCache::TILE_SIZE * this->zoom / this->ui_scale));
+    return std::ceil(31 - log2(icCanvasManager::TileCache::TILE_SIZE * this->zoom / this->ui_scale) + 1);
 }
 
 void icCanvasManager::CanvasView::request_tiles(cairo_rectangle_t* rect) {
@@ -38,7 +38,7 @@ void icCanvasManager::CanvasView::request_tiles(cairo_rectangle_t* rect) {
 void icCanvasManager::CanvasView::draw_tiles(cairo_t* ctxt, cairo_rectangle_t* rect) {
     float square_size = std::max(rect->width, rect->height);
     int lowest_zoom = std::floor(31 - log2(square_size * this->zoom));
-    int highest_zoom = std::ceil(31 - log2(icCanvasManager::TileCache::TILE_SIZE * this->zoom / this->ui_scale));
+    int highest_zoom = this->highest_zoom();
     int canvas_x_min = this->x_scroll + (rect->x * this->zoom),
         canvas_x_max = this->x_scroll + (rect->x + rect->width) * this->zoom,
         canvas_y_min = this->y_scroll + (rect->y * this->zoom),
