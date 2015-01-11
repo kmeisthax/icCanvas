@@ -56,11 +56,22 @@ void icCanvasManager::RenderScheduler::request_tiles(icCanvasManager::RefPtr<icC
 
 void icCanvasManager::RenderScheduler::revoke_request(icCanvasManager::RefPtr<icCanvasManager::Drawing> d, int x_min, int y_min, int x_max, int y_max) {
     for (auto i = this->_unrendered.begin(); i != this->_unrendered.end(); i++) {
-        int tile_manhattan_diameter = (UINT32_MAX >> i->size) / 2;
+        unsigned int tile_manhattan_diameter = (UINT32_MAX >> i->size) / 2;
+        auto adjust_x_min = x_min, adjust_x_max = x_max, adjust_y_min = y_min, adjust_y_max = y_max;
+        if (adjust_x_min > INT32_MIN + tile_manhattan_diameter) adjust_x_min -= tile_manhattan_diameter;
+        else adjust_x_min = INT32_MIN;
+        if (adjust_x_max < INT32_MAX - tile_manhattan_diameter) adjust_x_max += tile_manhattan_diameter;
+        else adjust_x_max = INT32_MAX;
+        if (adjust_y_min > INT32_MIN + tile_manhattan_diameter) adjust_y_min -= tile_manhattan_diameter;
+        else adjust_y_min = INT32_MIN;
+        if (adjust_y_max < INT32_MAX - tile_manhattan_diameter) adjust_y_max += tile_manhattan_diameter;
+        else adjust_y_max = INT32_MAX;
+
         if (i->d == d &&
-            i->x >= (x_min - tile_manhattan_diameter) && i->x < (x_max + tile_manhattan_diameter) &&
-            i->y >= (y_min - tile_manhattan_diameter) && i->y < (y_max + tile_manhattan_diameter)) {
+            i->x >= adjust_x_min && i->x < adjust_x_max &&
+            i->y >= adjust_y_min && i->y < adjust_y_max) {
             i = this->_unrendered.erase(i);
+            if (i == this->_unrendered.end()) break;
         }
     }
 };
