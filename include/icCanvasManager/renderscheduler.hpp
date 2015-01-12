@@ -42,9 +42,12 @@ namespace icCanvasManager {
         /* Revoke previously made requests in a particular canvas rectangle.
          *
          * Already filled requests (or those currently in processing) cannot be
-         * revoked and will reach the TileCache anyway.
+         * revoked and will reach the TileCache anyway. Use this only to avoid
+         * wasting energy on processing unnecessary tiles.
+         *
+         * is_inverse excludes requests _not_ within the rectangle.
          */
-        void revoke_request(RefPtr<Drawing> d, int x_min, int y_min, int x_max, int y_max);
+        void revoke_request(RefPtr<Drawing> d, int x_min, int y_min, int x_max, int y_max, bool is_inverse);
 
         /* Process rendering tasks whenever the application has free time.
          *

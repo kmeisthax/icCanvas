@@ -45,6 +45,11 @@
     return self->_wrapped->collect_request(inner_d, out_tile_rect);
 };
 
+- (void)revokeRequestForDrawing:(ICMDrawing*)d xMin:(int)x_min yMin:(int)y_min xMax:(int)x_max yMax:(int)y_max isInverse:(BOOL)is_inverse {
+    icCanvasManager::RefPtr<icCanvasManager::Drawing> inner_d = (icCanvasManager::Drawing*)[d getWrappedObject];
+    return self->_wrapped->revoke_request(inner_d, x_min, y_min, x_max, y_max, is_inverse);
+};
+
 - (void*)getWrappedObject {
     return (void*)self->_wrapped;
 };

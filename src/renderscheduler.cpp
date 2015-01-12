@@ -54,7 +54,7 @@ void icCanvasManager::RenderScheduler::request_tiles(icCanvasManager::RefPtr<icC
     }
 };
 
-void icCanvasManager::RenderScheduler::revoke_request(icCanvasManager::RefPtr<icCanvasManager::Drawing> d, int x_min, int y_min, int x_max, int y_max) {
+void icCanvasManager::RenderScheduler::revoke_request(icCanvasManager::RefPtr<icCanvasManager::Drawing> d, int x_min, int y_min, int x_max, int y_max, bool is_inverse) {
     for (auto i = this->_unrendered.begin(); i != this->_unrendered.end(); i++) {
         unsigned int tile_manhattan_diameter = (UINT32_MAX >> i->size) / 2;
         auto adjust_x_min = x_min, adjust_x_max = x_max, adjust_y_min = y_min, adjust_y_max = y_max;
@@ -67,9 +67,11 @@ void icCanvasManager::RenderScheduler::revoke_request(icCanvasManager::RefPtr<ic
         if (adjust_y_max < INT32_MAX - tile_manhattan_diameter) adjust_y_max += tile_manhattan_diameter;
         else adjust_y_max = INT32_MAX;
 
-        if (i->d == d &&
+        bool in_rect = i->d == d &&
             i->x >= adjust_x_min && i->x < adjust_x_max &&
-            i->y >= adjust_y_min && i->y < adjust_y_max) {
+            i->y >= adjust_y_min && i->y < adjust_y_max;
+
+        if (in_rect || is_inverse && !in_rect) {
             i = this->_unrendered.erase(i);
             if (i == this->_unrendered.end()) break;
         }
