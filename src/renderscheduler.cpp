@@ -15,6 +15,12 @@ void icCanvasManager::RenderScheduler::request_tile(icCanvasManager::RefPtr<icCa
         return;
     }
 
+    for (auto i = this->_unrendered.begin(); i != this->_unrendered.end(); i++) {
+        if (i->x == x && i->y == y && i->size == size && i->time == time) {
+            return;
+        }
+    }
+
     icCanvasManager::RenderScheduler::__Request r = {d, x, y, size, time};
     this->_unrendered.push_back(r);
 };
