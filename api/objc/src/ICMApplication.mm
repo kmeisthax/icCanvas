@@ -5,7 +5,7 @@
     icCanvasManager::Application* _wrapped;
 }
 
-+ (id)getInstance {
++ (ICMApplication*)getInstance {
     return [[ICMApplication alloc] initFromWrappedObject:(void*)&icCanvasManager::Application::get_instance()];
 };
 

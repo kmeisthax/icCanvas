@@ -50,6 +50,11 @@
     return self->_wrapped->revoke_request(inner_d, x_min, y_min, x_max, y_max, is_inverse);
 };
 
+- (void)revokeRequestForDrawing:(ICMDrawing*)d zoomMin:(int)z_min zoomMax:(int)z_max isInverse:(BOOL)is_inverse {
+    icCanvasManager::RefPtr<icCanvasManager::Drawing> inner_d = (icCanvasManager::Drawing*)[d getWrappedObject];
+    return self->_wrapped->revoke_request(inner_d, z_min, z_max, is_inverse);
+};
+
 - (void*)getWrappedObject {
     return (void*)self->_wrapped;
 };

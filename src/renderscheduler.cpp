@@ -71,18 +71,18 @@ void icCanvasManager::RenderScheduler::revoke_request(icCanvasManager::RefPtr<ic
             i->x >= adjust_x_min && i->x < adjust_x_max &&
             i->y >= adjust_y_min && i->y < adjust_y_max;
 
-        if (in_rect || is_inverse && !in_rect) {
+        if (in_rect || (is_inverse && !in_rect)) {
             i = this->_unrendered.erase(i);
             if (i == this->_unrendered.end()) break;
         }
     }
 };
 
-void revoke_request(RefPtr<Drawing> d, int zoom_min, int zoom_max, bool is_inverse) {
+void icCanvasManager::RenderScheduler::revoke_request(icCanvasManager::RefPtr<icCanvasManager::Drawing> d, int zoom_min, int zoom_max, bool is_inverse) {
     for (auto i = this->_unrendered.begin(); i != this->_unrendered.end(); i++) {
         bool is_bad_zoom = i->size >= zoom_min && i->size < zoom_max;
 
-        if (is_bad_zoom || is_inverse && !is_bad_zoom) {
+        if (is_bad_zoom || (is_inverse && !is_bad_zoom)) {
             i = this->_unrendered.erase(i);
             if (i == this->_unrendered.end()) break;
         }
