@@ -49,6 +49,9 @@ namespace icCanvasManager {
          */
         void revoke_request(RefPtr<Drawing> d, int x_min, int y_min, int x_max, int y_max, bool is_inverse);
 
+        /* Revoke previously made requests above a particular zoom factor. */
+        void revoke_request(RefPtr<Drawing> d, int zoom_min, int zoom_max, bool is_inverse);
+
         /* Process rendering tasks whenever the application has free time.
          *
          * This function is specifically designed to be called periodically and
