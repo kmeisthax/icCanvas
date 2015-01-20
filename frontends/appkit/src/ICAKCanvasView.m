@@ -172,6 +172,12 @@
 - (void)updateInternalViewWithVisibleRect:(NSRect)rect andMagnification:(CGFloat)zoom {
     [self->internal setSizeWidth:rect.size.width andHeight:rect.size.height andUiScale:self.windowScaleFactor * zoom];
     
+    int32_t tx, ty, twidth, theight;
+    
+    [self->internal windowToCoordSpaceX:rect.origin.x andY:rect.origin.y outTx:&tx outTy:&ty];
+    [self->internal windowToCoordSpaceX:rect.size.width andY:rect.size.height outTx:&twidth outTy:&theight];
+    
+    [[ICMApplication getInstance].renderScheduler revokeRequestForDrawing:self->drawing xMin:tx yMin:ty xMax:tx + twidth yMax:ty + theight isInverse:YES];
     [[ICMApplication getInstance].renderScheduler revokeRequestForDrawing:self->drawing zoomMin:0  zoomMax:self->internal.highestZoom isInverse:YES];
 };
 

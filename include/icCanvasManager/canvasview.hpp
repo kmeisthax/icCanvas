@@ -20,10 +20,6 @@ namespace icCanvasManager {
         float x_size, y_size;   //Size of the view in canvas units.
         float ui_scale;
 
-        //Convert window-space coordinates to canvas coordinates and back.
-        void windowToCoordspace(const int32_t x, const int32_t y, int32_t* out_tx, int32_t* out_ty);
-        void coordToWindowspace(const int32_t x, const int32_t y, int32_t* out_tx, int32_t* out_ty);
-
         //Request all tiles within a particular rectangle.
         void request_tiles(cairo_rectangle_t* rect);
 
@@ -110,6 +106,10 @@ namespace icCanvasManager {
          */
         double get_zoom();
         void set_zoom(const double vpixel_size);
+
+        //Convert window-space coordinates to canvas coordinates and back.
+        void windowToCoordspace(const int32_t x, const int32_t y, int32_t* out_tx, int32_t* out_ty);
+        void coordToWindowspace(const int32_t x, const int32_t y, int32_t* out_tx, int32_t* out_ty);
 
         /* Calculate the highest canvas zoom factor that is feasible to render
          * at given the current canvas zoom and window system UI scale.

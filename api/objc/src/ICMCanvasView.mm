@@ -71,6 +71,13 @@
     self->_wrapped->set_zoom(vpixel_size);
 };
 
+- (void)windowToCoordSpaceX:(const int32_t)x andY:(const int32_t)y outTx:(int32_t*)out_x outTy:(int32_t*)out_y {
+    self->_wrapped->windowToCoordspace(x, y, out_x, out_y);
+};
+- (void)coordToWindowSpaceX:(const int32_t)x andY:(const int32_t)y outTx:(int32_t*)out_x outTy:(int32_t*)out_y {
+    self->_wrapped->coordToWindowspace(x, y, out_x, out_y);
+};
+
 - (int)highestZoom {
     return self->_wrapped->highest_zoom();
 };
