@@ -41,8 +41,8 @@ void icCanvasManager::RenderScheduler::request_tiles(icCanvasManager::RefPtr<icC
     int rect_y_scroll = rect.y;
     int base_x = rect_x_scroll - rect_x_scroll % request_size - (request_size / 2);
     int base_y = rect_y_scroll - rect_y_scroll % request_size - (request_size / 2);
-    int x_tile_count = std::ceil(rect.width / (float)request_size);
-    int y_tile_count = std::ceil(rect.height / (float)request_size);
+    int x_tile_count = std::ceil(rect.width / (float)request_size) + 1;
+    int y_tile_count = std::ceil(rect.height / (float)request_size) + 1;
 
     for (int i = 0; i <= x_tile_count; i++) {
         for (int j = 0; j <= y_tile_count; j++) {
