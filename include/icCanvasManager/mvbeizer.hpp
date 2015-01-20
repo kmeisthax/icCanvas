@@ -110,6 +110,8 @@ namespace icCanvasManager {
                 spl._pt[polypt] = pt;
             }
         };
+
+        friend class Renderer;
     };
 };
 

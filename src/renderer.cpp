@@ -1,5 +1,6 @@
 #include <icCanvasManager.hpp>
 #include <cmath>
+#include <iostream>
 
 icCanvasManager::Renderer::Renderer():
     xrctxt(NULL), xrsurf(NULL) {
@@ -62,6 +63,8 @@ void icCanvasManager::Renderer::enterImageSurface(const int32_t x, const int32_t
 
     this->xmax = x + (size >> 1);
     this->ymax = y + (size >> 1);
+
+    std::cout << "Rendering a tile at " << x << "x" << y << std::endl;
 
     cairo_set_source_rgba(this->xrctxt, 1.0, 1.0, 1.0, 0.0);
     cairo_paint(this->xrctxt);
@@ -168,6 +171,21 @@ float icCanvasManager::Renderer::curve_arc_length(int polynomID, icCanvasManager
 };
 
 void icCanvasManager::Renderer::drawStroke(icCanvasManager::RefPtr<icCanvasManager::BrushStroke> br) {
+    auto bbox = br->bounding_box();
+    int32_t wx, wy, wx2, wy2, wx3, wy3, wx4, wy4;
+
+    this->coordToTilespace(bbox.x, bbox.y, &wx, &wy);
+    this->coordToTilespace(bbox.x + bbox.width, bbox.y + bbox.height, &wx2, &wy2);
+
+    cairo_move_to(this->xrctxt, wx, wy);
+    cairo_line_to(this->xrctxt, wx2, wy);
+    cairo_line_to(this->xrctxt, wx2, wy2);
+    cairo_line_to(this->xrctxt, wx, wy2);
+    cairo_line_to(this->xrctxt, wx, wy);
+    cairo_set_line_width(this->xrctxt, 1.0f);
+    cairo_set_source_rgba(this->xrctxt, 1.0f, 0.0f, 1.0f, 1.0f);
+    cairo_stroke(this->xrctxt);
+
     auto num_segments = br->count_segments();
     auto derivative = br->_curve.derivative();
     icCanvasManager::Renderer::_DifferentialCurveFunctor diff(derivative);
@@ -231,6 +249,30 @@ void icCanvasManager::Renderer::drawStroke(icCanvasManager::RefPtr<icCanvasManag
             
             this->applyBrush(br->_curve.evaluate_for_point(this_t));
         }
+    }
+
+    for (int i = 0; i < num_segments; i++) {
+        this->coordToTilespace(br->_curve._storage[i]._pt[0].x, br->_curve._storage[i]._pt[0].y, &wx, &wy);
+        this->coordToTilespace(br->_curve._storage[i]._pt[1].x, br->_curve._storage[i]._pt[1].y, &wx2, &wy2);
+        this->coordToTilespace(br->_curve._storage[i]._pt[2].x, br->_curve._storage[i]._pt[2].y, &wx3, &wy3);
+        this->coordToTilespace(br->_curve._storage[i]._pt[3].x, br->_curve._storage[i]._pt[3].y, &wx4, &wy4);
+
+        cairo_move_to(this->xrctxt, wx, wy);
+        cairo_curve_to(this->xrctxt, wx2, wy2, wx3, wy3, wx4, wy4);
+        cairo_set_line_width(this->xrctxt, 1.0f);
+        cairo_set_source_rgba(this->xrctxt, i & 0x1 ? 0.0f : 1.0f, 1.0f, i & 0x1 ? 1.0f : 0.0f, 1.0f);
+        cairo_stroke(this->xrctxt);
+    }
+
+    for (auto i = br->_fitpts.begin(); i != br->_fitpts.end(); i++) {
+        this->coordToTilespace(i->x, i->y, &wx, &wy);
+
+        cairo_move_to(this->xrctxt, wx, wy);
+        cairo_close_path(this->xrctxt);
+        cairo_set_line_cap(this->xrctxt, CAIRO_LINE_CAP_ROUND);
+        cairo_set_line_width(this->xrctxt, 5.0f);
+        cairo_set_source_rgba(this->xrctxt, 0.0f, 1.0f, 1.0f, 1.0f);
+        cairo_stroke(this->xrctxt);
     }
 };
 

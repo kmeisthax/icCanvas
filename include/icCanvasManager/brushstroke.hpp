@@ -41,6 +41,8 @@ namespace icCanvasManager {
         class __DerivFunctor;
         class __SecondDerivFunctor;
         class __ThirdDerivFunctor;
+
+        std::vector<__ControlPoint> _fitpts;
     public:
         typedef __Spline::size_type spline_size_type;
         

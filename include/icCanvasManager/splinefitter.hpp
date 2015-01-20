@@ -21,6 +21,9 @@ namespace icCanvasManager {
         int unfitted_id;
         int error_threshold;
 
+        //Other random crap
+        Eigen::Vector4f curve_xpos, curve_ypos;
+
         //Measure the fitting error of the current curve segment.
         struct __ErrorPoint {
             float x, y;

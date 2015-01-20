@@ -78,9 +78,13 @@ void icCanvasManager::SplineFitter::fit_curve(int max_pts) {
     this->target_curve->pen_to_pressure(curve_pressure(1,0), curve_pressure(2,0), curve_pressure(3,0));
     this->target_curve->pen_to_tilt(curve_tilt(1,0), curve_angle(1,0), curve_tilt(2,0), curve_angle(2,0), curve_tilt(3,0), curve_angle(3,0));
     this->target_curve->pen_to_velocity(curve_xdelta(1,0), curve_ydelta(1,0), curve_xdelta(2,0), curve_ydelta(2,0), curve_xdelta(3,0), curve_ydelta(3,0));
+
+    this->curve_xpos = curve_xpos;
+    this->curve_ypos = curve_ypos;
 };
 
 void icCanvasManager::SplineFitter::add_fit_point(int x, int y, int pressure, int tilt, int angle, int dx, int dy) {
+    std::cout << "Fit pt: " << x << ", " << y << std::endl;
     icCanvasManager::BrushStroke::__ControlPoint cp;
 
     cp.x = x;
@@ -90,6 +94,8 @@ void icCanvasManager::SplineFitter::add_fit_point(int x, int y, int pressure, in
     cp.angle = angle;
     cp.dx = dx;
     cp.dy = dy;
+
+    this->target_curve->_fitpts.push_back(cp);
 
     auto ptsize = this->unfitted_points.size();
     if (ptsize < 1) {
@@ -118,8 +124,7 @@ void icCanvasManager::SplineFitter::add_fit_point(int x, int y, int pressure, in
 
             this->target_curve->pen_extend();
             this->unfitted_id++;
-
-            this->fit_curve(2);
+            std::cout << "Fit curve: " << this->curve_xpos << ", " << this->curve_ypos << std::endl;
 
             return;
         }
@@ -139,6 +144,15 @@ void icCanvasManager::SplineFitter::add_fit_point(int x, int y, int pressure, in
 };
 
 void icCanvasManager::SplineFitter::finish_fitting() {
+    auto ptsize = this->unfitted_points.size();
+    std::cout << "Ptsize: " << ptsize << std::endl;
+
+    if (ptsize <= 3 && this->target_curve->count_segments() > 0) {
+        this->target_curve->pen_back();
+    } else {
+        this->fit_curve(ptsize);
+        std::cout << "Fit curve: " << this->curve_xpos << ", " << this->curve_ypos << std::endl;
+    }
 }
 
 void icCanvasManager::SplineFitter::prepare_for_reuse() {
