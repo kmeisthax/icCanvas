@@ -43,10 +43,16 @@ extern "C" {
         theSched->request_tiles(theDrawing, loco_rect, size, time);
     };
 
-    void icm_renderscheduler_revoke_request(icm_renderscheduler w, icm_drawing d, int x_min, int y_min, int x_max, int y_max) {
+    void icm_renderscheduler_revoke_request_rect(icm_renderscheduler w, icm_drawing d, int x_min, int y_min, int x_max, int y_max, bool is_inverse) {
         icCanvasManager::RenderScheduler* theSched = (icCanvasManager::RenderScheduler*)w;
         icCanvasManager::Drawing* theDrawing = (icCanvasManager::Drawing*)d;
-        theSched->revoke_request(theDrawing, x_min, y_min, x_max, y_max);
+        theSched->revoke_request(theDrawing, x_min, y_min, x_max, y_max, is_inverse);
+    };
+
+    void icm_renderscheduler_revoke_request_zoom(icm_renderscheduler w, icm_drawing d, int zoom_min, int zoom_max, bool is_inverse) {
+        icCanvasManager::RenderScheduler* theSched = (icCanvasManager::RenderScheduler*)w;
+        icCanvasManager::Drawing* theDrawing = (icCanvasManager::Drawing*)d;
+        theSched->revoke_request(theDrawing, zoom_min, zoom_max, is_inverse);
     };
 
     void icm_renderscheduler_background_tick(icm_renderscheduler w) {

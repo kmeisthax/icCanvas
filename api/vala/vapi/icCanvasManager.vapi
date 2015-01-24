@@ -156,7 +156,9 @@ namespace icCanvasManager {
         
         public void request_tile(Drawing d, int x, int y, int size, int time);
         public void request_tiles(Drawing d, Cairo.Rectangle rect, int size, int time);
-        public void revoke_request(Drawing d, int x_min, int y_min, int x_max, int y_max);
+        
+        public void revoke_request_rect(Drawing d, int x_min, int y_min, int x_max, int y_max, bool is_inverse);
+        public void revoke_request_zoom(Drawing d, int zoom_min, int zoom_max, bool is_inverse);
         
         public void background_tick();
         
