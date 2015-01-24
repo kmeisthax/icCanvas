@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 2.8)
 
-set(PARENT_PROJECT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../..")
+set(PARENT_PROJECT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../../..")
+set(GTK_PROJECT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../..")
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PARENT_PROJECT_DIR}/modules")
 
 include(UseVala REQUIRED)
@@ -29,7 +30,7 @@ link_libraries(${GEE_LIBRARIES})
 link_directories(${GEE_LIBRARY_DIRS})
 include_directories(${GEE_INCLUDE_DIRS})
 
-file(GLOB ICGTK_SRC_VALA RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} src/*.vala)
+file(GLOB ICGTK_SRC_VALA RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} ${GTK_PROJECT_DIR}/src/*.vala)
 include_directories(include)
 
 set(ICGTK_VALA_PACKAGES gtk+-3.0 glib-2.0 posix gee-1.0)
