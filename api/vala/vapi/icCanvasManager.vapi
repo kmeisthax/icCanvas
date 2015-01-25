@@ -130,6 +130,45 @@ namespace icCanvasManager {
         }
     }
     
+    [CCode (cname = "icm_changed_scroll_and_zoom_func")]
+    public delegate void ChangedScrollAndZoomFunc(double x, double y, double zoom);
+    
+    [CCode (cname = "icm_zoomtool_delegate_hooks",
+            destroy_function = "icm_zoomtool_delegate_hooks_destroy",
+            has_type_id = false)]
+    public struct ZoomToolDelegateHooks {
+        [CCode (delegate_target_cname = "changed_scroll_and_zoom_context")]
+        public ChangedScrollAndZoomFunc changed_scroll_and_zoom;
+    }
+    
+    [CCode (cname = "icm_zoomtool_delegate",
+            cprefix = "icm_zoomtool_delegate_",
+            ref_function = "icm_zoomtool_delegate_reference",
+            unref_function = "icm_zoomtool_delegate_dereference")]
+    [Compact]
+    public class ZoomToolDelegate {
+        public static ZoomToolDelegate construct_custom(ZoomToolDelegateHooks hooks);
+        public bool is_custom();
+    }
+    
+    [CCode (cname = "icm_zoomtool",
+            cprefix = "icm_zoomtool_",
+            ref_function = "icm_zoomtool_reference",
+            unref_function = "icm_zoomtool_dereference")]
+    [Compact]
+    public class ZoomTool {
+        [CCode (cname = "icm_zoomtool_construct")]
+        public ZoomTool();
+        
+        public static unowned ZoomTool? downcast(ZoomTool up_obj);
+        public unowned CanvasTool upcast();
+        
+        public ZoomToolDelegate delegate {
+            [CCode (cname = "icm_zoomtool_get_delegate")] get;
+            [CCode (cname = "icm_zoomtool_set_delegate")] set;
+        }
+    }
+    
     [CCode (cname = "icm_drawing",
             cprefix = "icm_drawing_",
             ref_function = "icm_drawing_reference",

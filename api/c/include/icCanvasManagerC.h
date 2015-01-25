@@ -8,5 +8,6 @@
 #include "icCanvasManagerC/icmcanvasview.h"
 #include "icCanvasManagerC/icmcanvastool.h"
 #include "icCanvasManagerC/icmbrushtool.h"
+#include "icCanvasManagerC/icmzoomtool.h"
 
 #endif
