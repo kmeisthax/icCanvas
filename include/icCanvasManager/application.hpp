@@ -4,9 +4,30 @@
 #include <icCanvasManager.hpp>
 
 namespace icCanvasManager {
+    /* Represents a platform-specific object responsible for responding to
+     * high-level application maintenance requests.
+     */
+    class ApplicationDelegate {
+    public:
+        virtual ~ApplicationDelegate();
+
+        /* Called when the Application has work to do on background_tick. */
+        virtual void enable_background_ticks() = 0;
+        /* Called when the Application is finished with work on the
+         * background_tick function.
+         *
+         * Calling background_tick again is possible, however, it will be a
+         * waste of energy.
+         */
+        virtual void disable_background_ticks() = 0;
+    };
+
     /* Represents objects and state intended to be shared about the application.
      */
-    class Application : public Singleton<Application> {
+    class Application : public Singleton<Application>, public Delegator<Application, ApplicationDelegate> {
+    public:
+        typedef ApplicationDelegate Delegate;
+    private:
         RefPtr<RenderScheduler> __scheduler;
 
         Application();
