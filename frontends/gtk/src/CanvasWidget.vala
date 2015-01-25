@@ -17,30 +17,23 @@ class icCanvasGtk.CanvasWidget : Gtk.Widget, Gtk.Scrollable {
         this.lastx = 0;
         this.lasty = 0;
         this._drawing = null;
-        
-        icCanvasManager.BrushTool bt = new icCanvasManager.BrushTool();
-        
-        icCanvasManager.BrushToolDelegateHooks hooks = icCanvasManager.BrushToolDelegateHooks();
-        hooks.captured_stroke = this.captured_stroke;
-        icCanvasManager.BrushToolDelegate btd = icCanvasManager.BrushToolDelegate.construct_custom(hooks);
-        
-        bt.delegate = btd;
-        
-        this.ct = bt.upcast();
     }
     
     public icCanvasManager.Drawing drawing {
+        get {
+            return this._drawing;
+        }
+        
         set {
             this._drawing = value;
             this.cv.attach_drawing(value);
         }
     }
     
-    private void captured_stroke(icCanvasManager.BrushStroke stroke) {
-        Cairo.Rectangle bbox = stroke.bounding_box();
-        
-        this._drawing.append_stroke(stroke);
-        icCanvasManager.Application.get_instance().get_render_scheduler().request_tiles(this._drawing, bbox, (int)this.cv.highest_zoom(), this._drawing.strokes_count());
+    public icCanvasManager.CanvasView internal {
+        get {
+            return this.cv;
+        }
     }
     
     public override void realize() {
@@ -212,5 +205,23 @@ class icCanvasGtk.CanvasWidget : Gtk.Widget, Gtk.Scrollable {
         widget_rect.height = canvas_rect.height / this.cv.zoom;
         
         this.queue_draw_area((int)widget_rect.x, (int)widget_rect.y, (int)widget_rect.width, (int)widget_rect.height);
+    }
+    
+    /* Swapping tools */
+    public icCanvasManager.CanvasTool current_tool {
+        get {
+            return this.ct;
+        }
+        
+        set {
+            this.ct = value;
+            this.ct.prepare_for_reuse();
+            
+            Gtk.Allocation al;
+            this.get_allocation(out al);
+            
+            this.ct.set_size(al.width, al.height, this.get_scale_factor(), 65536);
+            this.update_adjustments();
+        }
     }
 }

@@ -3,6 +3,10 @@ class icCanvasGtk.DrawingWindow : Gtk.ApplicationWindow {
     private icCanvasGtk.CanvasWidget canvaswdgt;
     private icCanvasGtk.WindowDock dock;
     
+    //Available tools
+    private icCanvasManager.BrushTool btool;
+    private icCanvasManager.ZoomTool ztool;
+    
     public DrawingWindow(icCanvasGtk.Application app) {
         Object(application: app);
         
@@ -18,6 +22,16 @@ class icCanvasGtk.DrawingWindow : Gtk.ApplicationWindow {
         
         this.canvaswdgt = new icCanvasGtk.CanvasWidget();
         this.scrollwdgt.add(canvaswdgt);
+        
+        this.btool = new icCanvasManager.BrushTool();
+        
+        icCanvasManager.BrushToolDelegateHooks hooks = icCanvasManager.BrushToolDelegateHooks();
+        hooks.captured_stroke = this.captured_stroke;
+        icCanvasManager.BrushToolDelegate btd = icCanvasManager.BrushToolDelegate.construct_custom(hooks);
+        
+        this.btool.delegate = btd;
+        
+        this.canvaswdgt.current_tool = btool.upcast();
     }
     
     public icCanvasGtk.Drawing drawing {
@@ -38,5 +52,16 @@ class icCanvasGtk.DrawingWindow : Gtk.ApplicationWindow {
     
     public void add_dockable(icCanvasGtk.Dockable dk, icCanvasGtk.Dock.Edge edge) {
         this.dock.add_dockable(dk, edge);
+    }
+    
+    private void captured_stroke(icCanvasManager.BrushStroke stroke) {
+        Cairo.Rectangle bbox = stroke.bounding_box();
+        
+        this.canvaswdgt.drawing.append_stroke(stroke);
+        icCanvasManager.Application.get_instance().get_render_scheduler().request_tiles(
+            this.canvaswdgt.drawing,
+            bbox,
+            (int)this.canvaswdgt.internal.highest_zoom(),
+            this.canvaswdgt.drawing.strokes_count());
     }
 }
