@@ -29,8 +29,10 @@ namespace icCanvasManager {
         std::vector<__Request> _unrendered;
         std::vector<__Response> _uncollected;
         RefPtr<Renderer> _renderer;
+
+        Application* _app;
     public:
-        RenderScheduler();
+        RenderScheduler(Application* app);
         ~RenderScheduler();
 
         /* Put a request for a tile to be rendered. */

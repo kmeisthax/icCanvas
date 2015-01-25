@@ -32,12 +32,18 @@ namespace icCanvasManager {
 
         Application();
         ~Application();
+
+        int _taskcnt;
     public:
 
         /* A function of which should be called periodically by frontend
          * event loops in order to perform background operations.
          */
         void background_tick();
+
+        /* The TaskCount is used to indicate when to enable or disable ticks */
+        void add_tasks(int howmany);
+        void complete_tasks(int howmany);
 
         RefPtr<RenderScheduler> get_render_scheduler();
 

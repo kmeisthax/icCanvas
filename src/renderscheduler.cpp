@@ -1,7 +1,8 @@
 #include <icCanvasManager.hpp>
 
-icCanvasManager::RenderScheduler::RenderScheduler() {
+icCanvasManager::RenderScheduler::RenderScheduler(icCanvasManager::Application* app) {
     this->_renderer = new icCanvasManager::Renderer();
+    this->_app = app;
 };
 
 icCanvasManager::RenderScheduler::~RenderScheduler() {
@@ -23,6 +24,8 @@ void icCanvasManager::RenderScheduler::request_tile(icCanvasManager::RefPtr<icCa
 
     icCanvasManager::RenderScheduler::__Request r = {d, x, y, size, time};
     this->_unrendered.push_back(r);
+
+    this->_app.add_tasks(1);
 };
 
 void icCanvasManager::RenderScheduler::request_tiles(icCanvasManager::RefPtr<icCanvasManager::Drawing> d, cairo_rectangle_t rect, int size, int time) {
@@ -61,6 +64,8 @@ void icCanvasManager::RenderScheduler::request_tiles(icCanvasManager::RefPtr<icC
 };
 
 void icCanvasManager::RenderScheduler::revoke_request(icCanvasManager::RefPtr<icCanvasManager::Drawing> d, int x_min, int y_min, int x_max, int y_max, bool is_inverse) {
+    int revokecnt = 0;
+
     for (auto i = this->_unrendered.begin(); i != this->_unrendered.end(); i++) {
         unsigned int tile_manhattan_diameter = (UINT32_MAX >> i->size) / 2;
         auto adjust_x_min = x_min, adjust_x_max = x_max, adjust_y_min = y_min, adjust_y_max = y_max;
@@ -78,21 +83,30 @@ void icCanvasManager::RenderScheduler::revoke_request(icCanvasManager::RefPtr<ic
             i->y >= adjust_y_min && i->y < adjust_y_max;
 
         if (in_rect || (is_inverse && !in_rect)) {
+            revokecnt++;
+
             i = this->_unrendered.erase(i);
             if (i == this->_unrendered.end()) break;
         }
     }
+
+    this->_app.complete_tasks(revokecnt);
 };
 
 void icCanvasManager::RenderScheduler::revoke_request(icCanvasManager::RefPtr<icCanvasManager::Drawing> d, int zoom_min, int zoom_max, bool is_inverse) {
+    int revokecnt = 0;
+
     for (auto i = this->_unrendered.begin(); i != this->_unrendered.end(); i++) {
         bool is_bad_zoom = i->size >= zoom_min && i->size < zoom_max;
 
         if (is_bad_zoom || (is_inverse && !is_bad_zoom)) {
+            revokecnt++;
+
             i = this->_unrendered.erase(i);
             if (i == this->_unrendered.end()) break;
         }
     }
+    this->_app.complete_tasks(revokecnt);
 };
 
 void icCanvasManager::RenderScheduler::background_tick() {
@@ -116,6 +130,8 @@ void icCanvasManager::RenderScheduler::background_tick() {
 
         rendered_requests++;
     }
+
+    this->_app.complete_tasks(rendered_requests);
 };
 
 int icCanvasManager::RenderScheduler::collect_request(icCanvasManager::RefPtr<icCanvasManager::Drawing> d, cairo_rectangle_t *out_tile_rect) {
