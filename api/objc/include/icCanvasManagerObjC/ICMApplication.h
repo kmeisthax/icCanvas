@@ -8,6 +8,9 @@
 - (void)backgroundTick;
 - (ICMRenderScheduler*)renderScheduler;
 
+- (void)setDelegate:(id <ICMApplicationDelegate>)del;
+- (id <ICMApplicationDelegate>)delegate;
+
 - (void*)getWrappedObject;
 
 @end
