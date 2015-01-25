@@ -60,9 +60,10 @@ void icCanvasManager::ZoomTool::mouse_drag(const double x, const double y, const
         double counterscroll_x = (this->_target_scroll_x - this->_initial_scroll_x) - (this->_target_scroll_x - this->_initial_scroll_x) * zoom_factor;
         double counterscroll_y = (this->_target_scroll_y - this->_initial_scroll_y) - (this->_target_scroll_y - this->_initial_scroll_y) * zoom_factor;
 
-        this->_delegate->changed_scroll_and_zoom(this->_initial_scroll_x + counterscroll_x,
-                                                 this->_initial_scroll_y + counterscroll_y,
-                                                 pixel_zoom_factor);
+        if (this->_delegate)
+            this->_delegate->changed_scroll_and_zoom(this->_initial_scroll_x + counterscroll_x,
+                                                     this->_initial_scroll_y + counterscroll_y,
+                                                     pixel_zoom_factor);
     }
 };
 
