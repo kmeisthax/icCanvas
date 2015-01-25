@@ -14,7 +14,8 @@ class icCanvasGtk.ToolController : GLib.Object {
         tb_brush.clicked.connect(() => {
             Gtk.Window wnd = this._dctrl.action_target_for_dockable(db);
             if (wnd is icCanvasGtk.DrawingWindow) {
-                //TODO: Change the tool to BrushTool
+                icCanvasGtk.DrawingWindow wnd_2 = wnd as icCanvasGtk.DrawingWindow;
+                wnd_2.switch_to_brushtool();
             }
         });
         tb_brush.set_icon_widget(tb_newimg);
@@ -23,6 +24,13 @@ class icCanvasGtk.ToolController : GLib.Object {
         Gtk.Image tb_zoomimg = new Gtk.Image.from_icon_name("zoom-in", Gtk.IconSize.SMALL_TOOLBAR);
         Gtk.RadioToolButton tb_zoom = new Gtk.RadioToolButton(tb_brush.get_group());
         tb_zoom.set_icon_widget(tb_zoomimg);
+        tb_zoom.clicked.connect(() => {
+            Gtk.Window wnd = this._dctrl.action_target_for_dockable(db);
+            if (wnd is icCanvasGtk.DrawingWindow) {
+                icCanvasGtk.DrawingWindow wnd_2 = wnd as icCanvasGtk.DrawingWindow;
+                wnd_2.switch_to_zoomtool();
+            }
+        });
         tb.add(tb_zoom);
         db.add(tb);
         

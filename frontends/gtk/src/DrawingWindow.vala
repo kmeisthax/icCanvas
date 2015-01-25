@@ -31,7 +31,9 @@ class icCanvasGtk.DrawingWindow : Gtk.ApplicationWindow {
         
         this.btool.delegate = btd;
         
-        this.canvaswdgt.current_tool = btool.upcast();
+        this.ztool = new icCanvasManager.ZoomTool();
+        
+        this.switch_to_brushtool();
     }
     
     public icCanvasGtk.Drawing drawing {
@@ -54,6 +56,16 @@ class icCanvasGtk.DrawingWindow : Gtk.ApplicationWindow {
         this.dock.add_dockable(dk, edge);
     }
     
+    /* Tool-switching code */
+    public void switch_to_brushtool() {
+        this.canvaswdgt.current_tool = btool.upcast();
+    }
+    
+    public void switch_to_zoomtool() {
+        this.canvaswdgt.current_tool = ztool.upcast();
+    }
+    
+    /* Various tool impls */
     private void captured_stroke(icCanvasManager.BrushStroke stroke) {
         Cairo.Rectangle bbox = stroke.bounding_box();
         
