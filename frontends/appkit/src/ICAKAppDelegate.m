@@ -7,7 +7,7 @@
 
 @end
 
-@implementation ICAKAppDelegate <ICMApplicationDelegate> {
+@implementation ICAKAppDelegate {
     ICMApplication* coreApp;
     NSTimer* _active_task_timer;
     
@@ -47,7 +47,7 @@
         [appInvoke setSelector:@selector(backgroundTick)];
         appInvoke.target = self->coreApp;
         self->_active_task_timer = [NSTimer timerWithTimeInterval:0.0 invocation:appInvoke repeats:YES];
-        [[NSRunLoop mainRunLoop] addTimer:appTimer forMode:NSDefaultRunLoopMode];
+        [[NSRunLoop mainRunLoop] addTimer:self->_active_task_timer forMode:NSDefaultRunLoopMode];
     }
 };
 

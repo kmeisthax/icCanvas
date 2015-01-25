@@ -1,9 +1,11 @@
 #import <Cocoa/Cocoa.h>
 #include <cairo.h>
 
+@class ICMApplication;
+
 @interface ICMRenderScheduler : NSObject
 
-- (id)init;
+- (id)initWithApplication:(ICMApplication*)appWrap;
 - (id)initFromWrappedObject:(void*)optr;
 
 - (void)requestTileOnDrawing:(ICMDrawing*)d atX:(int)x andY:(int)y atSize:(int)size atTime:(int)time;

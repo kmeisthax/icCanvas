@@ -25,7 +25,7 @@ void icCanvasManager::RenderScheduler::request_tile(icCanvasManager::RefPtr<icCa
     icCanvasManager::RenderScheduler::__Request r = {d, x, y, size, time};
     this->_unrendered.push_back(r);
 
-    this->_app.add_tasks(1);
+    this->_app->add_tasks(1);
 };
 
 void icCanvasManager::RenderScheduler::request_tiles(icCanvasManager::RefPtr<icCanvasManager::Drawing> d, cairo_rectangle_t rect, int size, int time) {
@@ -90,7 +90,7 @@ void icCanvasManager::RenderScheduler::revoke_request(icCanvasManager::RefPtr<ic
         }
     }
 
-    this->_app.complete_tasks(revokecnt);
+    this->_app->complete_tasks(revokecnt);
 };
 
 void icCanvasManager::RenderScheduler::revoke_request(icCanvasManager::RefPtr<icCanvasManager::Drawing> d, int zoom_min, int zoom_max, bool is_inverse) {
@@ -106,7 +106,7 @@ void icCanvasManager::RenderScheduler::revoke_request(icCanvasManager::RefPtr<ic
             if (i == this->_unrendered.end()) break;
         }
     }
-    this->_app.complete_tasks(revokecnt);
+    this->_app->complete_tasks(revokecnt);
 };
 
 void icCanvasManager::RenderScheduler::background_tick() {
@@ -131,7 +131,7 @@ void icCanvasManager::RenderScheduler::background_tick() {
         rendered_requests++;
     }
 
-    this->_app.complete_tasks(rendered_requests);
+    this->_app->complete_tasks(rendered_requests);
 };
 
 int icCanvasManager::RenderScheduler::collect_request(icCanvasManager::RefPtr<icCanvasManager::Drawing> d, cairo_rectangle_t *out_tile_rect) {

@@ -1,6 +1,6 @@
 #import <Cocoa/Cocoa.h>
 
-@interface ICAKAppDelegate : NSObject <NSApplicationDelegate>
+@interface ICAKAppDelegate : NSObject <NSApplicationDelegate, ICMApplicationDelegate>
 
 @property (retain) NSWindow *window;
 

@@ -6,11 +6,12 @@
     icCanvasManager::RefPtr<icCanvasManager::RenderScheduler> _wrapped;
 }
 
-- (id)init {
+- (id)initWithApplication:(ICMApplication*)appWrap {
     self = [super init];
     
     if (self != nil) {
-        self->_wrapped = new icCanvasManager::RenderScheduler();
+        icCanvasManager::Application* inner_app = (icCanvasManager::Application*)[appWrap getWrappedObject];
+        self->_wrapped = new icCanvasManager::RenderScheduler(inner_app);
     }
     
     return self;

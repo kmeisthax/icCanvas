@@ -6,6 +6,8 @@
 #include <cairo.h>
 
 namespace icCanvasManager {
+    class Application;
+
     /* RenderScheduler handles the rendering of tiles to off-screen surfaces.
      *
      * The Scheduler is free to render by any means necessary, including async
