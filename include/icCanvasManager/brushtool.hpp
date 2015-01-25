@@ -4,30 +4,28 @@
 #include <icCanvasManager.hpp>
 
 namespace icCanvasManager {
+    /* Delegate protocol class used to inform tool users of new strokes.
+     *
+     * If the delegate subclass does not also inherit from RefCnt, then you
+     * must ensure that the delegate is alive for as long as the Tool uses
+     * it.
+     */
+    class BrushToolDelegate {
+    public:
+        virtual ~BrushToolDelegate();
+
+        /* Called when the Tool captures a brushstroke.
+         */
+        virtual void captured_stroke(RefPtr<BrushStroke> stroke) = 0;
+    };
+
     /*
      * A CanvasTool that records brush strokes.
      */
-    class BrushTool : public CanvasTool {
+    class BrushTool : public CanvasTool, public Delegator<BrushTool, BrushToolDelegate> {
     public:
-        /* Delegate protocol class used to inform tool users of new strokes.
-         *
-         * If the delegate subclass does not also inherit from RefCnt, then you
-         * must ensure that the delegate is alive for as long as the Tool uses
-         * it.
-         */
-        class Delegate {
-        public:
-            virtual ~Delegate();
-
-            /* Called when the Tool captures a brushstroke.
-             */
-            virtual void captured_stroke(RefPtr<BrushStroke> stroke) = 0;
-        };
-
+        typedef BrushToolDelegate Delegate;
     private:
-        Delegate* _delegate;
-        RefPtr<RefCnt> _delegate_lifetime;
-
         int _error_threshold;
 
         RefPtr<SplineFitter> _fitter;
@@ -44,10 +42,6 @@ namespace icCanvasManager {
         void mouse_down(const double x, const double y, const double deltaX, const double deltaY);
         void mouse_drag(const double x, const double y, const double deltaX, const double deltaY);
         void mouse_up(const double x, const double y, const double deltaX, const double deltaY);
-
-        /* Set/get the delegate for this tool. */
-        void set_delegate(Delegate* del);
-        Delegate* get_delegate();
     };
 }
 

@@ -3,6 +3,7 @@
 
 #include "icCanvasManager/refcnt.hpp"
 #include "icCanvasManager/refptr.hpp"
+#include "icCanvasManager/delegator.hpp"
 #include "icCanvasManager/rk4integrate.hpp"
 #include "icCanvasManager/mvbeizer.hpp"
 #include "icCanvasManager/brushstroke.hpp"

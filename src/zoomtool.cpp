@@ -2,7 +2,7 @@
 
 //icCanvasManager::ZoomTool::
 
-icCanvasManager::ZoomTool::ZoomTool() : _delegate(NULL), _delegate_lifetime(NULL), _is_tracking_zoom(false) {
+icCanvasManager::ZoomTool::ZoomTool() : _is_tracking_zoom(false) {
 }
 
 icCanvasManager::ZoomTool::~ZoomTool() {
@@ -72,24 +72,6 @@ void icCanvasManager::ZoomTool::mouse_up(const double x, const double y, const d
     this->_is_tracking_click = false;
 };
 
-/* Set/get the delegate for this tool. */
-void icCanvasManager::ZoomTool::set_delegate(icCanvasManager::ZoomTool::Delegate* del) {
-    if (del == this->_delegate) return;
-
-    if (this->_delegate && this->_delegate_lifetime) this->_delegate_lifetime = NULL;
-
-    if (del) {
-        auto* del_rc = dynamic_cast<icCanvasManager::ZoomTool::RefCnt*>(del);
-        if (del_rc) this->_delegate_lifetime = del_rc;
-
-        this->_delegate = del;
-    }
-};
-
-icCanvasManager::ZoomTool::Delegate* icCanvasManager::ZoomTool::get_delegate() {
-    return this->_delegate;
-};
-
 /* Required by C++ law */
-icCanvasManager::ZoomTool::Delegate::~Delegate() {
+icCanvasManager::ZoomToolDelegate::~ZoomToolDelegate() {
 };

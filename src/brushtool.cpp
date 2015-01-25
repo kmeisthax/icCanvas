@@ -2,7 +2,7 @@
 
 //icCanvasManager::BrushTool::
 
-icCanvasManager::BrushTool::BrushTool() : _error_threshold(0), _delegate(NULL), _delegate_lifetime(NULL), _fitter(new icCanvasManager::SplineFitter()) {
+icCanvasManager::BrushTool::BrushTool() : _error_threshold(0), _fitter(new icCanvasManager::SplineFitter()) {
 }
 
 icCanvasManager::BrushTool::~BrushTool() {
@@ -45,24 +45,6 @@ void icCanvasManager::BrushTool::mouse_up(const double x, const double y, const 
     }
 };
 
-/* Set/get the delegate for this tool. */
-void icCanvasManager::BrushTool::set_delegate(icCanvasManager::BrushTool::Delegate* del) {
-    if (del == this->_delegate) return;
-
-    if (this->_delegate && this->_delegate_lifetime) this->_delegate_lifetime = NULL;
-
-    if (del) {
-        auto* del_rc = dynamic_cast<icCanvasManager::BrushTool::RefCnt*>(del);
-        if (del_rc) this->_delegate_lifetime = del_rc;
-
-        this->_delegate = del;
-    }
-};
-
-icCanvasManager::BrushTool::Delegate* icCanvasManager::BrushTool::get_delegate() {
-    return this->_delegate;
-};
-
 /* Required by C++ law */
-icCanvasManager::BrushTool::Delegate::~Delegate() {
+icCanvasManager::BrushToolDelegate::~BrushToolDelegate() {
 };
