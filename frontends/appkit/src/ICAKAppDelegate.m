@@ -41,7 +41,7 @@
 }
 
 - (void)enableBackgroundTicks {
-    if (self->_active_task_timer != nil) {
+    if (self->_active_task_timer == nil) {
         //Attach ICMApplication background tasks
         NSInvocation* appInvoke = [NSInvocation invocationWithMethodSignature:[self->coreApp methodSignatureForSelector:@selector(backgroundTick)]];
         [appInvoke setSelector:@selector(backgroundTick)];
