@@ -12,3 +12,5 @@ void icCanvasManager::Application::background_tick() {
 icCanvasManager::RefPtr<icCanvasManager::RenderScheduler> icCanvasManager::Application::get_render_scheduler() {
     return this->__scheduler;
 };
+
+icCanvasManager::ApplicationDelegate::~ApplicationDelegate() {};
