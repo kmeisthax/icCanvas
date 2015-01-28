@@ -200,7 +200,7 @@ void icCanvasManager::Renderer::drawStroke(icCanvasManager::RefPtr<icCanvasManag
             //Special case: If the derivative for this curve is zero,
             //don't try to draw the whole curve since the below code crahses.
 
-            this->applyBrush(br->_curve.evaluate_for_point(i));
+            this->applyBrush(br, br->_curve.evaluate_for_point(i));
             continue;
         }
 
@@ -247,7 +247,7 @@ void icCanvasManager::Renderer::drawStroke(icCanvasManager::RefPtr<icCanvasManag
                 break;
             }
             
-            this->applyBrush(br->_curve.evaluate_for_point(this_t));
+            this->applyBrush(br, br->_curve.evaluate_for_point(this_t));
         }
     }
 
@@ -276,9 +276,9 @@ void icCanvasManager::Renderer::drawStroke(icCanvasManager::RefPtr<icCanvasManag
     }
 };
 
-void icCanvasManager::Renderer::applyBrush(const icCanvasManager::BrushStroke::__ControlPoint &cp) {
+void icCanvasManager::Renderer::applyBrush(icCanvasManager::RefPtr<icCanvasManager::BrushStroke> br, const icCanvasManager::BrushStroke::__ControlPoint &cp) {
     //Hardcoded brush size and color
-    uint32_t brush_size = 10 * 65536;
+    uint32_t brush_size = br->brush_thickness();
     auto brush_size_tspace = brush_size * this->xscale;
     cairo_set_source_rgba(this->xrctxt, 0.0, 0.0, 0.0, 1.0 / brush_size_tspace);
     

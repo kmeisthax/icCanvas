@@ -38,6 +38,8 @@ namespace icCanvasManager {
         __Spline _curve;
         __Spline::size_type pos;
 
+        int _base_thickness;
+
         class __DerivFunctor;
         class __SecondDerivFunctor;
         class __ThirdDerivFunctor;
@@ -105,6 +107,10 @@ namespace icCanvasManager {
         //Erase the last spline section.
         void pen_back();
         
+        /* Set the thickness of the curve brush. */
+        void set_brush_thickness(int samples);
+        int brush_thickness();
+
         //Count the number of spline segments.
         spline_size_type count_segments();
 

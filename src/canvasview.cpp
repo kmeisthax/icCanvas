@@ -101,9 +101,6 @@ void icCanvasManager::CanvasView::draw(cairo_t *ctxt, cairo_rectangle_list_t *re
     cairo_paint(ctxt);
     cairo_pattern_destroy(clear_ptn);
 
-    //Phase 0.1: Delete existing outstanding requests
-    auto renderscheduler = icCanvasManager::Application::get_instance().get_render_scheduler();
-
     for (int i = 0; i < rectList->num_rectangles; i++) {
         this->request_tiles(&rectList->rectangles[i]);
     }

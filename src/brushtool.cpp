@@ -24,6 +24,11 @@ void icCanvasManager::BrushTool::set_size(const double width, const double heigh
 void icCanvasManager::BrushTool::mouse_down(const double x, const double y, const double deltaX, const double deltaY) {
     this->_is_fitting = true;
     this->_built_stroke = new icCanvasManager::BrushStroke();
+
+    double z;
+    this->_window_zoom(&z);
+    this->_built_stroke->set_brush_thickness(z * 10);
+
     this->_fitter->begin_fitting(this->_built_stroke, this->_error_threshold);
 };
 

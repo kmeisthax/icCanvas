@@ -22,7 +22,7 @@ namespace icCanvasManager {
         void coordToTilespace(const int32_t x, const int32_t y, int32_t* out_tx, int32_t* out_ty);
 
         /* Draw the current brush at a particular point. */
-        void applyBrush(const BrushStroke::__ControlPoint &cp);
+        void applyBrush(RefPtr<BrushStroke> br, const BrushStroke::__ControlPoint &cp);
         
         class _DifferentialCurveFunctor;
         float curve_arc_length(int polynomID, BrushStroke::__Spline::derivative_type &dt);

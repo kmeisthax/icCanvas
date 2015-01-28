@@ -42,7 +42,7 @@ icCanvasManager::BrushStroke::__ControlPoint icCanvasManager::BrushStroke::__Con
     return us;
 };
 
-icCanvasManager::BrushStroke::BrushStroke() : pos(0) {};
+icCanvasManager::BrushStroke::BrushStroke() : pos(0), _base_thickness(65536) {};
 icCanvasManager::BrushStroke::~BrushStroke() {};
 
 void icCanvasManager::BrushStroke::pen_begin(int32_t x, int32_t y) {
@@ -143,6 +143,14 @@ void icCanvasManager::BrushStroke::pen_extend(int continuity_level) {
 void icCanvasManager::BrushStroke::pen_back() {
     this->_curve.contract_spline();
     this->pos--;
+};
+
+/* Set the thickness of the curve brush. */
+void icCanvasManager::BrushStroke::set_brush_thickness(int samples) {
+    this->_base_thickness = samples;
+};
+int icCanvasManager::BrushStroke::brush_thickness() {
+    return this->_base_thickness;
 };
 
 icCanvasManager::BrushStroke::spline_size_type icCanvasManager::BrushStroke::count_segments() {
