@@ -178,7 +178,15 @@
     [self->internal windowToCoordSpaceX:rect.size.width andY:rect.size.height outTx:&twidth outTy:&theight];
     
     [[ICMApplication getInstance].renderScheduler revokeRequestForDrawing:self->drawing xMin:tx yMin:ty xMax:tx + twidth yMax:ty + theight isInverse:YES];
-    [[ICMApplication getInstance].renderScheduler revokeRequestForDrawing:self->drawing zoomMin:0  zoomMax:self->internal.highestZoom isInverse:YES];
+    [[ICMApplication getInstance].renderScheduler revokeRequestForDrawing:self->drawing zoomMin:self->internal.highestZoom + 1 zoomMax:32 isInverse:NO];
+    
+    cairo_rectangle_t cRect;
+    cRect.x = tx;
+    cRect.y = ty;
+    cRect.width = twidth;
+    cRect.height = theight;
+    
+    [[ICMApplication getInstance].renderScheduler requestTilesOnDrawing:self->drawing inRect:cRect atSize:self->internal.highestZoom atTime:self->drawing.strokesCount];
 };
 
 - (void)drawRect:(NSRect)dirtyRect {
