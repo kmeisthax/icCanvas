@@ -45,7 +45,9 @@ void icCanvasManager::BrushTool::mouse_drag(const double x, const double y, cons
 void icCanvasManager::BrushTool::mouse_up(const double x, const double y, const double deltaX, const double deltaY) {
     if (this->_is_fitting) {
         this->_fitter->finish_fitting();
-        if (this->_delegate) this->_delegate->captured_stroke(this->_built_stroke);
+        if (this->_built_stroke->count_segments() > 0) {
+            if (this->_delegate) this->_delegate->captured_stroke(this->_built_stroke);
+        }
         this->prepare_for_reuse();
     }
 };
