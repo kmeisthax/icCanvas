@@ -8,6 +8,10 @@
 #import "icCanvasAppKit/ICAKDockableToolbar.h"
 #import "icCanvasAppKit/ICAKCanvasView.h"
 
+//Color panel views
+#import "icCanvasAppkit/ICAKColorPickerView.h"
+#import "icCanvasAppkit/ICAKDockableColorPanel.h"
+
 //Dockable view factories/controllers
 #import "icCanvasAppKit/ICAKToolPaletteController.h"
 

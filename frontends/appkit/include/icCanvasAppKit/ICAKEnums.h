@@ -17,6 +17,22 @@ typedef NS_ENUM(NSInteger, ICAKDockableToolbarBehavior) {
     ICAKDockableToolbarBehaviorAction,
 };
 
+typedef NS_ENUM(NSInteger, ICAKColorPickerViewMode) {
+    ICAKColorPickerViewModeLinear,
+    ICAKColorPickerViewModeCircular,
+};
+
+typedef NS_ENUM(NSInteger, ICAKColorPickerViewChannel) {
+    ICAKColorPickerViewChannelNone,
+    ICAKColorPickerViewChannelHue,
+    ICAKColorPickerViewChannelSaturation,
+    ICAKColorPickerViewChannelLightness,
+    ICAKColorPickerViewChannelRed,
+    ICAKColorPickerViewChannelGreen,
+    ICAKColorPickerViewChannelBlue,
+    ICAKColorPickerViewChannelAlpha,
+};
+
 static const CGFloat ICAKDockableViewPanelMargins = 15.0f;
 static const CGFloat ICAKDockableViewMinPanelSize = 240.0f;
 
