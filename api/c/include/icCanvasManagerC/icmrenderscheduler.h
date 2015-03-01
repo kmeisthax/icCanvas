@@ -13,7 +13,7 @@ extern "C" {
 
     typedef void *icm_renderscheduler;
 
-    icm_renderscheduler icm_renderscheduler_construct();
+    icm_renderscheduler icm_renderscheduler_construct(icm_application app);
     icm_renderscheduler icm_renderscheduler_reference(icm_renderscheduler wrap);
     int icm_renderscheduler_dereference(icm_renderscheduler wrap);
 
