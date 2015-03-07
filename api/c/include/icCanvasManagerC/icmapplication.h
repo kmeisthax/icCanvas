@@ -9,6 +9,8 @@ extern "C" {
 
     typedef void *icm_application;
 
+    typedef void *icm_renderscheduler;
+
     icm_application icm_application_get_instance();
 
     icm_application icm_application_reference(icm_application wrap);

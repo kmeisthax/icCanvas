@@ -3,8 +3,9 @@
 #include <icCanvasManagerC.h>
 
 extern "C" {
-    icm_renderscheduler icm_renderscheduler_construct() {
-        icCanvasManager::RenderScheduler* d = new icCanvasManager::RenderScheduler();
+    icm_renderscheduler icm_renderscheduler_construct(icm_application app) {
+        icCanvasManager::Application *theApp = (icCanvasManager::Application*)app;
+        icCanvasManager::RenderScheduler* d = new icCanvasManager::RenderScheduler(theApp);
         d->ref();
 
         return (icm_renderscheduler)d;

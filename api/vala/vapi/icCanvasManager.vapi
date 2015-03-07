@@ -191,7 +191,7 @@ namespace icCanvasManager {
     [Compact]
     public class RenderScheduler {
         [CCode (cname = "icm_renderscheduler_construct")]
-        public RenderScheduler();
+        public RenderScheduler(Application app);
         
         public void request_tile(Drawing d, int x, int y, int size, int time);
         public void request_tiles(Drawing d, Cairo.Rectangle rect, int size, int time);

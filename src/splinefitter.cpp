@@ -25,6 +25,9 @@ void icCanvasManager::SplineFitter::begin_fitting(icCanvasManager::RefPtr<icCanv
 
 void icCanvasManager::SplineFitter::fit_curve(int max_pts) {
     auto ptsize = std::min((decltype(this->unfitted_points.size()))max_pts, this->unfitted_points.size());
+
+    if (ptsize <= 0) return;
+
     int newTotalDist = this->distances.at(ptsize - 1);
     
     Eigen::Matrix<float, Eigen::Dynamic, 4> b_indexes(ptsize, 4);
@@ -147,7 +150,9 @@ void icCanvasManager::SplineFitter::finish_fitting() {
     auto ptsize = this->unfitted_points.size();
     std::cout << "Ptsize: " << ptsize << std::endl;
 
-    if (ptsize <= 3 && this->target_curve->count_segments() > 0) {
+    if (ptsize <= 0 && this->target_curve->count_segments() <= 0) {
+        //Do nothing.
+    } else if (ptsize <= 3 && this->target_curve->count_segments() > 0) {
         this->target_curve->pen_back();
     } else {
         this->fit_curve(ptsize);
