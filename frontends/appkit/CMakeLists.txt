@@ -5,7 +5,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/modules"
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PARENT_PROJECT_DIR}/modules")
 
 find_package(Eigen)
-include(${PARENT_PROJECT_DIR}/modules/BuildCairo.cmake)
+include(${CMAKE_CURRENT_SOURCE_DIR}/modules/BuildCairo.cmake)
 include(${PARENT_PROJECT_DIR}/CMakeLists.txt)
 include(${PARENT_PROJECT_DIR}/api/objc/CMakeLists.txt)
 
