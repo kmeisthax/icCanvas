@@ -38,7 +38,13 @@ namespace icCanvasManager {
         __Spline _curve;
         __Spline::size_type pos;
 
+        /* Brushstrokes have an initial user-selected thickness, color, and
+         * opacity. These may be further modulated by the brush itself to
+         * generate the final stroke appearance.
+         */
         int _base_thickness;
+        int _tint_color_red, _tint_color_green, _tint_color_blue;
+        int _tint_alpha;
 
         class __DerivFunctor;
         class __SecondDerivFunctor;
@@ -51,6 +57,7 @@ namespace icCanvasManager {
         BrushStroke();
         virtual ~BrushStroke();
         
+        const static int COLOR_MAX = 65536;
         const static int PRESSURE_MAX = 65536;
         const static int TILT_ANGLE_QUARTER = 32400;
         const static int TILT_ANGLE_HALF = 64800;
@@ -110,6 +117,14 @@ namespace icCanvasManager {
         /* Set the thickness of the curve brush. */
         void set_brush_thickness(int samples);
         int brush_thickness();
+
+        /* Set the tint of the curve brush. */
+        void set_brush_tint(int r, int g, int b);
+        void brush_tint(int *r, int *g, int *b);
+
+        /* Set the opacity of the curve brush. */
+        void set_brush_opacity(int alpha);
+        int brush_opacity();
 
         //Count the number of spline segments.
         spline_size_type count_segments();

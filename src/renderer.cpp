@@ -279,8 +279,17 @@ void icCanvasManager::Renderer::drawStroke(icCanvasManager::RefPtr<icCanvasManag
 void icCanvasManager::Renderer::applyBrush(icCanvasManager::RefPtr<icCanvasManager::BrushStroke> br, const icCanvasManager::BrushStroke::__ControlPoint &cp) {
     //Hardcoded brush size and color
     uint32_t brush_size = br->brush_thickness();
+    int brush_alpha = br->brush_opacity();
+    int tint_red, tint_green, tint_blue;
+
+    br->brush_tint(&tint_red, &tint_green, &tint_blue);
+
     auto brush_size_tspace = brush_size * this->xscale;
-    cairo_set_source_rgba(this->xrctxt, 0.0, 0.0, 0.0, 1.0 / brush_size_tspace);
+    cairo_set_source_rgba(this->xrctxt,
+                          tint_red / (float)icCanvasManager::BrushStroke::COLOR_MAX,
+                          tint_green / (float)icCanvasManager::BrushStroke::COLOR_MAX,
+                          tint_blue / (float)icCanvasManager::BrushStroke::COLOR_MAX,
+                          brush_alpha / (float)icCanvasManager::BrushStroke::COLOR_MAX / brush_size_tspace);
     
     int tx, ty;
     this->coordToTilespace(cp.x, cp.y, &tx, &ty);
