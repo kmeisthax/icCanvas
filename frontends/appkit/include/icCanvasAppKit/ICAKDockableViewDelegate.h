@@ -1,4 +1,4 @@
-#include <Cocoa/Cocoa.h>
+#import <Cocoa/Cocoa.h>
 
 @class ICAKDock;
 
