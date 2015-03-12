@@ -42,7 +42,7 @@ icCanvasManager::BrushStroke::__ControlPoint icCanvasManager::BrushStroke::__Con
     return us;
 };
 
-icCanvasManager::BrushStroke::BrushStroke() : pos(0), _base_thickness(65536) {};
+icCanvasManager::BrushStroke::BrushStroke() : pos(0), _base_thickness(65536), _tint_color_red(0), _tint_color_blue(0), _tint_color_green(0), _tint_alpha(65536) {};
 icCanvasManager::BrushStroke::~BrushStroke() {};
 
 void icCanvasManager::BrushStroke::pen_begin(int32_t x, int32_t y) {
@@ -151,6 +151,26 @@ void icCanvasManager::BrushStroke::set_brush_thickness(int samples) {
 };
 int icCanvasManager::BrushStroke::brush_thickness() {
     return this->_base_thickness;
+};
+
+void icCanvasManager::BrushStroke::set_brush_tint(int r, int g, int b) {
+    this->_tint_color_red = r;
+    this->_tint_color_green = g;
+    this->_tint_color_blue = b;
+};
+
+void icCanvasManager::BrushStroke::brush_tint(int *r, int *g, int *b) {
+    if (r) *r = this->_tint_color_red;
+    if (g) *g = this->_tint_color_green;
+    if (b) *b = this->_tint_color_blue;
+};
+
+void icCanvasManager::BrushStroke::set_brush_opacity(int alpha) {
+    this->_tint_alpha = alpha;
+};
+
+int icCanvasManager::BrushStroke::brush_opacity() {
+    return this->_tint_alpha;
 };
 
 icCanvasManager::BrushStroke::spline_size_type icCanvasManager::BrushStroke::count_segments() {
