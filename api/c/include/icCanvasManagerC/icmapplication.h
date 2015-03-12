@@ -45,10 +45,10 @@ extern "C" {
     typedef struct {
         icm_background_ticks_func enable_background_ticks;
         void* enable_background_ticks_context;
-        void (*enable_background_ticks_destroy_notify)(void*);
+        void (*enable_background_ticks_target_destroy_notify)(void*);
         icm_background_ticks_func disable_background_ticks;
         void* disable_background_ticks_context;
-        void (*disable_background_ticks_destroy_notify)(void*);
+        void (*disable_background_ticks_target_destroy_notify)(void*);
     } icm_application_delegate_hooks;
 
     /*Custom delegates are used to allow C code to be called from C++ code.*/

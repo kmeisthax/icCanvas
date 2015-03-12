@@ -52,10 +52,24 @@ class icCanvasGtk.Application : Gtk.Application {
     }
     
     public override void activate() {
-        GLib.Idle.add_full(GLib.Priority.DEFAULT_IDLE, this.on_idle);
+        var app = icCanvasManager.Application.get_instance();
+        icCanvasManager.ApplicationDelegateHooks hk = icCanvasManager.ApplicationDelegateHooks();
+        hk.enable_background_ticks = this.enable_background_ticks;
+        hk.disable_background_ticks = this.disable_background_ticks;
+        
+        icCanvasManager.ApplicationDelegate app_del = icCanvasManager.ApplicationDelegate.construct_custom(hk);
+        app.delegate = app_del;
         
         var drawing = this.new_drawing();
         this.new_drawing_window(drawing);
+    }
+    
+    public void enable_background_ticks() {
+        GLib.Idle.add_full(GLib.Priority.DEFAULT_IDLE, this.on_idle);
+    }
+    
+    public void disable_background_ticks() {
+        GLib.Idle.remove_by_data(this);
     }
     
     public bool on_idle() {

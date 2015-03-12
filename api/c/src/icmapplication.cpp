@@ -9,12 +9,12 @@ namespace icCanvasManager {
     public:
         ApplicationDelegateCImpl(icm_application_delegate_hooks* hooks) : hooks(*hooks), RefCnt() {}
         virtual ~ApplicationDelegateCImpl() {
-            if (this->hooks.enable_background_ticks_destroy_notify) {
-                this->hooks.enable_background_ticks_destroy_notify(this->hooks.enable_background_ticks_context);
+            if (this->hooks.enable_background_ticks_target_destroy_notify) {
+                this->hooks.enable_background_ticks_target_destroy_notify(this->hooks.enable_background_ticks_context);
             }
             
-            if (this->hooks.disable_background_ticks_destroy_notify) {
-                this->hooks.disable_background_ticks_destroy_notify(this->hooks.disable_background_ticks_context);
+            if (this->hooks.disable_background_ticks_target_destroy_notify) {
+                this->hooks.disable_background_ticks_target_destroy_notify(this->hooks.disable_background_ticks_context);
             }
         }
 
