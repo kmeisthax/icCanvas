@@ -1,5 +1,28 @@
 [CCode (cheader_filename = "icCanvasManagerC.h")]
 namespace icCanvasManager {
+    [CCode (cname = "icm_background_ticks_func")]
+    public delegate void BackgroundTicksFunc();
+    
+    [CCode (cname = "icm_application_delegate_hooks",
+            destroy_function = "icm_application_delegate_hooks_destroy",
+            has_type_id = false)]
+    public struct ApplicationDelegateHooks {
+        [CCode (delegate_target_cname = "enable_background_ticks_context")]
+        public BackgroundTicksFunc enable_background_ticks;
+        [CCode (delegate_target_cname = "disable_background_ticks_context")]
+        public BackgroundTicksFunc disable_background_ticks;
+    }
+    
+    [CCode (cname = "icm_application_delegate",
+            cprefix = "icm_application_delegate_",
+            ref_function = "icm_application_delegate_reference",
+            unref_function = "icm_application_delegate_dereference")]
+    [Compact]
+    public class ApplicationDelegate {
+        public static ApplicationDelegate construct_custom(ApplicationDelegateHooks hooks);
+        public bool is_custom();
+    }
+    
     [CCode (cname = "icm_application",
             cprefix = "icm_application_",
             ref_function = "icm_application_reference",
@@ -10,6 +33,11 @@ namespace icCanvasManager {
 
         public void background_tick();
         public RenderScheduler get_render_scheduler();
+        
+        public ApplicationDelegate delegate {
+            [CCode (cname = "icm_application_get_delegate")] get;
+            [CCode (cname = "icm_application_set_delegate")] set;
+        }
     }
 
     [CCode (cname = "icm_brushstroke",
