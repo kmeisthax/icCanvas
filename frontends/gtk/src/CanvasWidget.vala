@@ -196,15 +196,29 @@ class icCanvasGtk.CanvasWidget : Gtk.Widget, Gtk.Scrollable {
         
         this.get_allocation(out widget_alloc);
         
-        double widget_x = this._vadjust.value - (widget_alloc.width * this.cv.zoom / 2.0);
-        double widget_y = this._hadjust.value - (widget_alloc.height * this.cv.zoom / 2.0);
+        double widget_x = this._vadjust.value - (widget_alloc.width / 2.0);
+        double widget_y = this._hadjust.value - (widget_alloc.height / 2.0);
         
-        widget_rect.x = (canvas_rect.x - widget_x) / this.cv.zoom;
-        widget_rect.y = (canvas_rect.x - widget_y) / this.cv.zoom;
+        widget_rect.x = (canvas_rect.x - widget_x * this.cv.zoom) / this.cv.zoom;
+        widget_rect.y = (canvas_rect.y - widget_y * this.cv.zoom) / this.cv.zoom;
         widget_rect.width = canvas_rect.width / this.cv.zoom;
         widget_rect.height = canvas_rect.height / this.cv.zoom;
         
         this.queue_draw_area((int)widget_rect.x, (int)widget_rect.y, (int)widget_rect.width, (int)widget_rect.height);
+    }
+    
+    public void revoke_widget_rect(bool outside) {
+        Cairo.Rectangle canvas_rect = Cairo.Rectangle();
+        Gtk.Allocation widget_alloc;
+        this.get_allocation(out widget_alloc);
+        
+        double widget_x = this._vadjust.value - (widget_alloc.width / 2.0);
+        double widget_y = this._hadjust.value - (widget_alloc.height / 2.0);
+        
+        canvas_rect.x = widget_x * this.cv.zoom;
+        canvas_rect.y = widget_y * this.cv.zoom;
+        canvas_rect.width = widget_alloc.width * this.cv.zoom;
+        canvas_rect.height = widget_alloc.height * this.cv.zoom;
     }
     
     /* Swapping tools */

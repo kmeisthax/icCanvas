@@ -5,12 +5,15 @@ class icCanvasGtk.Application : Gtk.Application {
     private GLib.List<icCanvasGtk.Drawing> _drawing_list;
     private icCanvasGtk.ToolController _tctrl;
     
+    private bool _background_ticks_enabled;
+    
     public icCanvasGtk.DockingController docking_ctrl { get; set; }
     
     public Application (string s, GLib.ApplicationFlags f) {
         this._drawing_list = new GLib.List<icCanvasGtk.Drawing>();
         this.docking_ctrl = new icCanvasGtk.DockingController();
         this._tctrl = new icCanvasGtk.ToolController(this.docking_ctrl);
+        this._background_ticks_enabled = false;
     }
     
     public icCanvasGtk.Drawing new_drawing() {
@@ -52,10 +55,28 @@ class icCanvasGtk.Application : Gtk.Application {
     }
     
     public override void activate() {
-        GLib.Idle.add_full(GLib.Priority.DEFAULT_IDLE, this.on_idle);
+        var app = icCanvasManager.Application.get_instance();
+        icCanvasManager.ApplicationDelegateHooks hk = icCanvasManager.ApplicationDelegateHooks();
+        hk.enable_background_ticks = this.enable_background_ticks;
+        hk.disable_background_ticks = this.disable_background_ticks;
+        
+        icCanvasManager.ApplicationDelegate app_del = icCanvasManager.ApplicationDelegate.construct_custom(hk);
+        app.delegate = app_del;
         
         var drawing = this.new_drawing();
         this.new_drawing_window(drawing);
+    }
+    
+    public void enable_background_ticks() {
+        if (!this._background_ticks_enabled) {
+            this._background_ticks_enabled = true;
+            GLib.Idle.add_full(GLib.Priority.DEFAULT_IDLE, this.on_idle);
+        }
+    }
+    
+    public void disable_background_ticks() {
+        this._background_ticks_enabled = false;
+        GLib.Idle.remove_by_data(this);
     }
     
     public bool on_idle() {
@@ -63,7 +84,7 @@ class icCanvasGtk.Application : Gtk.Application {
         
         app.background_tick();
         
-        return true;
+        return this._background_ticks_enabled;
     }
     
     public void add_drawing(icCanvasGtk.Drawing drawing) {
