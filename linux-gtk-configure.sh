@@ -4,4 +4,4 @@ mkdir build
 mkdir build/linux-gtk
 cd build/linux-gtk
 
-cmake ../../frontends/gtk/platform/gnulinux-desktop
+cmake ../../frontends/gtk/
