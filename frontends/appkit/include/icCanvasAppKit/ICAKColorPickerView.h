@@ -15,4 +15,6 @@
 - (NSColor*)currentColor;
 - (void)setCurrentColor:(NSColor*)color;
 
+- (void)setAction:(SEL)action andTarget:(id)target;
+
 @end
