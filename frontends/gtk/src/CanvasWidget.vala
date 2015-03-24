@@ -67,7 +67,7 @@ class icCanvasGtk.CanvasWidget : Gtk.Widget, Gtk.Scrollable {
         if (this.get_realized()) {
             this.evtWindow.move_resize(allocation.x, allocation.y, allocation.width, allocation.height);
             this.cv.set_size(allocation.width, allocation.height, this.get_scale_factor());
-            this.ct.set_size(allocation.width, allocation.height, this.get_scale_factor(), 65536);
+            this.ct.set_size(allocation.width, allocation.height, this.get_scale_factor(), this.cv.zoom);
         }
     }
     
@@ -83,12 +83,10 @@ class icCanvasGtk.CanvasWidget : Gtk.Widget, Gtk.Scrollable {
     }
     
     public override bool button_press_event(Gdk.EventButton evt) {
-        if (evt.type == Gdk.EventType.BUTTON_PRESS) {
-            this.ct.mouse_down(evt.x, evt.y, 0, 0);
-            
-            this.lastx = evt.x;
-            this.lasty = evt.y;
-        }
+        this.ct.mouse_down(evt.x, evt.y, 0, 0);
+        
+        this.lastx = evt.x;
+        this.lasty = evt.y;
         
         return true;
     }
@@ -103,15 +101,13 @@ class icCanvasGtk.CanvasWidget : Gtk.Widget, Gtk.Scrollable {
     }
     
     public override bool button_release_event(Gdk.EventButton evt) {
-        if (evt.type == Gdk.EventType.BUTTON_RELEASE) {
-            this.ct.mouse_up(evt.x, evt.y, evt.x - this.lastx, evt.y - this.lasty);
-
-            this.lastx = evt.x;
-            this.lasty = evt.y;
-
-            this.queue_draw();
-        }
-
+        this.ct.mouse_up(evt.x, evt.y, evt.x - this.lastx, evt.y - this.lasty);
+        
+        this.lastx = evt.x;
+        this.lasty = evt.y;
+        
+        this.queue_draw();
+        
         return true;
     }
     
@@ -237,5 +233,22 @@ class icCanvasGtk.CanvasWidget : Gtk.Widget, Gtk.Scrollable {
             this.ct.set_size(al.width, al.height, this.get_scale_factor(), 65536);
             this.update_adjustments();
         }
+    }
+    
+    /* Set scroll center and zoom */
+    public void set_scroll_center_and_zoom(double x, double y, double zoom) {
+        Gtk.Allocation allocation;
+        this.get_allocation(out allocation);
+        
+        this.cv.zoom = zoom;
+        this.ct.set_size(allocation.width, allocation.height, this.get_scale_factor(), zoom);
+        
+        double width, height;
+        this.cv.get_maximum_size(out width, out height);
+        this.configure_adjustment(this.hadjustment, height);
+        this.configure_adjustment(this.vadjustment, width);
+        
+        this.vadjustment.value = (x / zoom);
+        this.hadjustment.value = (y / zoom);
     }
 }

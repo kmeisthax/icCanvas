@@ -41,6 +41,11 @@ namespace icCanvasManager {
          */
         void fit_curve(int max_pts);
     public:
+        /* The vector math library we use doesn't use C++11 alignas, so we need
+         * to install their own aligned new operator into the class.
+         */
+        EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+
         SplineFitter();
         virtual ~SplineFitter();
 

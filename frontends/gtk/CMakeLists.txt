@@ -25,6 +25,13 @@ link_directories(${GTK_LIBRARY_DIRS})
 include_directories(${GTK_INCLUDE_DIRS})
 
 pkg_check_modules(GEE gee-1.0)
+if (GEE_FOUND) #Stupid concession because Debian/Ubuntu package Gee with the wrong version number.
+    SET(SUCCESSFUL_GEE gee-1.0)
+else (GEE_FOUND)
+    pkg_check_modules(GEE gee-0.8)
+    SET(SUCCESSFUL_GEE gee-0.8)
+endif (GEE_FOUND)
+
 link_libraries(${GEE_LIBRARIES})
 link_directories(${GEE_LIBRARY_DIRS})
 include_directories(${GEE_INCLUDE_DIRS})
@@ -32,7 +39,7 @@ include_directories(${GEE_INCLUDE_DIRS})
 file(GLOB ICGTK_SRC_VALA RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} src/*.vala)
 include_directories(include)
 
-set(ICGTK_VALA_PACKAGES gtk+-3.0 glib-2.0 posix gee-1.0)
+set(ICGTK_VALA_PACKAGES gtk+-3.0 glib-2.0 posix ${SUCCESSFUL_GEE})
 
 vala_precompile(ICGTK_SRC ${ICGTK_SRC_VALA}
     PACKAGES ${ICGTK_VALA_PACKAGES}

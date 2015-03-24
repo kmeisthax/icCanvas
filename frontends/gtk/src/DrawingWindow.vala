@@ -33,6 +33,12 @@ class icCanvasGtk.DrawingWindow : Gtk.ApplicationWindow {
         
         this.ztool = new icCanvasManager.ZoomTool();
         
+        icCanvasManager.ZoomToolDelegateHooks zhooks = icCanvasManager.ZoomToolDelegateHooks();
+        zhooks.changed_scroll_and_zoom = this.canvaswdgt.set_scroll_center_and_zoom;
+        icCanvasManager.ZoomToolDelegate ztd = icCanvasManager.ZoomToolDelegate.construct_custom(zhooks);
+        
+        this.ztool.delegate = ztd;
+        
         this.switch_to_brushtool();
     }
     
