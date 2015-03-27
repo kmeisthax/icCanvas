@@ -7,7 +7,10 @@
 #include "icCanvasManager/rk4integrate.hpp"
 #include "icCanvasManager/mvbeizer.hpp"
 #include "icCanvasManager/brushstroke.hpp"
+
 #include "icCanvasManager/renderer.hpp"
+#include "icCanvasManager/cairorenderer.hpp"
+
 #include "icCanvasManager/drawing.hpp"
 #include "icCanvasManager/splinefitter.hpp"
 #include "icCanvasManager/canvasview.hpp"

@@ -133,6 +133,7 @@ namespace icCanvasManager {
         cairo_rectangle_t bounding_box();
 
         friend class Renderer;
+        friend class CairoRenderer;
         friend class SplineFitter;
     };
 };

@@ -1,7 +1,7 @@
 #include <icCanvasManager.hpp>
 
 icCanvasManager::RenderScheduler::RenderScheduler(icCanvasManager::Application* app) {
-    this->_renderer = new icCanvasManager::Renderer();
+    this->_renderer = new icCanvasManager::CairoRenderer();
     this->_app = app;
 };
 
@@ -115,14 +115,19 @@ void icCanvasManager::RenderScheduler::background_tick() {
     while (this->_unrendered.size() > 0 && rendered_requests < tick_request_limit) {
         auto req = this->_unrendered.back();
 
-        cairo_surface_t* imgsurf = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, icCanvasManager::TileCache::TILE_SIZE, icCanvasManager::TileCache::TILE_SIZE);
-        cairo_surface_reference(imgsurf);
-
-        this->_renderer->enterImageSurface(req.x, req.y, req.size, imgsurf);
+        this->_renderer->enter_new_surface(req.x, req.y, req.size);
 
         for (int i = 0; i < req.time; i++) {
-            this->_renderer->drawStroke(req.d->stroke_at_time(i));
+            this->_renderer->draw_stroke(req.d->stroke_at_time(i));
         }
+
+        cairo_surface_t* imgsurf = this->_renderer->retrieve_image_surface();
+        if (imgsurf == NULL) {
+            cairo_surface_t* imgsurf = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, icCanvasManager::TileCache::TILE_SIZE, icCanvasManager::TileCache::TILE_SIZE);
+            this->_renderer->transfer_to_image_surface(imgsurf);
+        }
+
+        cairo_surface_reference(imgsurf);
 
         icCanvasManager::RenderScheduler::__Response r = {req.d, req.x, req.y, req.size, req.time, imgsurf};
         this->_unrendered.pop_back();

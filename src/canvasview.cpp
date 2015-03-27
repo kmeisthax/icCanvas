@@ -4,8 +4,6 @@
 #include <algorithm>
 
 icCanvasManager::CanvasView::CanvasView() {
-    this->renderer = new icCanvasManager::Renderer();
-
     this->x_center = 0;
     this->y_center = 0;
     this->ui_scale = 1;

@@ -10,7 +10,6 @@ namespace icCanvasManager {
      * Library-side, platform agnostic holder of Canvas view behaviors.
      */
     class CanvasView : public RefCnt {
-        RefPtr<Renderer> renderer;
         RefPtr<Drawing> drawing;
 
         double width, height;   //In window-system coordinates.

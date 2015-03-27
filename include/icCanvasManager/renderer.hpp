@@ -9,49 +9,42 @@
 namespace icCanvasManager {
     /* Class which implements icCanvas drawing methods.
      */
-    class Renderer : public RefCnt {
+    class Renderer : public virtual RefCnt {
+    protected:
+        /* Convert stroke coordinates to tile space. */
+        void coord_to_tilespace(const int32_t x, const int32_t y, int32_t* out_tx, int32_t* out_ty);
+
         int32_t x, y, zoom;             //Canvas parameters
         int32_t tw, th;                 //Surface parameters
         float xscale, yscale;           //Derived caluations
         int32_t xmin, xmax, ymin, ymax;
-
-        cairo_surface_t* xrsurf;        //Cairo surface to draw on
-        cairo_t*         xrctxt;        //Context for current surface
-        
-        /* Convert stroke coordinates to tile space. */
-        void coordToTilespace(const int32_t x, const int32_t y, int32_t* out_tx, int32_t* out_ty);
-
-        /* Draw the current brush at a particular point. */
-        void applyBrush(RefPtr<BrushStroke> br, const BrushStroke::__ControlPoint &cp);
-        
-        class _DifferentialCurveFunctor;
-        float curve_arc_length(int polynomID, BrushStroke::__Spline::derivative_type &dt);
     public:
         Renderer();
         virtual ~Renderer();
 
-        /* Specify the current drawing surface, location, and zoom level.
+        /* Create a new tile surface of the renderer's own choosing.
          * 
-         * The cairo surface pointer given to the renderer does not transfer
-         * memory ownership, but must point to valid memory for the entire time
-         * that you draw with this renderer.
-         * 
-         * A fresh context will be created for your surface. For drawing onto
-         * already existing contexts, see enterContext.
+         * At this stage the renderer is not required to place the tile within
+         * a Cairo image surface.
          */
-        void enterSurface(const int32_t x, const int32_t y, const int32_t zoom, cairo_surface_t* xrsurf, const int height, const int width);
-
-        /* Convenience method for image surfaces. */
-        void enterImageSurface(const int32_t x, const int32_t y, const int32_t zoom, cairo_surface_t* xrsurf);
-        
-        /* Convenience method for drawing directly to GUI widgets.
-         */
-        void enterContext(const int32_t x, const int32_t y, const int32_t zoom, cairo_t* xrctxt, const int height, const int width);
+        virtual void enter_new_surface(const int32_t x, const int32_t y, const int32_t zoom) = 0;
         
         /* Given a brushstroke, draw it onto the surface at the specified
          * position and zoom level.
          */
-        void drawStroke(RefPtr<BrushStroke> br);
+        virtual void draw_stroke(RefPtr<BrushStroke> br) = 0;
+
+        /* After rendering has finished, it may be copied to a Cairo image
+         * surface of the client's choosing. This may happen in two ways:
+         *
+         *    The client may provide a compatible cairo_surface_t by
+         *    implementing the retrieve_image_surface method and returning
+         *    a non-NULL pointer.
+         *
+         *    The client may copy the current surface into a Cairo surface
+         */
+        virtual cairo_surface_t* retrieve_image_surface();
+        virtual void transfer_to_image_surface(cairo_surface_t* surf) = 0;
     };
 }
 
