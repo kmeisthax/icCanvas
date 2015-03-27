@@ -132,6 +132,7 @@ static const NSInteger _MARGINS = 15;
         }
         
         self->_empty_constraint = [NSLayoutConstraint constraintWithItem:self attribute:attr1 relatedBy:NSLayoutRelationGreaterThanOrEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0 constant:length];
+        self->_empty_constraint.priority = NSLayoutPriorityDefaultLow;
         
         [self addConstraint:self->_empty_constraint];
         return;
@@ -190,8 +191,15 @@ static const NSInteger _MARGINS = 15;
         margin = 0;
     }
     
-    [self addConstraint:[NSLayoutConstraint constraintWithItem:subview attribute:attr1 relatedBy:NSLayoutRelationEqual toItem:self attribute:attr1 multiplier:1.0 constant:margin]];
-    [self addConstraint:[NSLayoutConstraint constraintWithItem:subview attribute:attr2 relatedBy:NSLayoutRelationEqual toItem:self attribute:attr2 multiplier:1.0 constant:margin * -1.0]];
+    NSLayoutConstraint *leftMargin, *rightMargin;
+    leftMargin = [NSLayoutConstraint constraintWithItem:subview attribute:attr1 relatedBy:NSLayoutRelationEqual toItem:self attribute:attr1 multiplier:1.0 constant:margin];
+    rightMargin = [NSLayoutConstraint constraintWithItem:subview attribute:attr2 relatedBy:NSLayoutRelationEqual toItem:self attribute:attr2 multiplier:1.0 constant:margin * -1.0];
+
+    leftMargin.priority = NSLayoutPriorityDefaultHigh;
+    rightMargin.priority = NSLayoutPriorityDefaultHigh;
+
+    [self addConstraint:leftMargin];
+    [self addConstraint:rightMargin];
 };
 
 - (NSLayoutConstraint*)createConstraintStapleView:(NSView*)view1 toView:(NSView*)view2 {
@@ -235,6 +243,7 @@ static const NSInteger _MARGINS = 15;
     [self regenerateSpacingConstraints];
     
     NSLayoutConstraint *dont_hit_titlebar = [NSLayoutConstraint constraintWithItem:subview attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationGreaterThanOrEqual toItem:self.window.contentLayoutGuide attribute:NSLayoutAttributeTop multiplier:1 constant:0];
+
     dont_hit_titlebar.active = true;
     
     if ([subview respondsToSelector:@selector(setVertical:)]) {
@@ -270,6 +279,8 @@ static const NSInteger _MARGINS = 15;
             stapleConstraint = [self createConstraintStapleView:view toView:previousView];
         }
         
+        stapleConstraint.priority = NSLayoutPriorityDefaultHigh;
+
         [self addConstraint:stapleConstraint];
         [self->_spacing_constraints addObject:stapleConstraint];
         

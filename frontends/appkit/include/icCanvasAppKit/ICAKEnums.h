@@ -1,5 +1,7 @@
 #import <Cocoa/Cocoa.h>
 
+#define M_TAU (M_PI * 2.0f);
+
 typedef NS_ENUM(NSInteger, ICAKDockEdge) {
     ICAKDockEdgeTop,
     ICAKDockEdgeBottom,
@@ -18,7 +20,8 @@ typedef NS_ENUM(NSInteger, ICAKDockableToolbarBehavior) {
 };
 
 typedef NS_ENUM(NSInteger, ICAKColorPickerViewMode) {
-    ICAKColorPickerViewModeLinear,
+    ICAKColorPickerViewModeLinearHorizontal,
+    ICAKColorPickerViewModeLinearVertical,
     ICAKColorPickerViewModeCircular,
 };
 
