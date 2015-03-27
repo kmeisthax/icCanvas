@@ -15,17 +15,9 @@
     return self;
 };
 
-- (void)enterSurfaceAtX:(const int32_t)x andY:(const int32_t)y withZoom:(const int32_t)zoom andSurface:(cairo_surface_t*)xrsurf withHeight:(const int)height andWidth:(const int)width {
-    self->_wrapped->enterSurface(x, y, zoom, xrsurf, height, width);
-};
-
-- (void)enterImageSurfaceAtX:(const int32_t)x andY:(const int32_t)y withZoom:(const int32_t)zoom andSurface:(cairo_surface_t*)xrsurf {
-    self->_wrapped->enterImageSurface(x, y, zoom, xrsurf);
-};
-
 - (void)drawStroke:(ICMBrushStroke*)br {
     icCanvasManager::RefPtr<icCanvasManager::BrushStroke> cppbr = (icCanvasManager::BrushStroke*)[br getWrappedObject];
-    self->_wrapped->drawStroke(cppbr);
+    self->_wrapped->draw_stroke(cppbr);
 };
 
 - (void*)getWrappedObject {
