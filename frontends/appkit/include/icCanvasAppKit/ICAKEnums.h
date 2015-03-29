@@ -52,4 +52,4 @@ static const CGFloat ICAKDockableViewToolbarControlLength = ICAKDockableViewTool
 static const CGFloat ICAKDockableViewMinToolbarSize = ICAKDockableViewToolbarControlLength + ICAKDockableViewToolbarSideMargin * 2.0f;
 
 static const CGFloat ICAKDockableColorPanelInteriorMargin = 5.0f;
-static const CGFloat ICAKColorPickerViewLinearCrossLength = 60.0f;
+static const CGFloat ICAKColorPickerViewLinearCrossLength = 30.0f;
