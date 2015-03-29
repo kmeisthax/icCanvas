@@ -110,14 +110,17 @@
     NSMutableArray* colorsArray = [[NSMutableArray alloc] init];
     
     switch (chan) {
-        case ICAKColorPickerViewChannelHue:
-            [colorsArray addObject:(id)NSColor.redColor.CGColor];
-            [colorsArray addObject:(id)NSColor.yellowColor.CGColor];
-            [colorsArray addObject:(id)NSColor.greenColor.CGColor];
-            [colorsArray addObject:(id)NSColor.cyanColor.CGColor];
-            [colorsArray addObject:(id)NSColor.blueColor.CGColor];
-            [colorsArray addObject:(id)NSColor.purpleColor.CGColor];
-            [colorsArray addObject:(id)NSColor.redColor.CGColor];
+        case ICAKColorPickerViewChannelHue: {
+            CGFloat lightScale = self->colorLightness > 0.5f ? 1.0f : self->colorLightness * 2;
+            CGFloat overLightScale = self->colorLightness < 0.5f ? 0.0f : self->colorLightness * 2 - 1.0f;
+
+            [colorsArray addObject:(id)[NSColor colorWithDeviceRed:lightScale green:overLightScale blue:overLightScale alpha:1.0].CGColor];
+            [colorsArray addObject:(id)[NSColor colorWithDeviceRed:lightScale green:lightScale blue:overLightScale alpha:1.0].CGColor];
+            [colorsArray addObject:(id)[NSColor colorWithDeviceRed:overLightScale green:lightScale blue:overLightScale alpha:1.0].CGColor];
+            [colorsArray addObject:(id)[NSColor colorWithDeviceRed:overLightScale green:lightScale blue:lightScale alpha:1.0].CGColor];
+            [colorsArray addObject:(id)[NSColor colorWithDeviceRed:overLightScale green:overLightScale blue:lightScale alpha:1.0].CGColor];
+            [colorsArray addObject:(id)[NSColor colorWithDeviceRed:lightScale green:overLightScale blue:lightScale alpha:1.0].CGColor];
+            [colorsArray addObject:(id)[NSColor colorWithDeviceRed:lightScale green:overLightScale blue:overLightScale alpha:1.0].CGColor];
 
             if (outLocations) {
                 *outLocations = [NSArray arrayWithObjects:
@@ -129,15 +132,15 @@
                                     [NSNumber numberWithFloat:5.0f/6.0f],
                                     [NSNumber numberWithFloat:6.0f/6.0f], nil];
             }
+        }
             break;
         case ICAKColorPickerViewChannelSaturation:
+            [colorsArray addObject:(id)[NSColor colorWithDeviceRed:self->colorLightness green:self->colorLightness blue:self->colorLightness alpha:1.0].CGColor];
             if (isRadialChannel) {
-                [colorsArray addObject:(id)[NSColor colorWithDeviceRed:0.0 green:0.0 blue:0.0 alpha:0.0].CGColor];
+                [colorsArray addObject:(id)[NSColor colorWithDeviceRed:self->colorLightness green:self->colorLightness blue:self->colorLightness alpha:0.0].CGColor];
             } else {
                 [colorsArray addObject:(id)color.CGColor];
             }
-            
-            [colorsArray addObject:(id)[NSColor colorWithDeviceRed:1.0 green:1.0 blue:1.0 alpha:1.0].CGColor];
 
             if (outLocations) {
                 *outLocations = [NSArray arrayWithObjects:
@@ -148,7 +151,7 @@
         case ICAKColorPickerViewChannelLightness:
             [colorsArray addObject:(id)[NSColor colorWithDeviceRed:0.0 green:0.0 blue:0.0 alpha:1.0].CGColor];
             if (isRadialChannel) {
-                [colorsArray addObject:(id)[NSColor colorWithDeviceRed:0.0 green:0.0 blue:0.0 alpha:0.0].CGColor];
+                [colorsArray addObject:(id)[NSColor colorWithDeviceRed:0.5 green:0.5 blue:0.5 alpha:0.0].CGColor];
             } else {
                 [colorsArray addObject:(id)color.CGColor]; //TODO: Replace with hue
             }
@@ -161,10 +164,9 @@
                                     [NSNumber numberWithFloat:2.0f/2.0f], nil];
             }
             break;
-            /* TODO: Replace all of these with ones actually based on the color */
         case ICAKColorPickerViewChannelRed:
-            [colorsArray addObject:(id)[NSColor colorWithDeviceRed:0.0 green:0.0 blue:0.0 alpha:1.0].CGColor];
-            [colorsArray addObject:(id)NSColor.redColor.CGColor];
+            [colorsArray addObject:(id)[NSColor colorWithDeviceRed:0.0 green:self->colorGreen blue:self->colorBlue alpha:1.0].CGColor];
+            [colorsArray addObject:(id)[NSColor colorWithDeviceRed:1.0 green:self->colorGreen blue:self->colorBlue alpha:1.0].CGColor];
 
             if (outLocations) {
                 *outLocations = [NSArray arrayWithObjects:
@@ -173,8 +175,8 @@
             }
             break;
         case ICAKColorPickerViewChannelGreen:
-            [colorsArray addObject:(id)[NSColor colorWithDeviceRed:0.0 green:0.0 blue:0.0 alpha:1.0].CGColor];
-            [colorsArray addObject:(id)NSColor.greenColor.CGColor];
+            [colorsArray addObject:(id)[NSColor colorWithDeviceRed:self->colorRed green:0.0 blue:self->colorBlue alpha:1.0].CGColor];
+            [colorsArray addObject:(id)[NSColor colorWithDeviceRed:self->colorRed green:1.0 blue:self->colorBlue alpha:1.0].CGColor];
 
             if (outLocations) {
                 *outLocations = [NSArray arrayWithObjects:
@@ -183,8 +185,8 @@
             }
             break;
         case ICAKColorPickerViewChannelBlue:
-            [colorsArray addObject:(id)[NSColor colorWithDeviceRed:0.0 green:0.0 blue:0.0 alpha:1.0].CGColor];
-            [colorsArray addObject:(id)NSColor.blueColor.CGColor];
+            [colorsArray addObject:(id)[NSColor colorWithDeviceRed:self->colorRed green:self->colorGreen blue:0.0 alpha:1.0].CGColor];
+            [colorsArray addObject:(id)[NSColor colorWithDeviceRed:self->colorRed green:self->colorGreen blue:1.0 alpha:1.0].CGColor];
 
             if (outLocations) {
                 *outLocations = [NSArray arrayWithObjects:
@@ -193,8 +195,8 @@
             }
             break;
         case ICAKColorPickerViewChannelAlpha:
+            [colorsArray addObject:(id)[NSColor colorWithDeviceRed:self->colorRed green:self->colorGreen blue:self->colorBlue alpha:0.0].CGColor];
             [colorsArray addObject:(id)color.CGColor];
-            [colorsArray addObject:(id)[NSColor colorWithDeviceRed:0.0 green:0.0 blue:0.0 alpha:0.0].CGColor];
 
             if (outLocations) {
                 *outLocations = [NSArray arrayWithObjects:
@@ -203,7 +205,7 @@
             }
             break;
         default:
-            NSLog(@"Ravenholm u sudnt com here");
+            NSLog(@"john freeman looked at road sign and saw ravenholm with someons writing under it saying u sudnt come here");
             break;
     }
     
@@ -383,6 +385,11 @@
 - (void)setCurrentColor:(NSColor*)color {
 
     self->currentColor = color;
+
+    [self updateInternalHSLFromColor];
+
+    self.linearChannel = self.linearChannel;
+    self.radialChannel = self.radialChannel;
 };
 
 - (BOOL)layer:(CALayer *)layer shouldInheritContentsScale:(CGFloat)newScale fromWindow:(NSWindow *)window {
