@@ -54,7 +54,8 @@
         pressureConstraint.active = YES;
         
         self.layer = [CALayer layer];
-        self.layer.backgroundColor = (__bridge struct CGColor*)NSColor.blueColor;
+        self.layer.borderColor = NSColor.blackColor.CGColor;
+        self.layer.borderWidth = 1.0f; //TODO: Adjust border width based on screen pixel density
         self.layer.delegate = self;
         
         self->angleRadialLayer = [AngleGradientLayer layer];
@@ -95,10 +96,20 @@
     
     if (mode == ICAKColorPickerViewModeCircular) {
         self.layer.cornerRadius = self.layer.bounds.size.width / 2.0f;
-        self.layer.masksToBounds = YES;
+        self->linearLayer.cornerRadius = self.layer.bounds.size.width / 2.0f;
+        self->linearLayer.masksToBounds = YES;
+        self->angleRadialLayer.cornerRadius = self.layer.bounds.size.width / 2.0f;
+        self->angleRadialLayer.masksToBounds = YES;
+        self->radialLayer.cornerRadius = self.layer.bounds.size.width / 2.0f;
+        self->radialLayer.masksToBounds = YES;
     } else {
         self.layer.cornerRadius = 0.0f;
-        self.layer.masksToBounds = NO;
+        self->linearLayer.cornerRadius = 0.0f;
+        self->linearLayer.masksToBounds = NO;
+        self->angleRadialLayer.cornerRadius = 0.0f;
+        self->angleRadialLayer.masksToBounds = NO;
+        self->radialLayer.cornerRadius = 0.0f;
+        self->radialLayer.masksToBounds = NO;
     }
 
     self.layer.frame = self.frame;
