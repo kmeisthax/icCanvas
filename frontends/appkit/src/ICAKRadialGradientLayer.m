@@ -49,13 +49,25 @@
             gradColors[colNum * 4 + 3] = comps[1];
         }
 
-        if (gradLocationsNum > 1) {
-            gradLocations[colNum] = 1.0f / (gradLocationsNum - 1) * colNum;
-        } else {
-            gradLocations[colNum] = 0.0f;
+        if (self.locations == nil) {
+            if (gradLocationsNum > 1) {
+                gradLocations[colNum] = 1.0f / (gradLocationsNum - 1) * colNum;
+            } else {
+                gradLocations[colNum] = 0.0f;
+            }
         }
 
         colNum++;
+    }
+
+    if (self.locations != nil) {
+        colNum = 0;
+        for (NSNumber* n in self.locations) {
+            if (colNum == gradLocationsNum) break;
+
+            gradLocations[colNum] = n.floatValue;
+            colNum++;
+        }
     }
 
     CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
@@ -63,7 +75,7 @@
     CGColorSpaceRelease(colorSpace);
 
     CGPoint gradCenter= CGPointMake(self.bounds.size.width/2, self.bounds.size.height/2);
-    float gradRadius = MIN(self.bounds.size.width , self.bounds.size.height);
+    float gradRadius = MIN(self.bounds.size.width, self.bounds.size.height) / 2;
 
     CGContextDrawRadialGradient(ctx, gradient, gradCenter, 0, gradCenter, gradRadius, 0);
 
