@@ -5,7 +5,7 @@
 
 @interface ICAKColorPickerView (Private)
 
-- (NSArray*)gradientColorsForChannel:(ICAKColorPickerViewChannel)chan withCurrentColor:(NSColor*)color isRadialChannel:(BOOL)radialChannel;
+- (NSArray*)gradientColorsForChannel:(ICAKColorPickerViewChannel)chan withCurrentColor:(NSColor*)color isRadialChannel:(BOOL)radialChannel writeLocations:(NSArray**)outLocations;
 
 - (NSColor*)evaluateGradient:(NSArray*)colors atPoint:(CGFloat)pt;
 - (NSColor*)blendColor:(NSColor*)col1 withColor:(NSColor*)col2;
@@ -16,6 +16,8 @@
 - (void)selectColorAtPoint:(NSPoint)pt;
 
 - (void)fireAction;
+
+- (void)layoutSublayersOfLayer:(CALayer *)layer;
 
 @end
 
@@ -32,6 +34,8 @@
     NSColor *currentColor;
     CGFloat colorAlpha, colorHue, colorSaturation, colorLightness, colorRed, colorBlue, colorGreen;
 
+    NSLayoutConstraint* shapeConstraint;
+
     SEL action;
     id target;
 }
@@ -39,38 +43,37 @@
 - (id)init {
     self = [super init];
     if (self) {
-        self.layer = [[CALayer alloc] init];
-        self.layer.layoutManager = [CAConstraintLayoutManager layoutManager];
+        self.translatesAutoresizingMaskIntoConstraints = NO;
         
-        self->linearLayer = [[CAGradientLayer alloc] init];
-        self->linearLayer.type = kCAGradientLayerAxial;
-        self->linearLayer.delegate = self;
+        NSLayoutConstraint *pressureConstraint = [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationGreaterThanOrEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0 constant:1.0];
         
-        [self->linearLayer addConstraint:[CAConstraint constraintWithAttribute:kCAConstraintWidth relativeTo:@"superlayer" attribute:kCAConstraintWidth]];
-        [self->linearLayer addConstraint:[CAConstraint constraintWithAttribute:kCAConstraintHeight relativeTo:@"superlayer" attribute:kCAConstraintHeight]];
-        [self->linearLayer addConstraint:[CAConstraint constraintWithAttribute:kCAConstraintMidX relativeTo:@"superlayer" attribute:kCAConstraintMidX]];
-        [self->linearLayer addConstraint:[CAConstraint constraintWithAttribute:kCAConstraintMidY relativeTo:@"superlayer" attribute:kCAConstraintMidY]];
-        [self.layer addSublayer:self->linearLayer];
+        pressureConstraint.active = YES;
+
+        pressureConstraint = [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationGreaterThanOrEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0 constant:1.0];
+
+        pressureConstraint.active = YES;
         
-        self->angleRadialLayer = [[AngleGradientLayer alloc] init];
-        self->angleRadialLayer.delegate = self;
+        self.layer = [CALayer layer];
+        self.layer.backgroundColor = (__bridge struct CGColor*)NSColor.blueColor;
+        self.layer.delegate = self;
         
-        [self->angleRadialLayer addConstraint:[CAConstraint constraintWithAttribute:kCAConstraintWidth relativeTo:@"superlayer" attribute:kCAConstraintWidth]];
-        [self->angleRadialLayer addConstraint:[CAConstraint constraintWithAttribute:kCAConstraintHeight relativeTo:@"superlayer" attribute:kCAConstraintHeight]];
-        [self->angleRadialLayer addConstraint:[CAConstraint constraintWithAttribute:kCAConstraintMidX relativeTo:@"superlayer" attribute:kCAConstraintMidX]];
-        [self->angleRadialLayer addConstraint:[CAConstraint constraintWithAttribute:kCAConstraintMidY relativeTo:@"superlayer" attribute:kCAConstraintMidY]];
+        self->angleRadialLayer = [AngleGradientLayer layer];
+        self->angleRadialLayer.name = @"angleRadialLayer";
+        self->angleRadialLayer.contentsGravity = kCAGravityResize;
         [self.layer addSublayer:self->angleRadialLayer];
 
-        self->radialLayer = [[ICAKRadialGradientLayer alloc] init];
-        self->radialLayer.delegate = self;
-
-        [self->radialLayer addConstraint:[CAConstraint constraintWithAttribute:kCAConstraintWidth relativeTo:@"superlayer" attribute:kCAConstraintWidth]];
-        [self->radialLayer addConstraint:[CAConstraint constraintWithAttribute:kCAConstraintHeight relativeTo:@"superlayer" attribute:kCAConstraintHeight]];
-        [self->radialLayer addConstraint:[CAConstraint constraintWithAttribute:kCAConstraintMidX relativeTo:@"superlayer" attribute:kCAConstraintMidX]];
-        [self->radialLayer addConstraint:[CAConstraint constraintWithAttribute:kCAConstraintMidY relativeTo:@"superlayer" attribute:kCAConstraintMidY]];
+        self->radialLayer = [ICAKRadialGradientLayer layer];
+        self->radialLayer.name = @"radialLayer";
+        self->radialLayer.contentsGravity = kCAGravityResize;
         [self.layer addSublayer:self->radialLayer];
         
-        self.currentColor = NSColor.blackColor;
+        self->linearLayer = [CAGradientLayer layer];
+        self->linearLayer.name = @"linearLayer";
+        //self->linearLayer.type = kCAGradientLayerAxial;
+        self->linearLayer.contentsGravity = kCAGravityResize;
+        [self.layer addSublayer:self->linearLayer];
+
+        self.currentColor = [NSColor colorWithDeviceRed:0.0 green:0.0 blue:0.0 alpha:1.0];
         self.mode = ICAKColorPickerViewModeLinearVertical;
         self.linearChannel = ICAKColorPickerViewChannelRed;
         self.radialChannel = ICAKColorPickerViewChannelLightness;
@@ -81,7 +84,20 @@
     return self;
 };
 
-- (NSArray*)gradientColorsForChannel:(ICAKColorPickerViewChannel)chan withCurrentColor:(NSColor*)color isRadialChannel:(BOOL)isRadialChannel {
+- (void)layoutSublayersOfLayer:(CALayer *)layer {
+    self->linearLayer.frame = layer.bounds;
+    self->angleRadialLayer.frame = layer.bounds;
+    self->radialLayer.frame = layer.bounds;
+};
+
+- (void)setFrame:(NSRect)rect {
+    [super setFrame:rect];
+
+    self.layer.frame = self.frame;
+    NSLog(@"Picker Frame: %fx%f@%fx%f", rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
+};
+
+- (NSArray*)gradientColorsForChannel:(ICAKColorPickerViewChannel)chan withCurrentColor:(NSColor*)color isRadialChannel:(BOOL)isRadialChannel writeLocations:(NSArray**)outLocations {
     /* TODO: Modify channel colors based on current color */
     NSMutableArray* colorsArray = [[NSMutableArray alloc] init];
     
@@ -94,43 +110,92 @@
             [colorsArray addObject:(id)NSColor.blueColor.CGColor];
             [colorsArray addObject:(id)NSColor.purpleColor.CGColor];
             [colorsArray addObject:(id)NSColor.redColor.CGColor];
+
+            if (outLocations) {
+                *outLocations = [NSArray arrayWithObjects:
+                                    [NSNumber numberWithFloat:0.0f/6.0f],
+                                    [NSNumber numberWithFloat:1.0f/6.0f],
+                                    [NSNumber numberWithFloat:2.0f/6.0f],
+                                    [NSNumber numberWithFloat:3.0f/6.0f],
+                                    [NSNumber numberWithFloat:4.0f/6.0f],
+                                    [NSNumber numberWithFloat:5.0f/6.0f],
+                                    [NSNumber numberWithFloat:6.0f/6.0f], nil];
+            }
             break;
         case ICAKColorPickerViewChannelSaturation:
             if (isRadialChannel) {
-                [colorsArray addObject:(id)NSColor.clearColor.CGColor];
+                [colorsArray addObject:(id)[NSColor colorWithDeviceRed:0.0 green:0.0 blue:0.0 alpha:0.0].CGColor];
             } else {
                 [colorsArray addObject:(id)color.CGColor];
             }
             
-            [colorsArray addObject:(id)NSColor.whiteColor.CGColor];
+            [colorsArray addObject:(id)[NSColor colorWithDeviceRed:1.0 green:1.0 blue:1.0 alpha:1.0].CGColor];
+
+            if (outLocations) {
+                *outLocations = [NSArray arrayWithObjects:
+                                    [NSNumber numberWithFloat:0.0f/1.0f],
+                                    [NSNumber numberWithFloat:1.0f/1.0f], nil];
+            }
             break;
         case ICAKColorPickerViewChannelLightness:
-            [colorsArray addObject:(id)NSColor.blackColor.CGColor];
+            [colorsArray addObject:(id)[NSColor colorWithDeviceRed:0.0 green:0.0 blue:0.0 alpha:1.0].CGColor];
             if (isRadialChannel) {
-                [colorsArray addObject:(id)NSColor.clearColor.CGColor];
+                [colorsArray addObject:(id)[NSColor colorWithDeviceRed:0.0 green:0.0 blue:0.0 alpha:0.0].CGColor];
             } else {
                 [colorsArray addObject:(id)color.CGColor]; //TODO: Replace with hue
             }
-            [colorsArray addObject:(id)NSColor.whiteColor.CGColor];
+            [colorsArray addObject:(id)[NSColor colorWithDeviceRed:1.0 green:1.0 blue:1.0 alpha:1.0].CGColor];
+
+            if (outLocations) {
+                *outLocations = [NSArray arrayWithObjects:
+                                    [NSNumber numberWithFloat:0.0f/2.0f],
+                                    [NSNumber numberWithFloat:1.0f/2.0f],
+                                    [NSNumber numberWithFloat:2.0f/2.0f], nil];
+            }
             break;
             /* TODO: Replace all of these with ones actually based on the color */
         case ICAKColorPickerViewChannelRed:
-            [colorsArray addObject:(id)NSColor.blackColor.CGColor];
+            [colorsArray addObject:(id)[NSColor colorWithDeviceRed:0.0 green:0.0 blue:0.0 alpha:1.0].CGColor];
             [colorsArray addObject:(id)NSColor.redColor.CGColor];
+
+            if (outLocations) {
+                *outLocations = [NSArray arrayWithObjects:
+                                    [NSNumber numberWithFloat:0.0f/1.0f],
+                                    [NSNumber numberWithFloat:1.0f/1.0f], nil];
+            }
             break;
         case ICAKColorPickerViewChannelGreen:
-            [colorsArray addObject:(id)NSColor.blackColor.CGColor];
+            [colorsArray addObject:(id)[NSColor colorWithDeviceRed:0.0 green:0.0 blue:0.0 alpha:1.0].CGColor];
             [colorsArray addObject:(id)NSColor.greenColor.CGColor];
+
+            if (outLocations) {
+                *outLocations = [NSArray arrayWithObjects:
+                                    [NSNumber numberWithFloat:0.0f/1.0f],
+                                    [NSNumber numberWithFloat:1.0f/1.0f], nil];
+            }
             break;
         case ICAKColorPickerViewChannelBlue:
-            [colorsArray addObject:(id)NSColor.blackColor.CGColor];
+            [colorsArray addObject:(id)[NSColor colorWithDeviceRed:0.0 green:0.0 blue:0.0 alpha:1.0].CGColor];
             [colorsArray addObject:(id)NSColor.blueColor.CGColor];
+
+            if (outLocations) {
+                *outLocations = [NSArray arrayWithObjects:
+                                    [NSNumber numberWithFloat:0.0f/1.0f],
+                                    [NSNumber numberWithFloat:1.0f/1.0f], nil];
+            }
             break;
         case ICAKColorPickerViewChannelAlpha:
             [colorsArray addObject:(id)color.CGColor];
-            [colorsArray addObject:(id)NSColor.clearColor.CGColor];
+            [colorsArray addObject:(id)[NSColor colorWithDeviceRed:0.0 green:0.0 blue:0.0 alpha:0.0].CGColor];
+
+            if (outLocations) {
+                *outLocations = [NSArray arrayWithObjects:
+                                    [NSNumber numberWithFloat:0.0f/1.0f],
+                                    [NSNumber numberWithFloat:1.0f/1.0f], nil];
+            }
             break;
         default:
+            NSLog(@"Ravenholm u sudnt com here");
             break;
     }
     
@@ -142,10 +207,18 @@
 };
 
 - (void)setMode:(ICAKColorPickerViewMode)newmode {
+    if (self->shapeConstraint != nil) {
+        self->shapeConstraint.active = NO;
+    }
+
     if (newmode == ICAKColorPickerViewModeCircular) {
         self->linearLayer.opacity = 0.0f;
         self->angleRadialLayer.opacity = 1.0f;
         self->radialLayer.opacity = 1.0f;
+
+        self->shapeConstraint = [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeWidth multiplier:1.0f constant:0.0];
+        self->shapeConstraint.priority = NSLayoutPriorityDefaultHigh;
+        self->shapeConstraint.active = YES;
     } else if (newmode == ICAKColorPickerViewModeLinearHorizontal) {
         self->linearLayer.opacity = 1.0f;
         self->angleRadialLayer.opacity = 0.0f;
@@ -155,15 +228,23 @@
 
         self->linearLayer.startPoint = start;
         self->linearLayer.endPoint = end;
+
+        self->shapeConstraint = [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0f constant:ICAKColorPickerViewLinearCrossLength];
+        self->shapeConstraint.priority = NSLayoutPriorityDefaultHigh;
+        self->shapeConstraint.active = YES;
     } else if (newmode == ICAKColorPickerViewModeLinearVertical) {
         self->linearLayer.opacity = 1.0f;
         self->angleRadialLayer.opacity = 0.0f;
         self->radialLayer.opacity = 0.0f;
 
-        NSPoint start = {0.5, 0.0}, end = {0.5, 1.0};
+        NSPoint start = {0.5, 1.0}, end = {0.5, 0.0};
 
         self->linearLayer.startPoint = start;
         self->linearLayer.endPoint = end;
+
+        self->shapeConstraint = [NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0f constant:ICAKColorPickerViewLinearCrossLength];
+        self->shapeConstraint.priority = NSLayoutPriorityDefaultHigh;
+        self->shapeConstraint.active = YES;
     }
     
     self->mode = newmode;
@@ -173,10 +254,19 @@
     return self->linearChannel;
 };
 - (void)setLinearChannel:(ICAKColorPickerViewChannel)channel {
-    NSArray* colors = [self gradientColorsForChannel:channel withCurrentColor:self->currentColor isRadialChannel:NO];
+    NSArray* locations = nil;
+
+    NSArray* colors = [self gradientColorsForChannel:channel withCurrentColor:self->currentColor isRadialChannel:NO writeLocations:&locations];
     
     self->linearLayer.colors = colors;
-    self->radialLayer.colors = colors;
+    self->linearLayer.locations = locations;
+
+    locations = nil;
+    NSArray* colors2 = [self gradientColorsForChannel:channel withCurrentColor:self->currentColor isRadialChannel:NO writeLocations:&locations];
+
+    self->angleRadialLayer.colors = colors2;
+    self->angleRadialLayer.locations = locations;
+
     self->linearChannel = channel;
 };
 
@@ -184,9 +274,12 @@
     return self->radialChannel;
 };
 - (void)setRadialChannel:(ICAKColorPickerViewChannel)channel {
-    NSArray* colors = [self gradientColorsForChannel:channel withCurrentColor:self->currentColor isRadialChannel:YES];
+    NSArray* locations = nil;
 
-    self->angleRadialLayer.colors = colors;
+    NSArray* colors = [self gradientColorsForChannel:channel withCurrentColor:self->currentColor isRadialChannel:YES writeLocations:&locations];
+
+    self->radialLayer.colors = colors;
+    self->radialLayer.locations = locations;
     self->radialChannel = channel;
 };
 

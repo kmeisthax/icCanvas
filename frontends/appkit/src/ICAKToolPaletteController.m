@@ -61,4 +61,16 @@
     }
 };
 
+- (ICAKDockableView*)createDockableColorPanel {
+    ICAKDockablePanel* dp = [[ICAKDockablePanel alloc] init];
+    ICAKDockableColorPanel* dcp = [[ICAKDockableColorPanel alloc] init];
+
+    dp.label = @"Color Panel";
+    dp.contentView = dcp;
+
+    //TODO: Color change event handling
+
+    return dp;
+};
+
 @end

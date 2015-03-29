@@ -1,7 +1,9 @@
 #import <icCanvasAppKit.h>
+#import <Cocoa/Cocoa.h>
 
-@interface ICAKDockableColorPanel : ICAKDockablePanel
+@interface ICAKDockableColorPanel : NSView
 
-- (id)init;
+- (NSColor*) selectedColor;
+- (void) setSelectedColor:(NSColor*)color;
 
 @end

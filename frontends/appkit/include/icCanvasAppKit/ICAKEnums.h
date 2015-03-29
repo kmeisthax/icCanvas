@@ -37,6 +37,8 @@ typedef NS_ENUM(NSInteger, ICAKColorPickerViewChannel) {
 };
 
 static const CGFloat ICAKDockableViewPanelMargins = 15.0f;
+static const CGFloat ICAKDockableViewPanelLabelHeight = 20.0f;
+static const CGFloat ICAKDockableViewPanelLabelMargin = 5.0f;
 static const CGFloat ICAKDockableViewMinPanelSize = 240.0f;
 
 static const CGFloat ICAKDockableViewToolbarTopMargin = 5.0f;
@@ -48,3 +50,6 @@ static const CGFloat ICAKDockableViewToolbarControlIconSize = 24.0f;
 static const CGFloat ICAKDockableViewToolbarControlPadding = 3.0f;
 static const CGFloat ICAKDockableViewToolbarControlLength = ICAKDockableViewToolbarControlIconSize + ICAKDockableViewToolbarControlPadding * 2.0f;
 static const CGFloat ICAKDockableViewMinToolbarSize = ICAKDockableViewToolbarControlLength + ICAKDockableViewToolbarSideMargin * 2.0f;
+
+static const CGFloat ICAKDockableColorPanelInteriorMargin = 5.0f;
+static const CGFloat ICAKColorPickerViewLinearCrossLength = 60.0f;
