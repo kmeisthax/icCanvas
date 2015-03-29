@@ -92,6 +92,14 @@
 
 - (void)setFrame:(NSRect)rect {
     [super setFrame:rect];
+    
+    if (mode == ICAKColorPickerViewModeCircular) {
+        self.layer.cornerRadius = self.layer.bounds.size.width / 2.0f;
+        self.layer.masksToBounds = YES;
+    } else {
+        self.layer.cornerRadius = 0.0f;
+        self.layer.masksToBounds = NO;
+    }
 
     self.layer.frame = self.frame;
     NSLog(@"Picker Frame: %fx%f@%fx%f", rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
