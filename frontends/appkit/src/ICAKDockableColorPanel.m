@@ -97,6 +97,13 @@
 
 - (void) setSelectedColor:(NSColor*)color {
     self->selectedColor = color;
+
+    self->radialPicker.currentColor = color;
+    self->linearLightnessPicker.currentColor = color;
+    self->linearRedPicker.currentColor = color;
+    self->linearGreenPicker.currentColor = color;
+    self->linearBluePicker.currentColor = color;
+    self->linearAlphaPicker.currentColor = color;
 };
 
 @end
