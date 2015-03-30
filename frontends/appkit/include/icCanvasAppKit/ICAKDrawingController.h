@@ -16,4 +16,8 @@
 - (void)brushToolCapturedStroke:(ICMBrushStroke*)stroke;
 - (void)changedScrollX:(const double)x andY:(const double)y andZoom:(const double)zoom;
 
+//Brush settings
+- (void)setCurrentColor:(NSColor*)color;
+- (NSColor*)currentColor;
+
 @end
