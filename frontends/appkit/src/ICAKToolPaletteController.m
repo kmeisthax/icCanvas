@@ -5,6 +5,8 @@
 - (void)didSelectBrushTool;
 - (void)didSelectZoomTool;
 
+- (void)dockableColorPicker:(ICAKDockableColorPanel*)view wasAssignedColor:(NSColor*)col;
+
 @end
 
 @implementation ICAKToolPaletteController {
@@ -67,10 +69,25 @@
 
     dp.label = @"Color Panel";
     dp.contentView = dcp;
+    dcp.selectedColor = NSColor.yellowColor;
 
-    //TODO: Color change event handling
+    [dcp setAction:@selector(dockableColorPicker:wasAssignedColor:) andTarget:self];
+
+    //TODO: When we have multiple windows, we need to ensure the panel reflects
+    //the current color of the selected or docked window.
 
     return dp;
+};
+
+- (void)dockableColorPicker:(ICAKDockableColorPanel*)view wasAssignedColor:(NSColor*)col {
+    ICAKDockablePanel* superview = (ICAKDockablePanel*)view;
+    NSWindowController* controller = [self->_dock findActionTargetForDockable:superview];
+
+    if (controller != nil) {
+        if ([controller isKindOfClass:ICAKDrawingController.class]) {
+            [(ICAKDrawingController*)controller setCurrentColor:col];
+        }
+    }
 };
 
 @end
