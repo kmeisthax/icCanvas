@@ -24,8 +24,8 @@ const static int ICMBrushStrokeTiltAngleFull = 129600;
 - (void)penExtendWithContinuityLevel:(int) lvl;
 - (void)penBack;
 
-- (void)setBrushTintRed:(int)r green:(int)g blue:(int)g;
-- (void)brushTintRed:(int*)r green:(int*)g blue:(int*)g;
+- (void)setBrushTintRed:(int)r green:(int)g blue:(int)b;
+- (void)brushTintRed:(int*)r green:(int*)g blue:(int*)b;
 
 - (void)setBrushOpacity:(int)alpha;
 - (int)brushOpacity;
