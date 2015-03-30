@@ -408,17 +408,48 @@
 };
 
 - (NSColor*)evaluateGradient:(NSArray*)colors atPoint:(CGFloat)pt {
-    NSInteger ptfloor = floor(pt * (colors.count - 1)),
-              ptceil = ceil(pt * (colors.count - 1));
-    CGFloat ptfrac = ptfloor - (pt * (colors.count - 1));
-    NSColor* minColor = [colors objectAtIndex:ptfloor],
-           * maxColor = [colors objectAtIndex:ptceil];
+    if (colors.count == 0) return NSColor.blackColor;
+
+    NSInteger ptfloor = fmax(0, floor(pt * (colors.count - 1))),
+              ptceil = fmin(colors.count - 1, ceil(pt * (colors.count - 1)));
+    CGFloat ptfrac = pt * (colors.count - 1) - ptfloor;
+    CGColorRef minColor = (__bridge CGColorRef)[colors objectAtIndex:ptfloor],
+               maxColor = (__bridge CGColorRef)[colors objectAtIndex:ptceil];
+
+    NSLog(@"PT:%f frac:%f", pt, ptfrac);
 
     //Get the new color by evaluating the channel's own color gradient.
     CGFloat minred, mingreen, minblue, minalpha,
             maxred, maxgreen, maxblue, maxalpha;
-    [minColor getRed:&minred green:&mingreen blue:&minblue alpha:&minalpha];
-    [maxColor getRed:&maxred green:&maxgreen blue:&maxblue alpha:&maxalpha];
+
+    const CGFloat *minComponents = CGColorGetComponents(minColor),
+                  *maxComponents = CGColorGetComponents(maxColor);
+
+    size_t minCompCount = CGColorGetNumberOfComponents(minColor),
+           maxCompCount = CGColorGetNumberOfComponents(maxColor);
+
+    if (minCompCount < 4) {
+        minalpha = minComponents[1];
+        minred = minComponents[0];
+        mingreen = minComponents[0];
+        minblue = minComponents[0];
+    } else {
+        minalpha = minComponents[3];
+        minred = minComponents[0];
+        mingreen = minComponents[1];
+        minblue = minComponents[2];
+    }
+    if (maxCompCount < 4) {
+        maxalpha = maxComponents[1];
+        maxred = maxComponents[0];
+        maxgreen = maxComponents[0];
+        maxblue = maxComponents[0];
+    } else {
+        maxalpha = maxComponents[3];
+        maxred = maxComponents[0];
+        maxgreen = maxComponents[1];
+        maxblue = maxComponents[2];
+    }
 
     CGFloat sumRed = (maxred - minred) * ptfrac + minred,
             sumGreen = (maxgreen - mingreen) * ptfrac + mingreen,
@@ -454,9 +485,14 @@
         linearPosition = (self.bounds.size.height - pt.y) / self.bounds.size.height;
     } else if (self->mode == ICAKColorPickerViewModeCircular) {
         NSPoint centerPos = {self.bounds.size.width / 2.0f, self.bounds.size.height / 2.0f};
-        linearPosition = sqrt((pt.x - centerPos.x) * 2.0f + (pt.y - centerPos.y) * 2.0f) / centerPos.x;
-        radialPosition = (atan2((pt.y - centerPos.y), (pt.x - centerPos.x)) + M_PI) / M_TAU;
+        linearPosition = sqrt(pow(fabs(pt.x - centerPos.x), 2.0f) + pow(fabs(pt.y - centerPos.y), 2.0f)) / centerPos.x;
+        radialPosition = (atan2((pt.x - centerPos.x), (pt.y - centerPos.y)) + M_PI) / M_TAU;
+        radialPosition = fmod((radialPosition + 0.25f), 1.0f);
     }
+
+    if (isnan(linearPosition)) linearPosition = 0;
+
+    NSLog(@"selectPt: %fx%f", linearPosition, radialPosition);
 
     //Get the new color by evaluating the channel's own color gradient.
     if (self->mode == ICAKColorPickerViewModeCircular) {
@@ -464,7 +500,7 @@
         NSColor* linearColor = [self evaluateGradient:self->radialLayer.colors atPoint:linearPosition];
         NSColor* radialColor = [self evaluateGradient:self->angleRadialLayer.colors atPoint:radialPosition];
 
-        NSColor* blentColor = [self blendColor:radialColor withColor:linearColor];
+        NSColor* blentColor = [self blendColor:linearColor withColor:radialColor];
         self->currentColor = blentColor;
     } else {
         NSColor* linearColor = [self evaluateGradient:self->linearLayer.colors atPoint:linearPosition];

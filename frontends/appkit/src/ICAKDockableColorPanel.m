@@ -11,6 +11,9 @@
 
     ICAKColorPickerView *radialPicker, *linearLightnessPicker,
         *linearRedPicker, *linearGreenPicker, *linearBluePicker, *linearAlphaPicker;
+
+    SEL action;
+    id target;
 }
 
 - (id)init {
@@ -104,6 +107,40 @@
     self->linearGreenPicker.currentColor = color;
     self->linearBluePicker.currentColor = color;
     self->linearAlphaPicker.currentColor = color;
+};
+
+- (void)setAction:(SEL)newaction andTarget:(id)newtarget {
+    self->action = newaction;
+    self->target = newtarget;
+};
+
+- (void)colorPicker:(ICAKColorPickerView*)picker didCaptureColor:(NSColor*)color {
+    self->radialPicker.currentColor = color;
+    self->linearLightnessPicker.currentColor = color;
+    self->linearRedPicker.currentColor = color;
+    self->linearGreenPicker.currentColor = color;
+    self->linearBluePicker.currentColor = color;
+    self->linearAlphaPicker.currentColor = color;
+
+    if (self->action != nil && self->target != nil) {
+        NSInvocation* inv = [NSInvocation invocationWithMethodSignature:[self->target methodSignatureForSelector:self->action]];
+        inv.selector = self->action;
+
+        NSInteger argCount = inv.methodSignature.numberOfArguments;
+
+        //Effective method signature:
+        // -(void)dockableColorPicker:(ICAKDockableColorPanel*)view wasAssignedColor:(NSColor*)col;
+        if (argCount > 2) { //one argument, counting the hidden IMP arguments
+            __unsafe_unretained id unsafe_self = self;
+            [inv setArgument:&unsafe_self atIndex:2];
+        }
+
+        if (argCount > 3) { //two arguments, counting the hidden IMP arguments
+            [inv setArgument:&color atIndex:3];
+        }
+
+        [inv invokeWithTarget:self->target];
+    }
 };
 
 @end

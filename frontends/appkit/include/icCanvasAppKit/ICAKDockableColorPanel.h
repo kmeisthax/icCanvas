@@ -6,4 +6,6 @@
 - (NSColor*) selectedColor;
 - (void) setSelectedColor:(NSColor*)color;
 
+- (void)setAction:(SEL)action andTarget:(id)target;
+
 @end
