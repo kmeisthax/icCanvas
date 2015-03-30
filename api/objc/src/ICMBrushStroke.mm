@@ -65,6 +65,20 @@
     self->_wrapped->pen_back();
 };
 
+- (void)setBrushTintRed:(int)r green:(int)g blue:(int)g {
+    self->_wrapped->set_brush_tint(r, g, b);
+};
+- (void)brushTintRed:(int*)r green:(int*)g blue:(int*)g {
+    self->_wrapped->brush_tint(&r, &g, &b);
+};
+
+- (void)setBrushOpacity:(int)alpha {
+    self->_wrapped->set_brush_opacity(alpha);
+};
+- (int)brushOpacity {
+    return self->_wrapped->brush_opacity();
+};
+
 - (cairo_rectangle_t)boundingBox; {
     return self->_wrapped->bounding_box();
 }

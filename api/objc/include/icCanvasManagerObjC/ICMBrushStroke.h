@@ -2,6 +2,12 @@
 
 #include <cairo.h>
 
+const static int ICMBrushStrokeColorMax = 65536;
+const static int ICMBrushStrokePressureMax = 65536;
+const static int ICMBrushStrokeTiltAngleQuarter = 32400;
+const static int ICMBrushStrokeTiltAngleHalf = 64800;
+const static int ICMBrushStrokeTiltAngleFull = 129600;
+
 @interface ICMBrushStroke : NSObject
 
 - (id)init;
@@ -17,6 +23,12 @@
 - (void)penToFromControlPointDeltaX:(int32_t)fromcp_delta_x andDeltaY:(int32_t)fromcp_delta_y toControlPointDeltaX:(int32_t)tocp_delta_x andDeltaY:(int32_t)tocp_delta_y toDeltaX:(int32_t)to_delta_x andDeltaY:(int32_t)to_delta_y;
 - (void)penExtendWithContinuityLevel:(int) lvl;
 - (void)penBack;
+
+- (void)setBrushTintRed:(int)r green:(int)g blue:(int)g;
+- (void)brushTintRed:(int*)r green:(int*)g blue:(int*)g;
+
+- (void)setBrushOpacity:(int)alpha;
+- (int)brushOpacity;
 
 - (cairo_rectangle_t)boundingBox;
 
