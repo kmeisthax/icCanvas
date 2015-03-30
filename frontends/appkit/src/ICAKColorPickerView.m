@@ -11,7 +11,7 @@
 - (NSColor*)blendColor:(NSColor*)col1 withColor:(NSColor*)col2;
 
 - (void)updateInternalHSLFromColor;
-- (void)updateInternalColorFromHSL;
+- (NSColor*)calculateColorFromHue:(CGFloat)hue saturation:(CGFloat)saturation lightness:(CGFloat)lightness alpha:(CGFloat)alpha;
 
 - (void)selectColorAtPoint:(NSPoint)pt;
 
@@ -160,13 +160,13 @@
             }
             break;
         case ICAKColorPickerViewChannelLightness:
-            [colorsArray addObject:(id)[NSColor colorWithDeviceRed:0.0 green:0.0 blue:0.0 alpha:1.0].CGColor];
+            [colorsArray addObject:(id)[self calculateColorFromHue:self->colorHue saturation:self->colorSaturation lightness:0.0 alpha:1.0].CGColor];
             if (isRadialChannel) {
-                [colorsArray addObject:(id)[NSColor colorWithDeviceRed:0.5 green:0.5 blue:0.5 alpha:0.0].CGColor];
+                [colorsArray addObject:(id)[self calculateColorFromHue:self->colorHue saturation:self->colorSaturation lightness:0.5 alpha:0.0].CGColor];
             } else {
-                [colorsArray addObject:(id)color.CGColor]; //TODO: Replace with hue
+                [colorsArray addObject:(id)[self calculateColorFromHue:self->colorHue saturation:self->colorSaturation lightness:0.5 alpha:1.0].CGColor];
             }
-            [colorsArray addObject:(id)[NSColor colorWithDeviceRed:1.0 green:1.0 blue:1.0 alpha:1.0].CGColor];
+            [colorsArray addObject:(id)[self calculateColorFromHue:self->colorHue saturation:self->colorSaturation lightness:1.0 alpha:1.0].CGColor];
 
             if (outLocations) {
                 *outLocations = [NSArray arrayWithObjects:
@@ -207,7 +207,7 @@
             break;
         case ICAKColorPickerViewChannelAlpha:
             [colorsArray addObject:(id)[NSColor colorWithDeviceRed:self->colorRed green:self->colorGreen blue:self->colorBlue alpha:0.0].CGColor];
-            [colorsArray addObject:(id)color.CGColor];
+            [colorsArray addObject:(id)[NSColor colorWithDeviceRed:self->colorRed green:self->colorGreen blue:self->colorBlue alpha:1.0].CGColor];
 
             if (outLocations) {
                 *outLocations = [NSArray arrayWithObjects:
@@ -336,58 +336,56 @@
 };
 
 //TODO: Do we even need this?
-- (void)updateInternalColorFromHSL {
-    if (self->colorSaturation == 0.0f) {
-        self->colorRed = self->colorLightness;
-        self->colorGreen = self->colorLightness;
-        self->colorBlue = self->colorLightness;
+- (NSColor*)calculateColorFromHue:(CGFloat)hue saturation:(CGFloat)saturation lightness:(CGFloat)lightness alpha:(CGFloat)alpha {
+    if (saturation == 0.0f) {
+        return [NSColor colorWithDeviceRed:lightness green:lightness blue:lightness alpha:alpha];
     } else {
-        CGFloat t1, t2, tR, tG, tB;
+        CGFloat t1, t2, tR, tG, tB, cRed, cGreen, cBlue;
 
-        if (self->colorLightness >= 0.5f) {
-            t1 = self->colorLightness + self->colorSaturation - self->colorLightness * self->colorSaturation;
+        if (lightness >= 0.5f) {
+            t1 = lightness + saturation - lightness * saturation;
         } else {
-            t1 = self->colorLightness * (1.0f + self->colorSaturation);
+            t1 = lightness * (1.0f + saturation);
         }
 
-        t2 = 2.0 * self->colorLightness - t1;
+        t2 = 2.0 * lightness - t1;
 
-        tR = fmod(self->colorHue + (1.0f/3.0f), 1.0f);
-        tG = fmod(self->colorHue, 1.0f);
-        tB = fmod(self->colorHue - (1.0f/3.0f), 1.0f);
+        tR = fmod(hue + (1.0f/3.0f), 1.0f);
+        tG = fmod(hue, 1.0f);
+        tB = fmod(hue - (1.0f/3.0f), 1.0f);
 
         if (tR * 6.0f < 1.0f) {
-            self->colorRed = t2 + (t1 - t2) * 6 * tR;
+            cRed = t2 + (t1 - t2) * 6 * tR;
         } else if (tR * 2.0f < 1.0f) {
-            self->colorRed = t1;
+            cRed = t1;
         } else if (tR * 3.0f < 2.0f) {
-            self->colorRed = t2 + (t1 - t2) * 6 * (2.0f/3.0f - tR);
+            cRed = t2 + (t1 - t2) * 6 * (2.0f/3.0f - tR);
         } else {
-            self->colorRed = t2;
+            cRed = t2;
         }
 
         if (tG * 6.0f < 1.0f) {
-            self->colorGreen = t2 + (t1 - t2) * 6 * tG;
+            cGreen = t2 + (t1 - t2) * 6 * tG;
         } else if (tG * 2.0f < 1.0f) {
-            self->colorGreen = t1;
+            cGreen = t1;
         } else if (tG * 3.0f < 2.0f) {
-            self->colorGreen = t2 + (t1 - t2) * 6 * (2.0f/3.0f - tG);
+            cGreen = t2 + (t1 - t2) * 6 * (2.0f/3.0f - tG);
         } else {
-            self->colorGreen = t2;
+            cGreen = t2;
         }
 
         if (tB * 6.0f < 1.0f) {
-            self->colorBlue = t2 + (t1 - t2) * 6 * tB;
+            cBlue = t2 + (t1 - t2) * 6 * tB;
         } else if (tB * 2.0f < 1.0f) {
-            self->colorBlue = t1;
+            cBlue = t1;
         } else if (tB * 3.0f < 2.0f) {
-            self->colorBlue = t2 + (t1 - t2) * 6 * (2.0f/3.0f - tB);
+            cBlue = t2 + (t1 - t2) * 6 * (2.0f/3.0f - tB);
         } else {
-            self->colorBlue = t2;
+            cBlue = t2;
         }
-    }
 
-    self.currentColor = [NSColor colorWithCalibratedRed:self->colorRed green:self->colorGreen blue:self->colorBlue alpha:self->colorAlpha];
+        return [NSColor colorWithDeviceRed:cRed green:cGreen blue:cBlue alpha:alpha];
+    }
 };
 
 - (NSColor*)currentColor {
