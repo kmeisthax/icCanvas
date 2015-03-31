@@ -61,17 +61,20 @@
         self->angleRadialLayer = [AngleGradientLayer layer];
         self->angleRadialLayer.name = @"angleRadialLayer";
         self->angleRadialLayer.contentsGravity = kCAGravityResize;
+        self->angleRadialLayer.delegate = self;
         [self.layer addSublayer:self->angleRadialLayer];
 
         self->radialLayer = [ICAKRadialGradientLayer layer];
         self->radialLayer.name = @"radialLayer";
         self->radialLayer.contentsGravity = kCAGravityResize;
+        self->radialLayer.delegate = self;
         [self.layer addSublayer:self->radialLayer];
         
         self->linearLayer = [CAGradientLayer layer];
         self->linearLayer.name = @"linearLayer";
         //self->linearLayer.type = kCAGradientLayerAxial;
         self->linearLayer.contentsGravity = kCAGravityResize;
+        self->linearLayer.delegate = self;
         [self.layer addSublayer:self->linearLayer];
 
         self.currentColor = [NSColor colorWithDeviceRed:0.0 green:0.0 blue:0.0 alpha:1.0];
@@ -86,10 +89,17 @@
 };
 
 - (void)layoutSublayersOfLayer:(CALayer *)layer {
-    self->linearLayer.frame = layer.bounds;
-    self->angleRadialLayer.frame = layer.bounds;
-    self->radialLayer.frame = layer.bounds;
+    if (layer == self.layer) {
+        self->linearLayer.frame = layer.bounds;
+        self->angleRadialLayer.frame = layer.bounds;
+        self->radialLayer.frame = layer.bounds;
+    }
 };
+
+//No animations plz
+- (id<CAAction>)actionForLayer:(CALayer *)layer forKey:(NSString *)event {
+    return (id)[NSNull null];
+}
 
 - (void)setFrame:(NSRect)rect {
     [super setFrame:rect];
