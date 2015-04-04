@@ -11,6 +11,9 @@
     //Individual CanvasTool impls
     ICMBrushTool *btool;
     ICMZoomTool *ztool;
+
+    //Various window-specific settings
+    NSColor* currentColor;
 }
 
 - (id)init {
@@ -76,6 +79,8 @@
         self->ztool.delegate = self;
         
         [self selectBrushTool];
+
+        self.currentColor = [NSColor colorWithDeviceRed:0.0 green:0.0 blue:0.0 alpha:1.0];
     }
     
     return self;
@@ -108,6 +113,11 @@
 
 //Various CanvasTool delegate impls
 - (void)brushToolCapturedStroke:(ICMBrushStroke*)stroke {
+    CGFloat r, g, b, a;
+    [self.currentColor getRed:&r green:&g blue:&b alpha:&a];
+    [stroke setBrushTintRed:(int)(r * ICMBrushStrokeColorMax) green:(int)(g * ICMBrushStrokeColorMax) blue:(int)(b * ICMBrushStrokeColorMax)];
+    stroke.brushOpacity = (int)(a * ICMBrushStrokeColorMax);
+
     cairo_rectangle_t bbox = stroke.boundingBox;
     
     [self->drawing appendStroke:stroke];
@@ -127,6 +137,14 @@
     newScrollPoint.y = (y / dscale) - (dVisRect.size.height / 2.0f);
     
     [self->scv.contentView scrollToPoint:newScrollPoint];
+};
+
+//Brush settings
+- (void)setCurrentColor:(NSColor*)color {
+    self->currentColor = color;
+};
+- (NSColor*)currentColor {
+    return self->currentColor;
 };
 
 @end

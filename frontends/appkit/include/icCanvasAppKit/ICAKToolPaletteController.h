@@ -7,5 +7,6 @@
 - (void)setDockingController:(ICAKDockingController*)dock;
 
 - (ICAKDockableView*)createToolPaletteView;
+- (ICAKDockableView*)createDockableColorPanel;
 
 @end

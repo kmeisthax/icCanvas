@@ -55,7 +55,11 @@
     ICAKDrawingController* dc = [[ICAKDrawingController alloc] init];
     [dc setDocument:self];
     [self addWindowController:dc];
+
+    ICAKDockableView* dCP = [self->_tpal_ctrl createDockableColorPanel];
+
     [dc.dock attachDockableView:[self->_tpal_ctrl createToolPaletteView] toEdge:ICAKDockEdgeTop];
+    [dc.dock attachDockableView:dCP toEdge:ICAKDockEdgeLeft];
     
     [self->_dock_ctrl addDrawingController:dc];
 }
