@@ -24,6 +24,10 @@ namespace icCanvasManager {
                 if (this->hk.make_current_destroy_notify) {
                     this->hk.make_current_destroy_notify(this->hk.make_current_context);
                 }
+
+                if (this->hk.get_current_destroy_notify) {
+                    this->hk.get_current_destroy_notify(this->hk.get_current_context);
+                }
             };
 
             CONTEXT create_main_context(int major, int minor) {
@@ -40,6 +44,10 @@ namespace icCanvasManager {
 
             CONTEXT make_current(CONTEXT ctxt, DRAWABLE drawable) {
                 return this->hk.make_current(ctxt, drawable, this->hk.make_current_context);
+            };
+
+            CONTEXT get_current() {
+                return this->hk.get_current(this->hk.get_current_context);
             };
         };
     };

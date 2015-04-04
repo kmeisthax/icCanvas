@@ -61,6 +61,10 @@ namespace icCanvasManager {
              */
             typedef intptr_t DRAWABLE;
 
+            /* Get the current context.
+             */
+            virtual CONTEXT get_current() = 0;
+
             /* Make the provided context current.
              *
              * The provided DRAWABLE becomes the default framebuffer for the
