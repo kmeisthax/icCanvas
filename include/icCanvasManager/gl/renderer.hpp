@@ -4,7 +4,7 @@
 #include "../../icCanvasManager.hpp"
 
 #include <cairo.h>
-#include <GL/gl.h>
+#include <PlatformGL.h>
 #include <cstdint>
 
 namespace icCanvasManager {

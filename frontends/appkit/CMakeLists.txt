@@ -12,6 +12,12 @@ include(${PARENT_PROJECT_DIR}/api/objc/CMakeLists.txt)
 find_library(APPKIT AppKit)
 find_library(QUARTZCORE QuartzCore)
 
+find_package(OpenGL REQUIRED)
+include_directories(${OpenGL_INCLUDE_DIRS})
+link_libraries(${OpenGL_LIBRARY_DIRS})
+add_definitions(${OpenGL_DEFINITIONS})
+target_link_libraries(icCanvasManager ${OpenGL_LIBRARIES})
+
 file(GLOB ICAPPKIT_SRC src/*.m)
 include_directories(include)
 
