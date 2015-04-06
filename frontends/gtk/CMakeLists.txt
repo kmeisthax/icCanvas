@@ -24,6 +24,12 @@ link_libraries(${GTK_LIBRARIES})
 link_directories(${GTK_LIBRARY_DIRS})
 include_directories(${GTK_INCLUDE_DIRS})
 
+find_package(OpenGL REQUIRED)
+include_directories(${OpenGL_INCLUDE_DIRS})
+link_libraries(${OpenGL_LIBRARY_DIRS})
+add_definitions(${OpenGL_DEFINITIONS})
+target_link_libraries(icCanvasManager ${OpenGL_LIBRARIES})
+
 pkg_check_modules(GEE gee-1.0)
 if (GEE_FOUND) #Stupid concession because Debian/Ubuntu package Gee with the wrong version number.
     SET(SUCCESSFUL_GEE gee-1.0)
