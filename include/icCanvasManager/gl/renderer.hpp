@@ -4,6 +4,7 @@
 #include "../../icCanvasManager.hpp"
 
 #include <cairo.h>
+#include <opengl.h>
 #include <cstdint>
 
 namespace icCanvasManager {
@@ -14,6 +15,7 @@ namespace icCanvasManager {
          * frontend code.
          */
         class Renderer : public virtual RefCnt, public virtual icCanvasManager::Renderer {
+            GLuint vShader, fShader;
         protected:
         public:
             Renderer(RefPtr<ContextManager> m, ContextManager::CONTEXT target, ContextManager::DRAWABLE window);
