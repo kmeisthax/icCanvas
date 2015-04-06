@@ -3,7 +3,7 @@
 #include <iostream>
 #include <fstream>
 
-#include <GL/gl.h>
+#include <PlatformGL.h>
 
 icCanvasManager::GL::Renderer::Renderer(icCanvasManager::RefPtr<icCanvasManager::GL::ContextManager> m, icCanvasManager::GL::ContextManager::CONTEXT target, icCanvasManager::GL::ContextManager::DRAWABLE window) {
 
