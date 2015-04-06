@@ -28,6 +28,10 @@ namespace icCanvasManager {
                 if (this->hk.get_current_destroy_notify) {
                     this->hk.get_current_destroy_notify(this->hk.get_current_context);
                 }
+
+                if (this->hk.get_proc_address_destroy_notify) {
+                    this->hk.get_proc_address_destroy_notify(this->hk.get_proc_address_context);
+                }
             };
 
             CONTEXT create_main_context(int major, int minor) {
@@ -48,6 +52,10 @@ namespace icCanvasManager {
 
             CONTEXT get_current() {
                 return this->hk.get_current(this->hk.get_current_context);
+            };
+
+            void(*)() get_proc_address(char* proc_name) {
+                return this->hk.get_proc_address(this->hk.get_proc_address_context);
             };
         };
     };

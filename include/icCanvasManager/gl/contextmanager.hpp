@@ -75,6 +75,12 @@ namespace icCanvasManager {
              * off-screen buffers.
              */
             virtual CONTEXT make_current(CONTEXT ctxt, DRAWABLE drawable) = 0;
+
+            /* Get a function pointer to a particular extension function.
+             *
+             * This is required for practically everything in modern OpenGL.
+             */
+            virtual void(*)() get_proc_address(char* procName) = 0;
         };
     }
 }
