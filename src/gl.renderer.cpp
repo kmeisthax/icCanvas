@@ -14,17 +14,17 @@ icCanvasManager::GL::Renderer::Renderer(icCanvasManager::RefPtr<icCanvasManager:
 
     iFile.open("resources/shaders/glsl/raymarch.vert.glsl", std::ifstream::in);
     iFile.seekg(0, std::ios::end);
-    vertLength = iFile.tellg();
+    GLint vertLength = iFile.tellg();
     iFile.seekg(0, std::ios::beg);
 
     char* vertBuffer = new char[vertLength];
-    iFile.read(vertBuffer, length);
+    iFile.read(vertBuffer, vertLength);
     iFile.close();
 
-    m->make_current(target, drawable);
+    m->make_current(target, window);
 
     this->vShader = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(this->vShader, 1, &vertBuffer, &length);
+    glShaderSource(this->vShader, 1, &vertBuffer, &vertLength);
     glCompileShader(this->vShader);
 
     delete[] vertBuffer;
@@ -47,15 +47,15 @@ icCanvasManager::GL::Renderer::Renderer(icCanvasManager::RefPtr<icCanvasManager:
 
     iFile.open("resources/shaders/glsl/brushstroke.frag.glsl", std::ifstream::in);
     iFile.seekg(0, std::ios::end);
-    auto fragLength = iFile.tellg();
+    GLint fragLength = iFile.tellg();
     iFile.seekg(0, std::ios::beg);
 
     char* fragBuffer = new char[fragLength];
-    iFile.read(fragBuffer, length);
+    iFile.read(fragBuffer, fragLength);
     iFile.close();
 
     this->fShader = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(this->fShader, 1, &buffer, &length);
+    glShaderSource(this->fShader, 1, &fragBuffer, &fragLength);
     glCompileShader(this->fShader);
 
     delete[] fragBuffer;
