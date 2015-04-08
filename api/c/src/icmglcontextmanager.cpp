@@ -54,8 +54,8 @@ namespace icCanvasManager {
                 return this->hk.get_current(this->hk.get_current_context);
             };
 
-            void(*)() get_proc_address(char* proc_name) {
-                return this->hk.get_proc_address(this->hk.get_proc_address_context);
+            void (*get_proc_address(char* proc_name)) () {
+                return this->hk.get_proc_address(proc_name, this->hk.get_proc_address_context);
             };
         };
     };

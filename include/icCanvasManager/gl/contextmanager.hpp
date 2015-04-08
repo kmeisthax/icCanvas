@@ -80,7 +80,7 @@ namespace icCanvasManager {
              *
              * This is required for practically everything in modern OpenGL.
              */
-            virtual void(*get_proc_address()) (char* procName) = 0;
+            virtual void(*get_proc_address(char* procName)) () = 0;
         };
     }
 }
