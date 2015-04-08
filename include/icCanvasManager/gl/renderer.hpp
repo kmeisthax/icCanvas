@@ -16,6 +16,9 @@ namespace icCanvasManager {
          */
         class Renderer : public virtual RefCnt, public virtual icCanvasManager::Renderer {
             GLuint vShader, fShader, dProgram;
+
+            RefPtr<Extensions> ex;
+            RefPtr<ContextManager> m;
         protected:
         public:
             Renderer(RefPtr<ContextManager> m, ContextManager::CONTEXT target, ContextManager::DRAWABLE window);

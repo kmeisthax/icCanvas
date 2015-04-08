@@ -5,7 +5,7 @@
 
 #include <PlatformGL.h>
 
-icCanvasManager::GL::Renderer::Renderer(icCanvasManager::RefPtr<icCanvasManager::GL::ContextManager> m, icCanvasManager::GL::ContextManager::CONTEXT target, icCanvasManager::GL::ContextManager::DRAWABLE window) {
+icCanvasManager::GL::Renderer::Renderer(icCanvasManager::RefPtr<icCanvasManager::GL::ContextManager> m, icCanvasManager::GL::ContextManager::CONTEXT target, icCanvasManager::GL::ContextManager::DRAWABLE window) : m(m) {
 
     /* TODO: Make resource loading work properly without running the program
      * inside the resources directory. */
@@ -22,25 +22,26 @@ icCanvasManager::GL::Renderer::Renderer(icCanvasManager::RefPtr<icCanvasManager:
     iFile.close();
 
     m->make_current(target, window);
+    this->ex->collect_extensions(this->m);
 
-    this->vShader = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(this->vShader, 1, &vertBuffer, &vertLength);
-    glCompileShader(this->vShader);
+    this->vShader = this->ex->glCreateShader(GL_VERTEX_SHADER);
+    this->ex->glShaderSource(this->vShader, 1, (const GLchar**)&vertBuffer, &vertLength);
+    this->ex->glCompileShader(this->vShader);
 
     delete[] vertBuffer;
 
     GLint success = 0;
-    glGetShaderiv(this->vShader, GL_COMPILE_STATUS, &success);
+    this->ex->glGetShaderiv(this->vShader, GL_COMPILE_STATUS, &success);
     if (success == GL_FALSE) {
         GLint logSize = 0;
-        glGetShaderiv(this->vShader, GL_INFO_LOG_LENGTH, &logSize);
+        this->ex->glGetShaderiv(this->vShader, GL_INFO_LOG_LENGTH, &logSize);
 
         char* vertLog = new char[logSize];
-        glGetShaderInfoLog(this->vShader, logSize, NULL, vertLog);
+        this->ex->glGetShaderInfoLog(this->vShader, logSize, NULL, vertLog);
 
         std::cout << vertLog << std::endl;
 
-        glDeleteShader(this->vShader);
+        this->ex->glDeleteShader(this->vShader);
         delete[] vertLog;
         return;
     }
@@ -54,57 +55,57 @@ icCanvasManager::GL::Renderer::Renderer(icCanvasManager::RefPtr<icCanvasManager:
     iFile.read(fragBuffer, fragLength);
     iFile.close();
 
-    this->fShader = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(this->fShader, 1, &fragBuffer, &fragLength);
-    glCompileShader(this->fShader);
+    this->fShader = this->ex->glCreateShader(GL_FRAGMENT_SHADER);
+    this->ex->glShaderSource(this->fShader, 1, (const GLchar**)&fragBuffer, &fragLength);
+    this->ex->glCompileShader(this->fShader);
 
     delete[] fragBuffer;
 
     success = 0;
-    glGetShaderiv(this->fShader, GL_COMPILE_STATUS, &success);
+    this->ex->glGetShaderiv(this->fShader, GL_COMPILE_STATUS, &success);
     if (success == GL_FALSE) {
         GLint logSize = 0;
-        glGetShaderiv(this->fShader, GL_INFO_LOG_LENGTH, &logSize);
+        this->ex->glGetShaderiv(this->fShader, GL_INFO_LOG_LENGTH, &logSize);
 
         char* fragLog = new char[logSize];
-        glGetShaderInfoLog(this->fShader, logSize, NULL, fragLog);
+        this->ex->glGetShaderInfoLog(this->fShader, logSize, NULL, fragLog);
 
         std::cout << fragLog << std::endl;
 
-        glDeleteShader(this->fShader);
-        glDeleteShader(this->vShader);
+        this->ex->glDeleteShader(this->fShader);
+        this->ex->glDeleteShader(this->vShader);
         delete[] fragLog;
         return;
     }
 
-    this->dProgram = glCreateProgram();
-    glAttachShader(this->dProgram, this->vShader);
-    glAttachShader(this->dProgram, this->fShader);
+    this->dProgram = this->ex->glCreateProgram();
+    this->ex->glAttachShader(this->dProgram, this->vShader);
+    this->ex->glAttachShader(this->dProgram, this->fShader);
 
-    glLinkProgram(this->dProgram);
+    this->ex->glLinkProgram(this->dProgram);
 
     success = 0;
-    glGetProgramiv(this->dProgram, GL_LINK_STATUS, &success);
+    this->ex->glGetProgramiv(this->dProgram, GL_LINK_STATUS, &success);
     if (success == GL_FALSE) {
         GLint logSize = 0;
-        glGetProgramiv(this->dProgram, GL_INFO_LOG_LENGTH, &logSize);
+        this->ex->glGetProgramiv(this->dProgram, GL_INFO_LOG_LENGTH, &logSize);
 
         char* linkLog = new char[logSize];
-        glGetProgramInfoLog(this->dProgram, logSize, NULL, linkLog);
+        this->ex->glGetProgramInfoLog(this->dProgram, logSize, NULL, linkLog);
 
         std::cout << linkLog << std::endl;
 
-        glDeleteProgram(this->dProgram);
-        glDeleteShader(this->fShader);
-        glDeleteShader(this->vShader);
+        this->ex->glDeleteProgram(this->dProgram);
+        this->ex->glDeleteShader(this->fShader);
+        this->ex->glDeleteShader(this->vShader);
         delete[] linkLog;
         return;
     }
 
-    glDetachShader(this->dProgram, this->vShader);
-    glDetachShader(this->dProgram, this->fShader);
-    glDeleteShader(this->vShader);
-    glDeleteShader(this->fShader);
+    this->ex->glDetachShader(this->dProgram, this->vShader);
+    this->ex->glDetachShader(this->dProgram, this->fShader);
+    this->ex->glDeleteShader(this->vShader);
+    this->ex->glDeleteShader(this->fShader);
 };
 icCanvasManager::GL::Renderer::~Renderer() {
 };

@@ -24,6 +24,7 @@
 
 //OpenGL rendering implementations
 #include "icCanvasManager/gl/contextmanager.hpp"
+#include "icCanvasManager/gl/extensions.hpp"
 #include "icCanvasManager/gl/renderer.hpp"
 
 #endif

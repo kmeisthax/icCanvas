@@ -1,9 +1,9 @@
-#ifndef __ICCANVASMANAGER_GL_CONTEXTMANAGER_HPP__
-#define __ICCANVASMANAGER_GL_CONTEXTMANAGER_HPP__
+#ifndef __ICCANVASMANAGER_GL_EXTENSIONS_HPP__
+#define __ICCANVASMANAGER_GL_EXTENSIONS_HPP__
 
 #include "../../icCanvasManager.hpp"
 
-#include <GL/gl.h>
+#include <PlatformGL.h>
 
 namespace icCanvasManager {
     namespace GL {
@@ -28,7 +28,22 @@ namespace icCanvasManager {
              * they were obtained from.
              */
             void collect_extensions(RefPtr<ContextManager> m);
-        }
+
+            /* Extension pointers. */
+            GLuint (*glCreateShader)(GLenum shaderType);
+            void (*glShaderSource)(GLuint shader, GLsizei count, const GLchar** string, const GLint *length);
+            void (*glCompileShader)(GLuint shader);
+            void (*glGetShaderiv)(GLuint shader, GLenum pname, GLint *params);
+            void (*glGetShaderInfoLog)(GLuint shader, GLsizei maxLength, GLsizei *length, GLchar *infoLog);
+            void (*glDeleteShader)(GLuint shader);
+            GLuint (*glCreateProgram)();
+            void (*glAttachShader)(GLuint program, GLuint shader);
+            void (*glLinkProgram)(GLuint program);
+            void (*glGetProgramiv)(GLuint program, GLenum pname, GLint *params);
+            void (*glGetProgramInfoLog)(GLuint program, GLsizei maxLength, GLsizei *length, GLchar *infoLog);
+            void (*glDeleteProgram)(GLuint program);
+            void (*glDetachShader)(GLuint program, GLuint shader);
+        };
     }
 }
 
