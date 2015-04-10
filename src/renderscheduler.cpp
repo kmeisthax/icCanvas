@@ -5,6 +5,14 @@ icCanvasManager::RenderScheduler::RenderScheduler(icCanvasManager::Application* 
     this->_app = app;
 };
 
+Renderer* renderer() {
+    return this->_renderer;
+};
+
+void set_renderer(RefPtr<Renderer> r) {
+    this->_renderer = r;
+};
+
 icCanvasManager::RenderScheduler::~RenderScheduler() {
     for (auto i = this->_uncollected.begin(); i != this->_uncollected.end(); i++) {
         if (i->tile) cairo_surface_destroy(i->tile);

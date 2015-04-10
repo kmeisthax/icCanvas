@@ -37,6 +37,10 @@ namespace icCanvasManager {
         RenderScheduler(Application* app);
         ~RenderScheduler();
 
+        /* Get or set the current renderer. */
+        Renderer* renderer();
+        void set_renderer(RefPtr<Renderer> r);
+
         /* Put a request for a tile to be rendered. */
         void request_tile(RefPtr<Drawing> d, int x, int y, int size, int time);
 
