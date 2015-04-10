@@ -212,6 +212,14 @@ namespace icCanvasManager {
         public void append_stroke(BrushStroke stroke);
     }
     
+    [CCode (cname = "icm_renderer",
+            cprefix = "icm_renderer_",
+            ref_function = "icm_renderer_reference",
+            unref_function = "icm_renderer_dereference")]
+    [Compact]
+    public class Renderer {
+    }
+    
     [CCode (cname = "icm_renderscheduler",
             cprefix = "icm_renderscheduler_",
             ref_function = "icm_renderscheduler_reference",
@@ -220,6 +228,11 @@ namespace icCanvasManager {
     public class RenderScheduler {
         [CCode (cname = "icm_renderscheduler_construct")]
         public RenderScheduler(Application app);
+        
+        public Renderer renderer {
+            [CCode (cname = "icm_renderscheduler_renderer")] get;
+            [CCode (cname = "icm_renderscheduler_set_renderer")] set;
+        }
         
         public void request_tile(Drawing d, int x, int y, int size, int time);
         public void request_tiles(Drawing d, Cairo.Rectangle rect, int size, int time);
