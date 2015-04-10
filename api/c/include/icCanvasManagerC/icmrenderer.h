@@ -9,7 +9,6 @@ extern "C" {
 
     typedef void* icm_renderer;
 
-    icm_renderer icm_renderer_construct();
     icm_renderer icm_renderer_reference(icm_renderer wrap);
     int icm_renderer_dereference(icm_renderer wrap);
 
