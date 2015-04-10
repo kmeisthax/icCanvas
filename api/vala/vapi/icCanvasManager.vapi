@@ -244,4 +244,70 @@ namespace icCanvasManager {
         
         public int collect_request(Drawing d, out Cairo.Rectangle tile_rect);
     }
+    
+    namespace GL {
+        [CCode (cname = "intptr_t", has_type_id = false)]
+        [SimpleType]
+        public struct CONTEXT {}
+        
+        [CCode (cname = "intptr_t", has_type_id = false)]
+        [SimpleType]
+        public struct DRAWABLE {}
+        
+        [CCode (has_target = false, has_type_id = false)]
+        public delegate void Proc();
+        
+        [CCode (cname = "icm_gl_create_main_context_func", has_type_id = false)]
+        public delegate CONTEXT CreateMainContextFunc(int major, int minor);
+        [CCode (cname = "icm_gl_create_sub_context_func", has_type_id = false)]
+        public delegate CONTEXT CreateSubContextFunc();
+        [CCode (cname = "icm_gl_shutdown_sub_context_func", has_type_id = false)]
+        public delegate void ShutdownSubContextFunc(CONTEXT ctxt);
+        [CCode (cname = "icm_gl_make_current_func", has_type_id = false)]
+        public delegate CONTEXT MakeCurrentFunc(CONTEXT ctxt, DRAWABLE draw);
+        [CCode (cname = "icm_gl_get_current_func", has_type_id = false)]
+        public delegate CONTEXT GetCurrentFunc();
+        [CCode (cname = "icm_gl_get_proc_address_func", has_type_id = false)]
+        public delegate Proc GetProcAddressFunc(string proc_name);
+
+        [CCode (cname = "icm_gl_contextmanager_hooks",
+                destroy_function = "icm_gl_contextmanager_hooks_destroy",
+                has_type_id = false)]
+        public struct ContextManagerHooks {
+            [CCode (delegate_target_cname = "create_main_context_context")]
+            public CreateMainContextFunc create_main_context;
+            [CCode (delegate_target_cname = "create_sub_context_context")]
+            public CreateSubContextFunc create_sub_context;
+            [CCode (delegate_target_cname = "shutdown_sub_context_context")]
+            public ShutdownSubContextFunc shutdown_sub_context;
+            [CCode (delegate_target_cname = "make_current_context")]
+            public MakeCurrentFunc make_current;
+            [CCode (delegate_target_cname = "get_current_context")]
+            public GetCurrentFunc get_current;
+            [CCode (delegate_target_cname = "get_proc_address_context")]
+            public GetProcAddressFunc get_proc_address;
+        }
+        
+        [CCode (cname = "icm_gl_contextmanager",
+                cprefix = "icm_gl_contextmanager_",
+                ref_function = "icm_gl_contextmanager_reference",
+                unref_function = "icm_gl_contextmanager_dereference")]
+        [Compact]
+        public class ContextManager {
+            public static ContextManager construct_custom(ContextManagerHooks hooks);
+        }
+        
+        [CCode (cname = "icm_gl_renderer",
+                cprefix = "icm_gl_renderer_",
+                ref_function = "icm_gl_renderer_reference",
+                unref_function = "icm_gl_renderer_dereference")]
+        [Compact]
+        public class Renderer {
+            [CCode (cname = "icm_gl_renderer_construct")]
+            public Renderer(ContextManager cm, CONTEXT ctxt, DRAWABLE drawable);
+            
+            public static unowned icCanvasManager.GL.Renderer? downcast(icCanvasManager.Renderer up_obj);
+            public unowned icCanvasManager.Renderer upcast();
+        }
+    }
 }
