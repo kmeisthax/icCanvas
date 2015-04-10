@@ -29,6 +29,20 @@ extern "C" {
         return refcount;
     };
 
+    icm_renderer icm_renderscheduler_renderer(icm_renderscheduler wrap) {
+        auto* w = (icCanvasManager::RenderScheduler*)wrap;
+        icCanvasManager::Renderer* r = w->renderer();
+
+        return r;
+    };
+
+    void icm_renderscheduler_set_renderer(icm_renderscheduler wrap, icm_renderer r) {
+        auto* w = (icCanvasManager::RenderScheduler*)wrap;
+        auto* r2 = (icCanvasManager::Renderer*)r;
+
+        w->set_renderer(r2);
+    };
+
     void icm_renderscheduler_request_tile(icm_renderscheduler w, icm_drawing d, int x, int y, int size, int time) {
         icCanvasManager::RenderScheduler* theSched = (icCanvasManager::RenderScheduler*)w;
         icCanvasManager::Drawing* theDrawing = (icCanvasManager::Drawing*)d;
