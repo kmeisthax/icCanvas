@@ -5,11 +5,11 @@ icCanvasManager::RenderScheduler::RenderScheduler(icCanvasManager::Application* 
     this->_app = app;
 };
 
-Renderer* renderer() {
+icCanvasManager::Renderer* icCanvasManager::RenderScheduler::renderer() {
     return this->_renderer;
 };
 
-void set_renderer(RefPtr<Renderer> r) {
+void icCanvasManager::RenderScheduler::set_renderer(icCanvasManager::RefPtr<icCanvasManager::Renderer> r) {
     this->_renderer = r;
 };
 
