@@ -42,6 +42,17 @@ class icCanvasGtk.GLXContextManager {
     private glX.Context main_ctxt = (glX.Context)0;
     
     icCanvasManager.GL.CONTEXT create_main_context(int major, int minor) {
+        int[] visual_attribs = {
+            glX.X_RENDERABLE, glX.True,
+            glX.DRAWABLE_TYPE, glX.WINDOW_BIT | glX.PBUFFER_BIT,
+            glX.RENDER_TYPE, glX.RGBA_BIT,
+            glX.RED_SIZE, 8,
+            glX.GREEN_SIZE, 8,
+            glX.BLUE_SIZE, 8,
+            glX.ALPHA_SIZE, 8,
+            glX.None
+        };
+        
         //TODO: Create main context.
         return (icCanvasManager.GL.CONTEXT)0;
     }
