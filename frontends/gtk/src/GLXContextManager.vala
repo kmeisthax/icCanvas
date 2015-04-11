@@ -1,0 +1,72 @@
+namespace glX {
+    [CCode (has_target = false)]
+    internal delegate glX.Context CreateContextAttribsARBProc(X.Display dpy, glX.FBConfig cfg, glX.Context share_context, bool direct, int[] attribs);
+}
+
+class icCanvasGtk.GLXContextManager {
+    public GLXContextManager(Gdk.X11Display? disp) {
+        this._cm = null;
+        
+        if (disp != null) {
+            this._disp = disp;
+        } else {
+            this._disp = (Gdk.X11Display)Gdk.Display.get_default();
+        }
+        
+        this._create_context_attribs_ARB = (glX.CreateContextAttribsARBProc)glX.GetProcAddressARB("glXCreateContextAttribsARB");
+    }
+    
+    private icCanvasManager.GL.ContextManager? _cm;
+    private Gdk.X11Display _disp;
+    
+    public icCanvasManager.GL.ContextManager context_manager {
+        get {
+            if (this._cm == null) {
+                icCanvasManager.GL.ContextManagerHooks hk = icCanvasManager.GL.ContextManagerHooks();
+                
+                hk.create_main_context = this.create_main_context;
+                hk.create_sub_context = this.create_sub_context;
+                hk.shutdown_sub_context = this.shutdown_sub_context;
+                hk.make_current = this.make_current;
+                hk.get_current = this.get_current;
+                hk.get_proc_address = this.get_proc_address;
+                
+                this._cm = icCanvasManager.GL.ContextManager.construct_custom(hk);
+            }
+            
+            return this._cm;
+        }
+    }
+    
+    private glX.CreateContextAttribsARBProc _create_context_attribs_ARB;
+    private glX.Context main_ctxt = (glX.Context)0;
+    
+    icCanvasManager.GL.CONTEXT create_main_context(int major, int minor) {
+        //TODO: Create main context.
+        return (icCanvasManager.GL.CONTEXT)0;
+    }
+    
+    icCanvasManager.GL.CONTEXT create_sub_context() {
+        //TODO: Create sub contexts.
+        return (icCanvasManager.GL.CONTEXT)0;
+    }
+    
+    void shutdown_sub_context(icCanvasManager.GL.CONTEXT ctxt) {
+        //TODO: Destroy contexts we don't need anymore.
+    }
+    
+    icCanvasManager.GL.CONTEXT make_current(icCanvasManager.GL.CONTEXT ctxt, icCanvasManager.GL.DRAWABLE draw) {
+        //TODO: Bind the current context as active with a drawable.
+        return (icCanvasManager.GL.CONTEXT)0;
+    }
+    
+    icCanvasManager.GL.CONTEXT get_current() {
+        //TODO: Get current context.
+        return (icCanvasManager.GL.CONTEXT)0;
+    }
+    
+    icCanvasManager.GL.Proc get_proc_address(string proc_name) {
+        //TODO: Get proctologist address.
+        return (icCanvasManager.GL.Proc)glX.GetProcAddressARB(proc_name);
+    }
+}
