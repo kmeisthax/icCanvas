@@ -28,7 +28,7 @@ find_package(OpenGL REQUIRED)
 include_directories(${OpenGL_INCLUDE_DIRS})
 link_libraries(${OpenGL_LIBRARY_DIRS})
 add_definitions(${OpenGL_DEFINITIONS})
-target_link_libraries(icCanvasManager ${OpenGL_LIBRARIES})
+target_link_libraries(icCanvasManager ${OpenGL_LIBRARIES} GL)
 
 pkg_check_modules(GEE gee-1.0)
 if (GEE_FOUND) #Stupid concession because Debian/Ubuntu package Gee with the wrong version number.
@@ -45,12 +45,12 @@ include_directories(${GEE_INCLUDE_DIRS})
 file(GLOB ICGTK_SRC_VALA RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} src/*.vala)
 include_directories(include)
 
-set(ICGTK_VALA_PACKAGES gtk+-3.0 glib-2.0 posix ${SUCCESSFUL_GEE})
+set(ICGTK_VALA_PACKAGES gtk+-3.0 gdk-x11-3.0 glib-2.0 posix ${SUCCESSFUL_GEE})
 
 vala_precompile(ICGTK_SRC ${ICGTK_SRC_VALA}
     PACKAGES ${ICGTK_VALA_PACKAGES}
     OPTIONS --thread
-    CUSTOM_VAPIS ${CORELIB_VAPI}
+    CUSTOM_VAPIS ${CORELIB_VAPI} ${CMAKE_CURRENT_SOURCE_DIR}/vapi/glx.vapi
     DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/vala)
 
 add_executable(icCanvasGtk ${ICGTK_SRC})
