@@ -254,7 +254,7 @@ namespace icCanvasManager {
         [SimpleType]
         public struct DRAWABLE {}
         
-        [CCode (has_target = false, has_type_id = false)]
+        [CCode (cname = "icm_gl_proc", has_target = false, has_type_id = false)]
         public delegate void Proc();
         
         [CCode (cname = "icm_gl_create_main_context_func", has_type_id = false)]

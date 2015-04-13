@@ -9,28 +9,28 @@ namespace icCanvasManager {
         public:
             CAPIContextManager(icm_gl_contextmanager_hooks hk) : hk(hk) {};
             virtual ~CAPIContextManager() override {
-                if (this->hk.create_main_context_destroy_notify) {
-                    this->hk.create_main_context_destroy_notify(this->hk.create_main_context_context);
+                if (this->hk.create_main_context_target_destroy_notify) {
+                    this->hk.create_main_context_target_destroy_notify(this->hk.create_main_context_context);
                 }
 
-                if (this->hk.create_sub_context_destroy_notify) {
-                    this->hk.create_sub_context_destroy_notify(this->hk.create_sub_context_context);
+                if (this->hk.create_sub_context_target_destroy_notify) {
+                    this->hk.create_sub_context_target_destroy_notify(this->hk.create_sub_context_context);
                 }
 
-                if (this->hk.shutdown_sub_context_destroy_notify) {
-                    this->hk.shutdown_sub_context_destroy_notify(this->hk.shutdown_sub_context_context);
+                if (this->hk.shutdown_sub_context_target_destroy_notify) {
+                    this->hk.shutdown_sub_context_target_destroy_notify(this->hk.shutdown_sub_context_context);
                 }
 
-                if (this->hk.make_current_destroy_notify) {
-                    this->hk.make_current_destroy_notify(this->hk.make_current_context);
+                if (this->hk.make_current_target_destroy_notify) {
+                    this->hk.make_current_target_destroy_notify(this->hk.make_current_context);
                 }
 
-                if (this->hk.get_current_destroy_notify) {
-                    this->hk.get_current_destroy_notify(this->hk.get_current_context);
+                if (this->hk.get_current_target_destroy_notify) {
+                    this->hk.get_current_target_destroy_notify(this->hk.get_current_context);
                 }
 
-                if (this->hk.get_proc_address_destroy_notify) {
-                    this->hk.get_proc_address_destroy_notify(this->hk.get_proc_address_context);
+                if (this->hk.get_proc_address_target_destroy_notify) {
+                    this->hk.get_proc_address_target_destroy_notify(this->hk.get_proc_address_context);
                 }
             };
 
@@ -80,8 +80,8 @@ extern "C" {
         return refcount;
     };
 
-    icm_gl_contextmanager icm_gl_contextmanager_construct_custom(icm_gl_contextmanager_hooks hookslist) {
-        auto *dcustom = new icCanvasManager::GL::CAPIContextManager(hookslist);
+    icm_gl_contextmanager icm_gl_contextmanager_construct_custom(icm_gl_contextmanager_hooks* hookslist) {
+        auto *dcustom = new icCanvasManager::GL::CAPIContextManager(*hookslist);
         icCanvasManager::GL::ContextManager *d = dcustom;
         dcustom->ref();
 
