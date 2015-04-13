@@ -29,7 +29,7 @@
 
 - (ICMRenderer*)renderer {
     auto* r = self->_wrapped->renderer();
-    return [[ICMRenderer alloc] initFromWrappedObject:(void+)r];
+    return [[ICMRenderer alloc] initFromWrappedObject:(void*)r];
 };
 
 - (void)setRenderer:(ICMRenderer*)r {
