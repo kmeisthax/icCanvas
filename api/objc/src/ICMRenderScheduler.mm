@@ -27,6 +27,15 @@
     return self;
 };
 
+- (ICMRenderer*)renderer {
+    auto* r = self->_wrapped->renderer();
+    return [[ICMRenderer alloc] initFromWrappedObject:(void+)r];
+};
+
+- (void)setRenderer:(ICMRenderer*)r {
+    self->_wrapped->set_renderer((icCanvasManager::Renderer*)[r getWrappedObject]);
+};
+
 - (void)requestTileOnDrawing:(ICMDrawing*)d atX:(int)x andY:(int)y atSize:(int)size atTime:(int)time {
     icCanvasManager::RefPtr<icCanvasManager::Drawing> inner_d = (icCanvasManager::Drawing*)[d getWrappedObject];
     self->_wrapped->request_tile(inner_d, x, y, size, time);
