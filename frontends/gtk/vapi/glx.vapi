@@ -9,7 +9,8 @@ namespace glX {
     [SimpleType]
     public struct Drawable {}
     
-    [CCode (cname = "GLXFBConfig")]
+    [CCode (cname = "GLXFBConfig",
+            free_function = "XFree")]
     [SimpleType]
     public struct FBConfig {}
     
@@ -117,8 +118,14 @@ namespace glX {
     public delegate void FuncPtr();
     
     [CCode (cname = "glXGetProcAddressARB")]
-    public static FuncPtr GetProcAddressARB(string procname);
+    public FuncPtr GetProcAddressARB(string procname);
     
     [CCode (cname = "glXChooseFBConfig")]
-    public static FuncPtr ChooseFBConfig(X.Display dpy, int screen, int[] attrib_list);
+    public FBConfig[] ChooseFBConfig(X.Display dpy, int screen, [CCode (array_length = false)] int[] attrib_list);
+    
+    [CCode (cname = "glXGetVisualFromFBConfig")]
+    public X.VisualInfo? GetVisualFromFBConfig(X.Display dpy, FBConfig fb);
+    
+    [CCode (cname = "glXMakeCurrent")]
+    public bool MakeCurrent(X.Display dpy, Drawable d, Context c);
 }

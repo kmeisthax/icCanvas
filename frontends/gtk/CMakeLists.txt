@@ -30,6 +30,12 @@ link_libraries(${OpenGL_LIBRARY_DIRS})
 add_definitions(${OpenGL_DEFINITIONS})
 target_link_libraries(icCanvasManager ${OpenGL_LIBRARIES} GL)
 
+pkg_check_modules(Xlib x11)
+include_directories(${Xlib_INCLUDE_DIRS})
+link_libraries(${Xlib_LIBRARY_DIRS})
+add_definitions(${Xlib_DEFINITIONS})
+target_link_libraries(icCanvasManager ${Xlib_LIBRARIES})
+
 pkg_check_modules(GEE gee-1.0)
 if (GEE_FOUND) #Stupid concession because Debian/Ubuntu package Gee with the wrong version number.
     SET(SUCCESSFUL_GEE gee-1.0)

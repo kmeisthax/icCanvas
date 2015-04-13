@@ -3,6 +3,15 @@ namespace glX {
     internal delegate glX.Context CreateContextAttribsARBProc(X.Display dpy, glX.FBConfig cfg, glX.Context share_context, bool direct, int[] attribs);
 }
 
+[CCode (cprefix = "X", lower_case_cprefix = "X")]
+namespace X {
+    [CCode (cname = "XScreenNumberOfScreen")]
+    public extern int ScreenNumberOfScreen(X.Screen scr);
+    
+    [CCode (cname = "XFree")]
+    public extern int Free(void* f);
+}
+
 class icCanvasGtk.GLXContextManager {
     public GLXContextManager(Gdk.X11Display? disp) {
         this._cm = null;
@@ -42,6 +51,11 @@ class icCanvasGtk.GLXContextManager {
     private glX.Context main_ctxt = (glX.Context)0;
     
     icCanvasManager.GL.CONTEXT create_main_context(int major, int minor) {
+        glX.Context nullCtxt = (glX.Context)0;
+        if (this.main_ctxt != nullCtxt) {
+            return (icCanvasManager.GL.CONTEXT)main_ctxt;
+        }
+        
         int[] visual_attribs = {
             glX.X_RENDERABLE, glX.True,
             glX.DRAWABLE_TYPE, glX.WINDOW_BIT | glX.PBUFFER_BIT,
@@ -53,8 +67,34 @@ class icCanvasGtk.GLXContextManager {
             glX.None
         };
         
-        //TODO: Create main context.
-        return (icCanvasManager.GL.CONTEXT)0;
+        unowned X.Display disp = Gdk.X11Display.get_xdisplay(this._disp);
+        
+        glX.FBConfig[] fb = glX.ChooseFBConfig(disp,
+            X.ScreenNumberOfScreen(disp.default_screen()),
+            visual_attribs);
+        
+        if (fb == null) {
+            return (icCanvasManager.GL.CONTEXT)0; //Error out
+        }
+        
+        glX.FBConfig fb_good = fb[0];
+        X.Free(fb);
+        
+        int[] context_attribs = {
+            glX.CONTEXT_MAJOR_VERSION_ARB, major,
+            glX.CONTEXT_MINOR_VERSION_ARB, minor,
+            glX.None
+        };
+        
+        glX.Context c = this._create_context_attribs_ARB(disp, fb_good, nullCtxt, true, context_attribs);
+        
+        if (c == nullCtxt) {
+            return (icCanvasManager.GL.CONTEXT)0; //Error out
+        }
+        
+        this.main_ctxt = c;
+        
+        return (icCanvasManager.GL.CONTEXT)c;
     }
     
     icCanvasManager.GL.CONTEXT create_sub_context() {
@@ -68,6 +108,19 @@ class icCanvasGtk.GLXContextManager {
     
     icCanvasManager.GL.CONTEXT make_current(icCanvasManager.GL.CONTEXT ctxt, icCanvasManager.GL.DRAWABLE draw) {
         //TODO: Bind the current context as active with a drawable.
+        var c = (glX.Context)ctxt;
+        var d = (glX.Drawable)draw;
+        
+        unowned X.Display disp = Gdk.X11Display.get_xdisplay(this._disp);
+        
+        var res = MakeCurrent(disp, d, c);
+        
+        if (res) {
+            return ctxt;
+        } else {
+            return (icCanvasManager.GL.CONTEXT)0;
+        }
+        
         return (icCanvasManager.GL.CONTEXT)0;
     }
     
