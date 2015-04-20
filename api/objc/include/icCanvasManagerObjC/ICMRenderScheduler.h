@@ -8,6 +8,9 @@
 - (id)initWithApplication:(ICMApplication*)appWrap;
 - (id)initFromWrappedObject:(void*)optr;
 
+- (ICMRenderer*)renderer;
+- (void)setRenderer:(ICMRenderer*)r;
+
 - (void)requestTileOnDrawing:(ICMDrawing*)d atX:(int)x andY:(int)y atSize:(int)size atTime:(int)time;
 - (void)requestTilesOnDrawing:(ICMDrawing*)d inRect:(cairo_rectangle_t)rect atSize:(int)size atTime:(int)time;
 - (void)backgroundTick;
