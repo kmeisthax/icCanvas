@@ -123,12 +123,10 @@ class icCanvasGtk.GLXContextManager {
     }
     
     icCanvasManager.GL.CONTEXT get_current() {
-        //TODO: Get current context.
         return (icCanvasManager.GL.CONTEXT)glX.GetCurrentContext();
     }
     
     icCanvasManager.GL.Proc get_proc_address(string proc_name) {
-        //TODO: Get proctologist address.
         return (icCanvasManager.GL.Proc)glX.GetProcAddressARB(proc_name);
     }
 }
