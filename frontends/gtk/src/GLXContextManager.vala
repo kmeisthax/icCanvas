@@ -124,7 +124,7 @@ class icCanvasGtk.GLXContextManager {
     
     icCanvasManager.GL.CONTEXT get_current() {
         //TODO: Get current context.
-        return (icCanvasManager.GL.CONTEXT)0;
+        return (icCanvasManager.GL.CONTEXT)glX.GetCurrentContext();
     }
     
     icCanvasManager.GL.Proc get_proc_address(string proc_name) {
