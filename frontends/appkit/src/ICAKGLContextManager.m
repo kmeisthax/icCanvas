@@ -36,7 +36,7 @@
         0,
     };
 
-    self->_pFormat = [[NSOpenGLPixelFormat alloc] initWithAttributes:&pfAttrs];
+    self->_pFormat = [[NSOpenGLPixelFormat alloc] initWithAttributes:pfAttrs];
     if (self->_pFormat == nil) {
         return 0;
     }
@@ -58,16 +58,18 @@
 
     [self->_subctxt addObject:subctxt];
 
-    return (intptr_t)subctxt;
+    return (intptr_t)(__bridge void*)subctxt;
 };
 
 - (void)shutdownSubContext:(intptr_t)ctxt {
-    [self->_subctxt removeObject:(NSOpenGLContext*) ctxt];
+    [self->_subctxt removeObject:(__bridge NSOpenGLContext*)(void*)ctxt];
 };
 
 - (intptr_t)makeCurrent:(intptr_t)ctxt withDrawable:(intptr_t)draw {
     NSOpenGLContext *c = (NSOpenGLContext*)c;
     [c makeCurrentContext];
+
+    return [self getCurrent];
 };
 
 - (intptr_t)getCurrent {
