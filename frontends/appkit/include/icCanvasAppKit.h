@@ -21,3 +21,6 @@
 #import "icCanvasAppKit/ICAKDockingController.h"
 
 #import "icCanvasAppKit/ICAKAppDelegate.h"
+
+//OpenGL platform support
+#import "icCanvasAppKit/ICAKGLContextManager.h"
