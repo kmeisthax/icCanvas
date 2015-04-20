@@ -128,4 +128,10 @@ namespace glX {
     
     [CCode (cname = "glXMakeCurrent")]
     public bool MakeCurrent(X.Display dpy, Drawable d, Context c);
+    
+    [CCode (cname = "glXGetCurrentContext")]
+    public Context GetCurrentContext();
+    
+    [CCode (cname = "glXDestroyContext")]
+    public void DestroyContext(X.Display dpy, Context c);
 }

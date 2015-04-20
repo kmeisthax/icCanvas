@@ -103,7 +103,16 @@ class icCanvasGtk.GLXContextManager {
     }
     
     void shutdown_sub_context(icCanvasManager.GL.CONTEXT ctxt) {
-        //TODO: Destroy contexts we don't need anymore.
+        var c = (glX.Context)ctxt;
+        
+        if (c == this.main_ctxt) {
+            //You CANNOT shutdown the main context.
+            return;
+        }
+        
+        unowned X.Display disp = Gdk.X11Display.get_xdisplay(this._disp);
+        
+        glX.DestroyContext(disp, c);
     }
     
     icCanvasManager.GL.CONTEXT make_current(icCanvasManager.GL.CONTEXT ctxt, icCanvasManager.GL.DRAWABLE draw) {
@@ -113,24 +122,20 @@ class icCanvasGtk.GLXContextManager {
         
         unowned X.Display disp = Gdk.X11Display.get_xdisplay(this._disp);
         
-        var res = MakeCurrent(disp, d, c);
+        var res = glX.MakeCurrent(disp, d, c);
         
         if (res) {
             return ctxt;
-        } else {
-            return (icCanvasManager.GL.CONTEXT)0;
         }
         
         return (icCanvasManager.GL.CONTEXT)0;
     }
     
     icCanvasManager.GL.CONTEXT get_current() {
-        //TODO: Get current context.
-        return (icCanvasManager.GL.CONTEXT)0;
+        return (icCanvasManager.GL.CONTEXT)glX.GetCurrentContext();
     }
     
     icCanvasManager.GL.Proc get_proc_address(string proc_name) {
-        //TODO: Get proctologist address.
         return (icCanvasManager.GL.Proc)glX.GetProcAddressARB(proc_name);
     }
 }
