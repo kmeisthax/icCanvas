@@ -113,12 +113,10 @@ class icCanvasGtk.GLXContextManager {
         
         unowned X.Display disp = Gdk.X11Display.get_xdisplay(this._disp);
         
-        var res = MakeCurrent(disp, d, c);
+        var res = glX.MakeCurrent(disp, d, c);
         
         if (res) {
             return ctxt;
-        } else {
-            return (icCanvasManager.GL.CONTEXT)0;
         }
         
         return (icCanvasManager.GL.CONTEXT)0;
