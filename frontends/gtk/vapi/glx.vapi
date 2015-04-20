@@ -131,4 +131,7 @@ namespace glX {
     
     [CCode (cname = "glXGetCurrentContext")]
     public Context GetCurrentContext();
+    
+    [CCode (cname = "glXDestroyContext")]
+    public void DestroyContext(X.Display dpy, Context c);
 }

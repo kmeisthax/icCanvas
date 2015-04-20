@@ -103,7 +103,16 @@ class icCanvasGtk.GLXContextManager {
     }
     
     void shutdown_sub_context(icCanvasManager.GL.CONTEXT ctxt) {
-        //TODO: Destroy contexts we don't need anymore.
+        var c = (glX.Context)ctxt;
+        
+        if (c == this.main_ctxt) {
+            //You CANNOT shutdown the main context.
+            return;
+        }
+        
+        unowned X.Display disp = Gdk.X11Display.get_xdisplay(this._disp);
+        
+        glX.DestroyContext(disp, c);
     }
     
     icCanvasManager.GL.CONTEXT make_current(icCanvasManager.GL.CONTEXT ctxt, icCanvasManager.GL.DRAWABLE draw) {
