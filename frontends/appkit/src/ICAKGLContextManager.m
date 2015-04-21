@@ -67,6 +67,9 @@
 
 - (intptr_t)makeCurrent:(intptr_t)ctxt withDrawable:(intptr_t)draw {
     NSOpenGLContext *c = (NSOpenGLContext*)c;
+    NSView *d = (NSView*)d;
+
+    c.view = d;
     [c makeCurrentContext];
 
     return [self getCurrent];
