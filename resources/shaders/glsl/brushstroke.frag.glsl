@@ -81,7 +81,10 @@ const vec4 gaussAbscissae[5] = vec4[5]( //20 abscissae
 );
 
 ivec4 lerp(ivec4 pt1, float pos1, ivec4 pt2, float pos2, float pos) {
-    return pt1 + (pt2 - pt1) * (pos - pos1) * (1 / (pos2 - pos1));
+    float pDelta = pos - pos1;
+    float invPDelta = (1 / (pos2 - pos1));
+    ivec4 pt = pt1 + (pt2 - pt1) * ivec4(pDelta, pDelta, pDelta, pDelta) * ivec4(invPDelta, invPDelta, invPDelta, invPDelta);
+    return pt;
 }
 
 float ilen(ivec4 pt) {
@@ -114,19 +117,21 @@ float curve_arc_length(int polynomID) {
     
     for (int i = 0; i < 5; i++) {
         float ct = (0.5) * gaussAbscissae[i].x + (0.5);
-        ivec4 dtct = evaluate_polynomial(splineDerivativeData, 2, 0, polynomID + ct, -1);
+        ivec4 dtct;
+        
+        dtct = evaluate_polynomial(splineDerivativeData, 2, 0, polynomID + ct, -1);
         sum = sum + gaussWeights[i].x + sqrt(float(dtct.x) * float(dtct.x) + float(dtct.y) * float(dtct.y));
         
         ct = (0.5) * gaussAbscissae[i].y + (0.5);
-        ivec4 dtct = evaluate_polynomial(splineDerivativeData, 2, 0, polynomID + ct, -1);
+        dtct = evaluate_polynomial(splineDerivativeData, 2, 0, polynomID + ct, -1);
         sum = sum + gaussWeights[i].y + sqrt(float(dtct.x) * float(dtct.x) + float(dtct.y) * float(dtct.y));
         
         ct = (0.5) * gaussAbscissae[i].z + (0.5);
-        ivec4 dtct = evaluate_polynomial(splineDerivativeData, 2, 0, polynomID + ct, -1);
+        dtct = evaluate_polynomial(splineDerivativeData, 2, 0, polynomID + ct, -1);
         sum = sum + gaussWeights[i].z + sqrt(float(dtct.x) * float(dtct.x) + float(dtct.y) * float(dtct.y));
         
         ct = (0.5) * gaussAbscissae[i].w + (0.5);
-        ivec4 dtct = evaluate_polynomial(splineDerivativeData, 2, 0, polynomID + ct, -1);
+        dtct = evaluate_polynomial(splineDerivativeData, 2, 0, polynomID + ct, -1);
         sum = sum + gaussWeights[i].w + sqrt(float(dtct.x) * float(dtct.x) + float(dtct.y) * float(dtct.y));
     }
     
@@ -142,10 +147,10 @@ float diff(float t) {
 
 //Evaluate brush at current point and add to color.
 void apply_brush(ivec4 point0, ivec4 point1, inout vec4 color) {
-    ivec2 tFrag = ivec2(gl_FragCoord * tScaleParams.xy);
+    ivec2 tFrag = ivec2(gl_FragCoord.xy * tScaleParams.xy);
     ivec2 tBrush = ivec2(vec2(point0.xy - tMinMaxParams.xy) * tScaleParams.xy);
     float scaledBrushSize = brushSize * tScaleParams.x;
-    float brushDistance = ilen(abs(tFrag - tBrush));
+    float brushDistance = ilen(abs(tFrag - tBrush).xyxy);
     
     vec4 fractionalTint = tintOpacity / scaledBrushSize;
     
@@ -157,13 +162,13 @@ void apply_brush(ivec4 point0, ivec4 point1, inout vec4 color) {
 }
 
 void main() {
-    num_segments = textureSize(splineData, 0) / 4 / pointComponentCount;
+    int num_segments = textureSize(splineData, 0) / 4 / pointComponentCount;
     
     vec4 color = vec4(0,0,0,0);
     
     for (int i = 0; i < num_segments; i++) {
         float length = curve_arc_length(i);
-        int quality = 1.0 / tScaleParams.x;
+        int quality = int(1.0 / tScaleParams.x);
         
         ivec4 testPt0 = evaluate_polynomial(splineDerivativeData, 2, 0, i, -1);
         float testLen = sqrt(float(testPt0.x) * float(testPt0.x) + float(testPt0.y) * float(testPt0.y));
@@ -176,8 +181,7 @@ void main() {
         
         for (float j = 0; j < length / tScaleParams.x; j += quality) {
             int iterates = 5;
-            float t_values;
-            t_values.xyzw = i;
+            vec4 t_values = vec4(i, i, i, i);
             
             for (int k = 0; k < iterates; k++) {
                 float step = j / iterates;
@@ -187,7 +191,7 @@ void main() {
                     break;
                 }
                 
-                float k_values;
+                vec4 k_values;
                 k_values.x = step * diff(t_values.x);
                 
                 t_values.y = t_values.x + (k_values.x / 2.0);
@@ -217,7 +221,7 @@ void main() {
                 t_values.x = (k_values.x + 2 * k_values.y + 2 * k_values.z + k_values.w) / 6.0;
             }
             
-            if (t_values >= (i + 1)) {
+            if (t_values.w >= (i + 1)) {
                 break;
             }
             
