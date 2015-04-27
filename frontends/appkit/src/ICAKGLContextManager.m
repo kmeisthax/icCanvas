@@ -46,7 +46,7 @@
         return 0;
     }
 
-    return (intptr_t)&self->_ctxt;
+    return (intptr_t)(__bridge void*)self->_ctxt;
 };
 
 - (intptr_t)createSubContext {
@@ -66,11 +66,16 @@
 };
 
 - (intptr_t)makeCurrent:(intptr_t)ctxt withDrawable:(intptr_t)draw {
-    NSOpenGLContext *c = (NSOpenGLContext*)c;
-    NSView *d = (NSView*)d;
+    NSOpenGLContext *c = (__bridge NSOpenGLContext*)(void*)ctxt;
+    NSView *d = (__bridge NSView*)(void*)draw;
+
+    assert(c != nil);
+    assert(d != nil);
 
     c.view = d;
     [c makeCurrentContext];
+
+    assert(NSOpenGLContext.currentContext == c);
 
     return [self getCurrent];
 };
