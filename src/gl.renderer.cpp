@@ -7,6 +7,8 @@
 
 icCanvasManager::GL::Renderer::Renderer(icCanvasManager::RefPtr<icCanvasManager::GL::ContextManager> m, icCanvasManager::GL::ContextManager::CONTEXT target, icCanvasManager::GL::ContextManager::DRAWABLE window) : m(m) {
 
+    this->ex = new icCanvasManager::GL::Extensions();
+
     /* TODO: Make resource loading work properly without running the program
      * inside the resources directory. */
 
@@ -17,15 +19,17 @@ icCanvasManager::GL::Renderer::Renderer(icCanvasManager::RefPtr<icCanvasManager:
     GLint vertLength = iFile.tellg();
     iFile.seekg(0, std::ios::beg);
 
-    char* vertBuffer = new char[vertLength];
+    GLchar* vertBuffer = new GLchar[vertLength + 1];
     iFile.read(vertBuffer, vertLength);
     iFile.close();
+
+    vertBuffer[vertLength] = 0;
 
     m->make_current(target, window);
     this->ex->collect_extensions(this->m);
 
     this->vShader = this->ex->glCreateShader(GL_VERTEX_SHADER);
-    this->ex->glShaderSource(this->vShader, 1, (const GLchar**)&vertBuffer, &vertLength);
+    this->ex->glShaderSource(this->vShader, 1, (const GLchar**)&vertBuffer, NULL);
     this->ex->glCompileShader(this->vShader);
 
     delete[] vertBuffer;
@@ -33,13 +37,15 @@ icCanvasManager::GL::Renderer::Renderer(icCanvasManager::RefPtr<icCanvasManager:
     GLint success = 0;
     this->ex->glGetShaderiv(this->vShader, GL_COMPILE_STATUS, &success);
     if (success == GL_FALSE) {
-        GLint logSize = 0;
+        GLint logSize = 0, getLogSize;
         this->ex->glGetShaderiv(this->vShader, GL_INFO_LOG_LENGTH, &logSize);
 
         char* vertLog = new char[logSize];
-        this->ex->glGetShaderInfoLog(this->vShader, logSize, NULL, vertLog);
+        this->ex->glGetShaderInfoLog(this->vShader, logSize, &getLogSize, vertLog);
 
-        std::cout << vertLog << std::endl;
+        std::cout << "Vertex shader compilation failed!" << std::endl;
+        std::cout.write(vertLog, getLogSize);
+        std::cout << std::endl;
 
         this->ex->glDeleteShader(this->vShader);
         delete[] vertLog;
@@ -51,9 +57,11 @@ icCanvasManager::GL::Renderer::Renderer(icCanvasManager::RefPtr<icCanvasManager:
     GLint fragLength = iFile.tellg();
     iFile.seekg(0, std::ios::beg);
 
-    char* fragBuffer = new char[fragLength];
+    GLchar* fragBuffer = new GLchar[fragLength + 1];
     iFile.read(fragBuffer, fragLength);
     iFile.close();
+
+    fragBuffer[fragLength] = 0;
 
     this->fShader = this->ex->glCreateShader(GL_FRAGMENT_SHADER);
     this->ex->glShaderSource(this->fShader, 1, (const GLchar**)&fragBuffer, &fragLength);
@@ -64,13 +72,15 @@ icCanvasManager::GL::Renderer::Renderer(icCanvasManager::RefPtr<icCanvasManager:
     success = 0;
     this->ex->glGetShaderiv(this->fShader, GL_COMPILE_STATUS, &success);
     if (success == GL_FALSE) {
-        GLint logSize = 0;
+        GLint logSize = 0, getLogSize;
         this->ex->glGetShaderiv(this->fShader, GL_INFO_LOG_LENGTH, &logSize);
 
         char* fragLog = new char[logSize];
-        this->ex->glGetShaderInfoLog(this->fShader, logSize, NULL, fragLog);
+        this->ex->glGetShaderInfoLog(this->fShader, logSize, &getLogSize, fragLog);
 
-        std::cout << fragLog << std::endl;
+        std::cout << "Fragment shader compilation failed!\n" << std::endl;
+        std::cout.write(fragLog, getLogSize);
+        std::cout << std::endl;
 
         this->ex->glDeleteShader(this->fShader);
         this->ex->glDeleteShader(this->vShader);
@@ -93,7 +103,7 @@ icCanvasManager::GL::Renderer::Renderer(icCanvasManager::RefPtr<icCanvasManager:
         char* linkLog = new char[logSize];
         this->ex->glGetProgramInfoLog(this->dProgram, logSize, NULL, linkLog);
 
-        std::cout << linkLog << std::endl;
+        std::cout << "Shader program linking failed!\n" << linkLog << std::endl;
 
         this->ex->glDeleteProgram(this->dProgram);
         this->ex->glDeleteShader(this->fShader);
