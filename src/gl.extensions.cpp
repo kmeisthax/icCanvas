@@ -17,4 +17,14 @@ void icCanvasManager::GL::Extensions::collect_extensions(icCanvasManager::RefPtr
     this->glGetProgramInfoLog = (decltype(this->glGetProgramInfoLog))m->get_proc_address("glGetProgramInfoLog");
     this->glDeleteProgram = (decltype(this->glDeleteProgram))m->get_proc_address("glDeleteProgram");
     this->glDetachShader = (decltype(this->glDetachShader))m->get_proc_address("glDetachShader");
+    this->glGenFramebuffers = (decltype(this->glGenFramebuffers))m->get_proc_address("glGenFramebuffers");
+    this->glDeleteFramebuffers = (decltype(this->glDeleteFramebuffers))m->get_proc_address("glDeleteFramebuffers");
+    this->glBindFramebuffer = (decltype(this->glBindFramebuffer))m->get_proc_address("glBindFramebuffer");
+    this->glFramebufferTexture = (decltype(this->glFramebufferTexture))m->get_proc_address("glFramebufferTexture");
+    this->glFramebufferTexture1D = (decltype(this->glFramebufferTexture1D))m->get_proc_address("glFramebufferTexture1D");
+    this->glFramebufferTexture2D = (decltype(this->glFramebufferTexture2D))m->get_proc_address("glFramebufferTexture2D");
+    this->glFramebufferTexture3D = (decltype(this->glFramebufferTexture3D))m->get_proc_address("glFramebufferTexture3D");
+    this->glCheckFramebufferStatus = (decltype(this->glCheckFramebufferStatus))m->get_proc_address("glCheckFramebufferStatus");
+    this->glDrawBuffer = (decltype(this->glDrawBuffer))m->get_proc_address("glDrawBuffer");
+    //this-> = (decltype(this->))m->get_proc_address("");
 }

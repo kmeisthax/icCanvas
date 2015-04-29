@@ -43,6 +43,15 @@ namespace icCanvasManager {
             void (*glGetProgramInfoLog)(GLuint program, GLsizei maxLength, GLsizei *length, GLchar *infoLog);
             void (*glDeleteProgram)(GLuint program);
             void (*glDetachShader)(GLuint program, GLuint shader);
+            void (*glGenFramebuffers)(GLsizei n, GLuint* ids);
+            void (*glDeleteFramebuffers)(GLsizei n, GLuint *framebuffers);
+            void (*glBindFramebuffer)(GLenum target, GLuint framebuffer);
+            void (*glFramebufferTexture)(GLenum target, GLenum attachment, GLuint texture, GLint level);
+            void (*glFramebufferTexture1D)(GLenum target, GLenum attachment, GLenum textarget, GLuint texture, GLint level);
+            void (*glFramebufferTexture2D)(GLenum target, GLenum attachment, GLenum textarget, GLuint texture, GLint level);
+            void (*glFramebufferTexture3D)(GLenum target, GLenum attachment, GLenum textarget, GLuint texture, GLint level, GLint layer);
+            GLenum (*glCheckFramebufferStatus)(GLenum target);
+            void (*glDrawBuffer)(GLenum mode);
         };
     }
 }
