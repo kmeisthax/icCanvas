@@ -14,6 +14,10 @@ namespace glX {
     [SimpleType]
     public struct FBConfig {}
     
+    [CCode (cname = "GLXPixmap")]
+    [SimpleType]
+    public struct Pixmap {}
+    
     //glX enumerants
     public const int USE_GL;
     public const int BUFFER_SIZE;
@@ -134,4 +138,10 @@ namespace glX {
     
     [CCode (cname = "glXDestroyContext")]
     public void DestroyContext(X.Display dpy, Context c);
+    
+    [CCode (cname = "glXCreateGLXPixmap")]
+    public Pixmap CreateGLXPixmap(X.Display dpy, X.VisualInfo vis, X.Pixmap pixmap);
+    
+    [CCode (cname = "glXDestroyGLXPixmap")]
+    public Pixmap DestroyGLXPixmap(X.Display dpy, Pixmap pixmap);
 }
