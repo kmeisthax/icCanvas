@@ -30,12 +30,21 @@ namespace icCanvasManager {
             void collect_extensions(RefPtr<ContextManager> m);
 
             /* Extension pointers. */
+
+            //Texture objects
+            void (*glGenTextures)(GLsizei n, GLuint* textures);
+            void (*glBindTexture)(GLenum target, GLuint texture);
+            void (*glDeleteTextures)(GLsizei n, const GLuint* textures);
+
+            //Shader objects
             GLuint (*glCreateShader)(GLenum shaderType);
             void (*glShaderSource)(GLuint shader, GLsizei count, const GLchar** string, const GLint *length);
             void (*glCompileShader)(GLuint shader);
             void (*glGetShaderiv)(GLuint shader, GLenum pname, GLint *params);
             void (*glGetShaderInfoLog)(GLuint shader, GLsizei maxLength, GLsizei *length, GLchar *infoLog);
             void (*glDeleteShader)(GLuint shader);
+
+            //Program objects
             GLuint (*glCreateProgram)();
             void (*glAttachShader)(GLuint program, GLuint shader);
             void (*glLinkProgram)(GLuint program);
@@ -43,6 +52,8 @@ namespace icCanvasManager {
             void (*glGetProgramInfoLog)(GLuint program, GLsizei maxLength, GLsizei *length, GLchar *infoLog);
             void (*glDeleteProgram)(GLuint program);
             void (*glDetachShader)(GLuint program, GLuint shader);
+
+            //Framebuffer objects
             void (*glGenFramebuffers)(GLsizei n, GLuint* ids);
             void (*glDeleteFramebuffers)(GLsizei n, GLuint *framebuffers);
             void (*glBindFramebuffer)(GLenum target, GLuint framebuffer);
@@ -51,6 +62,8 @@ namespace icCanvasManager {
             void (*glFramebufferTexture2D)(GLenum target, GLenum attachment, GLenum textarget, GLuint texture, GLint level);
             void (*glFramebufferTexture3D)(GLenum target, GLenum attachment, GLenum textarget, GLuint texture, GLint level, GLint layer);
             GLenum (*glCheckFramebufferStatus)(GLenum target);
+
+            //Back/front buffer configuration
             void (*glDrawBuffer)(GLenum mode);
         };
     }

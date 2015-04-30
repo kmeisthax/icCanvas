@@ -26,5 +26,8 @@ void icCanvasManager::GL::Extensions::collect_extensions(icCanvasManager::RefPtr
     this->glFramebufferTexture3D = (decltype(this->glFramebufferTexture3D))m->get_proc_address("glFramebufferTexture3D");
     this->glCheckFramebufferStatus = (decltype(this->glCheckFramebufferStatus))m->get_proc_address("glCheckFramebufferStatus");
     this->glDrawBuffer = (decltype(this->glDrawBuffer))m->get_proc_address("glDrawBuffer");
+    this->glGenTextures = (decltype(this->glGenTextures))m->get_proc_address("glGenTextures");
+    this->glBindTexture = (decltype(this->glBindTexture))m->get_proc_address("glBindTexture");
+    this->glDeleteTextures = (decltype(this->glDeleteTextures))m->get_proc_address("glDeleteTextures");
     //this-> = (decltype(this->))m->get_proc_address("");
 }
