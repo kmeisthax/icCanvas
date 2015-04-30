@@ -116,6 +116,18 @@ icCanvasManager::GL::Renderer::Renderer(icCanvasManager::RefPtr<icCanvasManager:
     this->ex->glDetachShader(this->dProgram, this->fShader);
     this->ex->glDeleteShader(this->vShader);
     this->ex->glDeleteShader(this->fShader);
+
+    this->ex->glGenFramebuffers(1, &this->renderTarget);
+    this->ex->glBindFramebuffer(GL_DRAW_FRAMEBUFFER, this->renderTarget);
+
+    this->ex->glGenTextures(1, &this->renderColorTexture);
+    this->ex->glBindTexture(GL_TEXTURE_2D, this->renderColorTexture);
+
+    this->ex->glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, icCanvasManager::TileCache::TILE_SIZE, icCanvasManager::TileCache::TILE_SIZE, 0, GL_RGBA, GL_FLOAT, NULL);
+
+    this->ex->glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, this->renderColorTexture, 0);
+
+    assert(this->ex->glCheckFramebufferStatus(GL_DRAW_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE);
 };
 icCanvasManager::GL::Renderer::~Renderer() {
 };

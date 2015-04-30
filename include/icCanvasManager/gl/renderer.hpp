@@ -15,7 +15,7 @@ namespace icCanvasManager {
          * frontend code.
          */
         class Renderer : public virtual RefCnt, public virtual icCanvasManager::Renderer {
-            GLuint vShader, fShader, dProgram;
+            GLuint vShader, fShader, dProgram, renderTarget, renderColorTexture;
 
             RefPtr<Extensions> ex;
             RefPtr<ContextManager> m;
