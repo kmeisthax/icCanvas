@@ -29,5 +29,6 @@ void icCanvasManager::GL::Extensions::collect_extensions(icCanvasManager::RefPtr
     this->glGenTextures = (decltype(this->glGenTextures))m->get_proc_address("glGenTextures");
     this->glBindTexture = (decltype(this->glBindTexture))m->get_proc_address("glBindTexture");
     this->glDeleteTextures = (decltype(this->glDeleteTextures))m->get_proc_address("glDeleteTextures");
+    this->glTexImage2D = (decltype(this->glTexImage2D))m->get_proc_address("glTexImage2D");
     //this-> = (decltype(this->))m->get_proc_address("");
 }
