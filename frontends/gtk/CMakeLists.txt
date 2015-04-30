@@ -49,6 +49,7 @@ link_directories(${GEE_LIBRARY_DIRS})
 include_directories(${GEE_INCLUDE_DIRS})
 
 file(GLOB ICGTK_SRC_VALA RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} src/*.vala)
+file(GLOB ICGTK_SRC_C RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} src/*.c)
 include_directories(include)
 
 set(ICGTK_VALA_PACKAGES gtk+-3.0 gdk-x11-3.0 glib-2.0 posix ${SUCCESSFUL_GEE})
@@ -59,7 +60,7 @@ vala_precompile(ICGTK_SRC ${ICGTK_SRC_VALA}
     CUSTOM_VAPIS ${CORELIB_VAPI} ${CMAKE_CURRENT_SOURCE_DIR}/vapi/glx.vapi
     DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/vala)
 
-add_executable(icCanvasGtk ${ICGTK_SRC})
+add_executable(icCanvasGtk ${ICGTK_SRC} ${ICGTK_SRC_C})
 
 target_link_libraries(icCanvasGtk ${GTK_LIBRARIES} gthread-2.0 m)
 target_link_libraries(icCanvasGtk icCanvasManager)

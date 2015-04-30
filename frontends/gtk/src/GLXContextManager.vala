@@ -10,6 +10,12 @@ namespace X {
     
     [CCode (cname = "XFree")]
     public extern int Free(void* f);
+    
+    [CCode (cname = "ICM_XDefaultRootWindow")]
+    public extern X.Window DefaultRootWindow(X.Display disp);
+    
+    [CCode (cname = "XCreatePixmap")]
+    public extern X.Pixmap create_pixmap(X.Display disp, X.Drawable d, uint width, uint height, uint depth);
 }
 
 class icCanvasGtk.GLXContextManager {
@@ -27,6 +33,12 @@ class icCanvasGtk.GLXContextManager {
     
     private icCanvasManager.GL.ContextManager? _cm;
     private Gdk.X11Display _disp;
+    
+    private glX.CreateContextAttribsARBProc _create_context_attribs_ARB;
+    private glX.Context main_ctxt = (glX.Context)0;
+    private glX.FBConfig config = (glX.FBConfig)0;
+    private X.Pixmap null_pixmap = (X.Pixmap)0;
+    private glX.Pixmap null_drawable = (glX.Pixmap)0;
     
     public icCanvasManager.GL.ContextManager context_manager {
         get {
@@ -47,10 +59,7 @@ class icCanvasGtk.GLXContextManager {
         }
     }
     
-    private glX.CreateContextAttribsARBProc _create_context_attribs_ARB;
-    private glX.Context main_ctxt = (glX.Context)0;
-    
-    icCanvasManager.GL.CONTEXT create_main_context(int major, int minor) {
+    public icCanvasManager.GL.CONTEXT create_main_context(int major, int minor) {
         glX.Context nullCtxt = (glX.Context)0;
         if (this.main_ctxt != nullCtxt) {
             return (icCanvasManager.GL.CONTEXT)main_ctxt;
@@ -77,7 +86,7 @@ class icCanvasGtk.GLXContextManager {
             return (icCanvasManager.GL.CONTEXT)0; //Error out
         }
         
-        glX.FBConfig fb_good = fb[0];
+        this.config = fb[0];
         X.Free(fb);
         
         int[] context_attribs = {
@@ -86,7 +95,7 @@ class icCanvasGtk.GLXContextManager {
             glX.None
         };
         
-        glX.Context c = this._create_context_attribs_ARB(disp, fb_good, nullCtxt, true, context_attribs);
+        glX.Context c = this._create_context_attribs_ARB(disp, this.config, nullCtxt, true, context_attribs);
         
         if (c == nullCtxt) {
             return (icCanvasManager.GL.CONTEXT)0; //Error out
@@ -97,12 +106,12 @@ class icCanvasGtk.GLXContextManager {
         return (icCanvasManager.GL.CONTEXT)c;
     }
     
-    icCanvasManager.GL.CONTEXT create_sub_context() {
+    public icCanvasManager.GL.CONTEXT create_sub_context() {
         //TODO: Create sub contexts.
         return (icCanvasManager.GL.CONTEXT)0;
     }
     
-    void shutdown_sub_context(icCanvasManager.GL.CONTEXT ctxt) {
+    public void shutdown_sub_context(icCanvasManager.GL.CONTEXT ctxt) {
         var c = (glX.Context)ctxt;
         
         if (c == this.main_ctxt) {
@@ -115,7 +124,7 @@ class icCanvasGtk.GLXContextManager {
         glX.DestroyContext(disp, c);
     }
     
-    icCanvasManager.GL.CONTEXT make_current(icCanvasManager.GL.CONTEXT ctxt, icCanvasManager.GL.DRAWABLE draw) {
+    public icCanvasManager.GL.CONTEXT make_current(icCanvasManager.GL.CONTEXT ctxt, icCanvasManager.GL.DRAWABLE draw) {
         //TODO: Bind the current context as active with a drawable.
         var c = (glX.Context)ctxt;
         var d = (glX.Drawable)draw;
@@ -131,11 +140,42 @@ class icCanvasGtk.GLXContextManager {
         return (icCanvasManager.GL.CONTEXT)0;
     }
     
-    icCanvasManager.GL.CONTEXT get_current() {
+    public icCanvasManager.GL.CONTEXT get_current() {
         return (icCanvasManager.GL.CONTEXT)glX.GetCurrentContext();
     }
     
-    icCanvasManager.GL.Proc get_proc_address(string proc_name) {
+    public icCanvasManager.GL.Proc get_proc_address(string proc_name) {
         return (icCanvasManager.GL.Proc)glX.GetProcAddressARB(proc_name);
+    }
+    
+    /* Create a null drawable.
+     * 
+     * A null drawable is intended to be used to emulate a GL implementation
+     * that would allow calling make_current without an active drawable.
+     * Application code using the null drawable should not use GL commands
+     * which affect the state of the default framebuffer. Furthermore, code
+     * using the null drawable must not use GL commands which read state from
+     * the default framebuffer, as it is considered undefined behavior.
+     * 
+     * Outside the MASSIVE documentation cop-out that "undefined behavior" is,
+     * create_null_drawable is free to hand any value which make_current can
+     * accept. It may return different drawables each time, it may return NULL
+     * if the implementation allows make_current with no drawable, or it may
+     * give you the same drawable each time. Hence, don't rely on having a
+     * default framebuffer - just create an FBO and bind it immediately.
+     */
+    public icCanvasManager.GL.DRAWABLE create_null_drawable() {
+        glX.Pixmap nullP = (glX.Pixmap)0;
+        if (this.null_drawable != nullP) {
+            return (icCanvasManager.GL.DRAWABLE)this.null_drawable;
+        }
+        
+        unowned X.Display disp = Gdk.X11Display.get_xdisplay(this._disp);
+        
+        var visual = glX.GetVisualFromFBConfig(disp, this.config);
+        this.null_pixmap = X.create_pixmap(disp, X.DefaultRootWindow(disp), 1, 1, 24);
+        this.null_drawable = glX.CreateGLXPixmap(disp, visual, this.null_pixmap);
+        
+        return (icCanvasManager.GL.DRAWABLE)this.null_drawable;
     }
 }
