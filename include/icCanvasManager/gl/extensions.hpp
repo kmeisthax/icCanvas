@@ -39,6 +39,7 @@ namespace icCanvasManager {
             void (*glGenTextures)(GLsizei n, GLuint* textures);
             void (*glBindTexture)(GLenum target, GLuint texture);
             void (*glDeleteTextures)(GLsizei n, const GLuint* textures);
+            void (*glTexImage1D)(GLenum target, GLint level, GLint internalformat, GLsizei width, GLint border, GLint format, GLenum type, const GLvoid *pixels);
             void (*glTexImage2D)(GLenum target, GLint level, GLint internalformat, GLsizei width, GLsizei height, GLint border, GLint format, GLenum type, const GLvoid *pixels);
 
             //Shader objects
