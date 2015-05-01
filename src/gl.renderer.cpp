@@ -129,6 +129,7 @@ icCanvasManager::GL::Renderer::Renderer(icCanvasManager::RefPtr<icCanvasManager:
 
     assert(this->ex->glCheckFramebufferStatus(GL_DRAW_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE);
 };
+
 icCanvasManager::GL::Renderer::~Renderer() {
 };
 
@@ -144,6 +145,36 @@ void icCanvasManager::GL::Renderer::enter_new_surface(const int32_t x, const int
  * position and zoom level.
  */
 void icCanvasManager::GL::Renderer::draw_stroke(icCanvasManager::RefPtr<icCanvasManager::BrushStroke> br) {
+    GLuint strokeInfoTex;
+
+    this->ex->glGenTextures(1, &strokeInfoTex);
+
+    //Pull the brushstroke information out into a texture.
+    size_t strokeTexSize = br._curve.count_points() * 4 * 2; //Number of texels
+    int32_t *strokeTexMem = malloc(strokeTexSize * 4 * sizeof(int32_t)); //Actual texture memory
+
+    for (int i = 0; i < br._curve.count_points(); i++) { //Forall polynomials
+        for (int j = 0; j < 4; j++) { //Forall control points
+            int base_component = i * 4 * 2 * 4 + j * 2 * 4;
+            auto &cpt = br.curve.get_point(i, j);
+
+            strokeTexMem[base_component] = cpt.x;
+            strokeTexMem[base_component + 1] = cpt.y;
+            strokeTexMem[base_component + 2] = cpt.dx;
+            strokeTexMem[base_component + 3] = cpt.dy;
+            strokeTexMem[base_component + 4] = cpt.tilt;
+            strokeTexMem[base_component + 5] = cpt.angle;
+            strokeTexMem[base_component + 6] = cpt.pressure;
+            strokeTexMem[base_component + 6] = 0;
+        }
+    }
+
+    this->ex->glBindTexture(GL_TEXTURE_1D, strokeInfoTex);
+    this->ex->glTexImage1D(GL_TEXTURE_1D, 0, GL_RGBA32I, strokeTexSize, 0, GL_RGBA_INTEGER, GL_INT, strokeTexMem);
+
+
+
+    this->ex->glDeleteTextures(1, &strokeInfoTex);
 };
 
 /* After rendering has finished, it may be copied to a Cairo image

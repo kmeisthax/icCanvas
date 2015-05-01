@@ -113,6 +113,7 @@ namespace icCanvasManager {
 
         friend class Renderer;
         friend class CairoRenderer;
+        friend class GL::Renderer;
     };
 };
 

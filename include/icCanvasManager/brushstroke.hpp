@@ -135,6 +135,7 @@ namespace icCanvasManager {
         friend class Renderer;
         friend class CairoRenderer;
         friend class SplineFitter;
+        friend class GL::Renderer;
     };
 };
 
