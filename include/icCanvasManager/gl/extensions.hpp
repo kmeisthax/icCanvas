@@ -46,6 +46,7 @@ namespace icCanvasManager {
             void (*glGenBuffers)(GLsizei n, GLuint* ids);
             void (*glDeleteBuffers)(GLsizei n, GLuint* ids);
             void (*glBindBuffer)(GLenum target, GLuint bufferName);
+            void (*glBufferData)(GLenum target, GLsizeiptr size, const GLvoid * data, GLenum usage);
 
             //Shader objects
             GLuint (*glCreateShader)(GLenum shaderType);
