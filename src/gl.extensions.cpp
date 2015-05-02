@@ -38,5 +38,8 @@ void icCanvasManager::GL::Extensions::collect_extensions(icCanvasManager::RefPtr
     this->glVertexAttribPointer = (decltype(this->glVertexAttribPointer))m->get_proc_address("glVertexAttribPointer");
     this->glVertexAttribIPointer = (decltype(this->glVertexAttribIPointer))m->get_proc_address("glVertexAttribIPointer");
     this->glVertexAttribLPointer = (decltype(this->glVertexAttribLPointer))m->get_proc_address("glVertexAttribLPointer");
+    this->glGenVertexArrays = (decltype(this->glGenVertexArrays))m->get_proc_address("glGenVertexArrays");
+    this->glDeleteVertexArrays = (decltype(this->glDeleteVertexArrays))m->get_proc_address("glDeleteVertexArrays");
+    this->glBindVertexArray = (decltype(this->glBindVertexArray))m->get_proc_address("glBindVertexArray");
     //this-> = (decltype(this->))m->get_proc_address("");
 }

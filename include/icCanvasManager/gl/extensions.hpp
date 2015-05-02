@@ -48,6 +48,11 @@ namespace icCanvasManager {
             void (*glBindBuffer)(GLenum target, GLuint bufferName);
             void (*glBufferData)(GLenum target, GLsizeiptr size, const GLvoid * data, GLenum usage);
 
+            //Vertex Array Objects
+            void (*glGenVertexArrays)(GLsizei n, GLuint* ids);
+            void (*glDeleteVertexArrays)(GLsizei n, GLuint* ids);
+            void (*glBindVertexArray)(GLuint bufferName);
+
             //Vertex specification
             void (*glVertexAttribPointer)(GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const GLvoid * pointer);
             void (*glVertexAttribIPointer)(GLuint index, GLint size, GLenum type, GLsizei stride, const GLvoid * pointer);
