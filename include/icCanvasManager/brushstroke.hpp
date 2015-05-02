@@ -12,6 +12,10 @@ namespace icCanvasManager {
     class Renderer;
     class SplineFitter;
 
+    namespace GL {
+        class Renderer;
+    }
+
     class BrushStroke : public RefCnt {
         struct __ControlPoint {
             int x, y;

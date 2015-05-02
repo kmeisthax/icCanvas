@@ -150,13 +150,13 @@ void icCanvasManager::GL::Renderer::draw_stroke(icCanvasManager::RefPtr<icCanvas
     this->ex->glGenTextures(1, &strokeInfoTex);
 
     //Pull the brushstroke information out into a texture.
-    size_t strokeTexSize = br._curve.count_points() * 4 * 2; //Number of texels
-    int32_t *strokeTexMem = malloc(strokeTexSize * 4 * sizeof(int32_t)); //Actual texture memory
+    size_t strokeTexSize = br->_curve.count_points() * 4 * 2; //Number of texels
+    int32_t *strokeTexMem = (int32_t*)malloc(strokeTexSize * 4 * sizeof(int32_t)); //Actual texture memory
 
-    for (int i = 0; i < br._curve.count_points(); i++) { //Forall polynomials
+    for (int i = 0; i < br->_curve.count_points(); i++) { //Forall polynomials
         for (int j = 0; j < 4; j++) { //Forall control points
             int base_component = i * 4 * 2 * 4 + j * 2 * 4;
-            auto &cpt = br.curve.get_point(i, j);
+            auto &cpt = br->_curve.get_point(i, j);
 
             strokeTexMem[base_component] = cpt.x;
             strokeTexMem[base_component + 1] = cpt.y;
@@ -165,7 +165,7 @@ void icCanvasManager::GL::Renderer::draw_stroke(icCanvasManager::RefPtr<icCanvas
             strokeTexMem[base_component + 4] = cpt.tilt;
             strokeTexMem[base_component + 5] = cpt.angle;
             strokeTexMem[base_component + 6] = cpt.pressure;
-            strokeTexMem[base_component + 6] = 0;
+            strokeTexMem[base_component + 7] = 0;
         }
     }
 

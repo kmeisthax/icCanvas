@@ -7,6 +7,10 @@
 #include <stdexcept>
 
 namespace icCanvasManager {
+    namespace GL {
+        class Renderer;
+    }
+
     /* Spline polynomial interpolation between any lerpable type.
      * 
      *  Order 0: Constant polynomials.
