@@ -77,6 +77,15 @@ namespace icCanvasManager {
             void (*glDeleteProgram)(GLuint program);
             void (*glDetachShader)(GLuint program, GLuint shader);
 
+            //Program introspection
+            void (*glGetActiveAttrib)(GLuint program, GLuint index, GLsizei bufSize, GLsizei *length, GLint *size, GLenum *type, GLchar *name);
+            GLint (*glGetAttribLocation)(GLuint program, const GLchar *name);
+            GLint (*glGetFragDataLocation)(GLuint program, const char * name);
+            GLint (*glGetFragDataIndex)(GLuint program, const char * name);
+            void (*glGetUniformIndices)(GLuint program, GLsizei uniformCount, const char ** uniformNames, GLuint *uniformIndices);
+            void (*glGetActiveUniformName)( GLuint program, GLuint uniformIndex, GLsizei bufSize, GLsizei *length, char *uniformName);
+            void (*glGetActiveUniformsiv)( GLuint program, GLsizei uniformCount, const GLuint *uniformIndices, GLenum pname, GLint *params );
+
             //Framebuffer objects
             void (*glGenFramebuffers)(GLsizei n, GLuint* ids);
             void (*glDeleteFramebuffers)(GLsizei n, GLuint *framebuffers);

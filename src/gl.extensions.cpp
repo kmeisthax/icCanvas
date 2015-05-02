@@ -43,5 +43,12 @@ void icCanvasManager::GL::Extensions::collect_extensions(icCanvasManager::RefPtr
     this->glBindVertexArray = (decltype(this->glBindVertexArray))m->get_proc_address("glBindVertexArray");
     this->glEnableVertexAttribArray = (decltype(this->glEnableVertexAttribArray))m->get_proc_address("glEnableVertexAttribArray");
     this->glDisableVertexAttribArray = (decltype(this->glDisableVertexAttribArray))m->get_proc_address("glDisableVertexAttribArray");
+    this->glGetActiveAttrib = (decltype(this->glGetActiveAttrib))m->get_proc_address("glGetActiveAttrib");
+    this->glGetAttribLocation = (decltype(this->glGetAttribLocation))m->get_proc_address("glGetAttribLocation");
+    this->glGetFragDataLocation = (decltype(this->glGetFragDataLocation))m->get_proc_address("glGetFragDataLocation");
+    this->glGetFragDataIndex = (decltype(this->glGetFragDataIndex))m->get_proc_address("glGetFragDataIndex");
+    this->glGetUniformIndices = (decltype(this->glGetUniformIndices))m->get_proc_address("glGetUniformIndices");
+    this->glGetActiveUniformName = (decltype(this->glGetActiveUniformName))m->get_proc_address("glGetActiveUniformName");
+    this->glGetActiveUniformsiv = (decltype(this->glGetActiveUniformsiv))m->get_proc_address("glGetActiveUniformsiv");
     //this-> = (decltype(this->))m->get_proc_address("");
 }
