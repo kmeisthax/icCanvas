@@ -31,5 +31,8 @@ void icCanvasManager::GL::Extensions::collect_extensions(icCanvasManager::RefPtr
     this->glDeleteTextures = (decltype(this->glDeleteTextures))m->get_proc_address("glDeleteTextures");
     this->glTexImage1D = (decltype(this->glTexImage1D))m->get_proc_address("glTexImage1D");
     this->glTexImage2D = (decltype(this->glTexImage2D))m->get_proc_address("glTexImage2D");
+    this->glGenBuffers = (decltype(this->glGenBuffers))m->get_proc_address("glGenBuffers");
+    this->glDeleteBuffers = (decltype(this->glDeleteBuffers))m->get_proc_address("glDeleteBuffers");
+    this->glBindBuffer = (decltype(this->glBindBuffer))m->get_proc_address("glBindBuffer");
     //this-> = (decltype(this->))m->get_proc_address("");
 }

@@ -42,6 +42,11 @@ namespace icCanvasManager {
             void (*glTexImage1D)(GLenum target, GLint level, GLint internalformat, GLsizei width, GLint border, GLint format, GLenum type, const GLvoid *pixels);
             void (*glTexImage2D)(GLenum target, GLint level, GLint internalformat, GLsizei width, GLsizei height, GLint border, GLint format, GLenum type, const GLvoid *pixels);
 
+            //Buffer objects
+            void (*glGenBuffers)(GLsizei n, GLuint* ids);
+            void (*glDeleteBuffers)(GLsizei n, GLuint* ids);
+            void (*glBindBuffer)(GLenum target, GLuint bufferName);
+
             //Shader objects
             GLuint (*glCreateShader)(GLenum shaderType);
             void (*glShaderSource)(GLuint shader, GLsizei count, const GLchar** string, const GLint *length);
