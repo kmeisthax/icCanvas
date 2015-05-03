@@ -74,6 +74,7 @@ namespace icCanvasManager {
             void (*glLinkProgram)(GLuint program);
             void (*glGetProgramiv)(GLuint program, GLenum pname, GLint *params);
             void (*glGetProgramInfoLog)(GLuint program, GLsizei maxLength, GLsizei *length, GLchar *infoLog);
+            void (*glUseProgram)(GLuint program);
             void (*glDeleteProgram)(GLuint program);
             void (*glDetachShader)(GLuint program, GLuint shader);
 
