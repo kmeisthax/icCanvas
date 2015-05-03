@@ -134,10 +134,10 @@ namespace icCanvasManager {
             GLenum (*glCheckFramebufferStatus)(GLenum target);
 
             //Framebuffer clears
-            void glClearBufferiv(GLenum buffer, GLint drawBuffer, const GLint * value);
-            void glClearBufferuiv(GLenum buffer, GLint drawBuffer, const GLuint * value);
-            void glClearBufferfv(GLenum buffer, GLint drawBuffer, const GLfloat * value);
-            void glClearBufferfi(GLenum buffer, GLint drawBuffer, GLfloat depth, GLint stencil);
+            void (*glClearBufferiv)(GLenum buffer, GLint drawBuffer, const GLint * value);
+            void (*glClearBufferuiv)(GLenum buffer, GLint drawBuffer, const GLuint * value);
+            void (*glClearBufferfv)(GLenum buffer, GLint drawBuffer, const GLfloat * value);
+            void (*glClearBufferfi)(GLenum buffer, GLint drawBuffer, GLfloat depth, GLint stencil);
 
             //Back/front buffer configuration
             void (*glDrawBuffer)(GLenum mode);
