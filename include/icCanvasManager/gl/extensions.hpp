@@ -85,6 +85,7 @@ namespace icCanvasManager {
             void (*glGetUniformIndices)(GLuint program, GLsizei uniformCount, const char ** uniformNames, GLuint *uniformIndices);
             void (*glGetActiveUniformName)( GLuint program, GLuint uniformIndex, GLsizei bufSize, GLsizei *length, char *uniformName);
             void (*glGetActiveUniformsiv)( GLuint program, GLsizei uniformCount, const GLuint *uniformIndices, GLenum pname, GLint *params );
+            GLint (*glGetUniformLocation)(GLuint program, const GLchar *name);
 
             //Framebuffer objects
             void (*glGenFramebuffers)(GLsizei n, GLuint* ids);

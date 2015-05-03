@@ -50,5 +50,6 @@ void icCanvasManager::GL::Extensions::collect_extensions(icCanvasManager::RefPtr
     this->glGetUniformIndices = (decltype(this->glGetUniformIndices))m->get_proc_address("glGetUniformIndices");
     this->glGetActiveUniformName = (decltype(this->glGetActiveUniformName))m->get_proc_address("glGetActiveUniformName");
     this->glGetActiveUniformsiv = (decltype(this->glGetActiveUniformsiv))m->get_proc_address("glGetActiveUniformsiv");
+    this->glGetUniformLocation = (decltype(this->glGetUniformLocation))m->get_proc_address("glGetUniformLocation");
     //this-> = (decltype(this->))m->get_proc_address("");
 }
