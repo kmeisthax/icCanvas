@@ -5,13 +5,22 @@
 
 #include <PlatformGL.h>
 
-icCanvasManager::GL::Renderer::Renderer(icCanvasManager::RefPtr<icCanvasManager::GL::ContextManager> m, icCanvasManager::GL::ContextManager::CONTEXT target, icCanvasManager::GL::ContextManager::DRAWABLE window) : m(m) {
+static float __raymarchVertData[16] = {-1,-1,0,1,
+                                        1,-1,0,1,
+                                       -1, 1,0,1,
+                                        1, 1,0,1};
 
+icCanvasManager::GL::Renderer::Renderer(icCanvasManager::RefPtr<icCanvasManager::GL::ContextManager> m, icCanvasManager::GL::ContextManager::CONTEXT target, icCanvasManager::GL::ContextManager::DRAWABLE window) : m(m) {
+    //Wrangle extensions
     this->ex = new icCanvasManager::GL::Extensions();
+
+    m->make_current(target, window);
+    this->ex->collect_extensions(this->m);
 
     /* TODO: Make resource loading work properly without running the program
      * inside the resources directory. */
 
+    //Create BrushStroke rendering function
     std::ifstream iFile;
 
     iFile.open("resources/shaders/glsl/raymarch.vert.glsl", std::ifstream::in);
@@ -24,9 +33,6 @@ icCanvasManager::GL::Renderer::Renderer(icCanvasManager::RefPtr<icCanvasManager:
     iFile.close();
 
     vertBuffer[vertLength] = 0;
-
-    m->make_current(target, window);
-    this->ex->collect_extensions(this->m);
 
     this->vShader = this->ex->glCreateShader(GL_VERTEX_SHADER);
     this->ex->glShaderSource(this->vShader, 1, (const GLchar**)&vertBuffer, NULL);
@@ -117,6 +123,20 @@ icCanvasManager::GL::Renderer::Renderer(icCanvasManager::RefPtr<icCanvasManager:
     this->ex->glDeleteShader(this->vShader);
     this->ex->glDeleteShader(this->fShader);
 
+    //Create "raymarch" quad (i.e. screen-filling so we can raster all points
+    //however we like)
+    this->ex->glGenBuffers(1, &this->raymarchVertex);
+    this->ex->glBindBuffer(GL_ARRAY_BUFFER, this->raymarchVertex);
+    this->ex->glBufferData(GL_ARRAY_BUFFER, sizeof(::__raymarchVertData), &::__raymarchVertData, GL_STATIC_DRAW);
+
+    this->ex->glGenVertexArrays(1, &this->raymarchGeom);
+    this->ex->glBindVertexArray(this->raymarchGeom);
+
+    GLint positionLoc = this->ex->glGetAttribLocation(this->dProgram, "vPos");
+    this->ex->glEnableVertexAttribArray(positionLoc);
+    this->ex->glVertexAttribPointer(positionLoc, 4, GL_FLOAT, GL_TRUE, 0, (void*)0);
+
+    //Create framebuffer object
     this->ex->glGenFramebuffers(1, &this->renderTarget);
     this->ex->glBindFramebuffer(GL_DRAW_FRAMEBUFFER, this->renderTarget);
 
@@ -138,7 +158,30 @@ icCanvasManager::GL::Renderer::~Renderer() {
  * At this stage the renderer is not required to place the tile within
  * a Cairo image surface.
  */
+static const float __clearColor[4] = {0.0f, 0.0f, 0.0f, 0.0f};
+
 void icCanvasManager::GL::Renderer::enter_new_surface(const int32_t x, const int32_t y, const int32_t zoom) {
+    this->ex->glBindFramebuffer(GL_DRAW_FRAMEBUFFER, this->renderTarget);
+
+    //Clear the active framebuffer.
+    this->ex->glClearBufferfv(GL_COLOR, 0, &::__clearColor);
+
+    //Set up additional uniforms used by the fragment shader.
+    GLint tileParamsLoc, surfaceParamsLoc, tScaleParamsLoc, tMinMaxParamsLoc, splineDataLoc, splineDerivativeDataLoc, tintOpacityLoc, brushSizeLoc;
+
+    tileParamsLoc = this->ex->glGetUniformLocation(this->dProgram, "tileParams");
+    surfaceParamsLoc = this->ex->glGetUniformLocation(this->dProgram, "surfaceParams");
+    tScaleParamsLoc = this->ex->glGetUniformLocation(this->dProgram, "tScaleParams");
+    tMinMaxParamsLoc = this->ex->glGetUniformLocation(this->dProgram, "tMinMaxParams");
+    splineDataLoc = this->ex->glGetUniformLocation(this->dProgram, "splineData");
+    splineDerivativeDataLoc = this->ex->glGetUniformLocation(this->dProgram, "splineDerivativeData");
+    tintOpacityLoc = this->ex->glGetUniformLocation(this->dProgram, "tintOpacity");
+    brushSizeLoc = this->ex->glGetUniformLocation(this->dProgram, "brushSize");
+
+    if (tileParamsLoc != -1) {
+    }
+
+    this->enter_image_surface(x, y, zoom, imgsurf);
 };
 
 /* Given a brushstroke, draw it onto the surface at the specified
@@ -172,7 +215,14 @@ void icCanvasManager::GL::Renderer::draw_stroke(icCanvasManager::RefPtr<icCanvas
     this->ex->glBindTexture(GL_TEXTURE_1D, strokeInfoTex);
     this->ex->glTexImage1D(GL_TEXTURE_1D, 0, GL_RGBA32I, strokeTexSize, 0, GL_RGBA_INTEGER, GL_INT, strokeTexMem);
 
+    //Set up the "raymarch" quad so we can raster over the whole tile.
+    this->ex->glBindVertexArray(this->raymarchGeom);
 
+    //Set up our framebuffer target.
+    this->ex->glBindFramebuffer(GL_DRAW_FRAMEBUFFER, this->renderTarget);
+
+    //Set up our shader program.
+    this->ex->glUseProgram(this->dProgram);
 
     this->ex->glDeleteTextures(1, &strokeInfoTex);
 };
