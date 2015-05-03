@@ -212,9 +212,9 @@ void icCanvasManager::GL::Renderer::enter_new_surface(const int32_t x, const int
  * position and zoom level.
  */
 void icCanvasManager::GL::Renderer::draw_stroke(icCanvasManager::RefPtr<icCanvasManager::BrushStroke> br) {
-    GLuint strokeInfoTex;
+    GLuint strokeInfoTex[2];
 
-    this->ex->glGenTextures(1, &strokeInfoTex);
+    this->ex->glGenTextures(2, &strokeInfoTex);
 
     //Pull the brushstroke information out into a texture.
     size_t strokeTexSize = br->_curve.count_points() * 4 * 2; //Number of texels
@@ -236,8 +236,32 @@ void icCanvasManager::GL::Renderer::draw_stroke(icCanvasManager::RefPtr<icCanvas
         }
     }
 
-    this->ex->glBindTexture(GL_TEXTURE_1D, strokeInfoTex);
+    this->ex->glBindTexture(GL_TEXTURE_1D, strokeInfoTex[0]);
     this->ex->glTexImage1D(GL_TEXTURE_1D, 0, GL_RGBA32I, strokeTexSize, 0, GL_RGBA_INTEGER, GL_INT, strokeTexMem);
+
+    //Pull the derivative stroke information into a texture.
+    auto curveDeriv = br->_curve.derivative();
+    size_t strokeDerivTexSize = curveDeriv.count_points() * 3 * 2; //Number of texels
+    int32_t *strokeDerivTexMem = (int32_t*)malloc(strokeDerivTexSize * 4 * sizeof(int32_t)); //Actual texture memory
+
+    for (int i = 0; i < curveDeriv.count_points(); i++) { //Forall polynomials
+        for (int j = 0; j < 3; j++) { //Forall control points
+            int base_component = i * 4 * 2 * 4 + j * 2 * 4;
+            auto &cpt = curveDeriv.get_point(i, j);
+
+            strokeDerivTexMem[base_component] = cpt.x;
+            strokeDerivTexMem[base_component + 1] = cpt.y;
+            strokeDerivTexMem[base_component + 2] = cpt.dx;
+            strokeDerivTexMem[base_component + 3] = cpt.dy;
+            strokeDerivTexMem[base_component + 4] = cpt.tilt;
+            strokeDerivTexMem[base_component + 5] = cpt.angle;
+            strokeDerivTexMem[base_component + 6] = cpt.pressure;
+            strokeDerivTexMem[base_component + 7] = 0;
+        }
+    }
+
+    this->ex->glBindTexture(GL_TEXTURE_1D, strokeInfoTex[1]);
+    this->ex->glTexImage1D(GL_TEXTURE_1D, 0, GL_RGBA32I, strokeDerivTexSize, 0, GL_RGBA_INTEGER, GL_INT, strokeDerivTexMem);
 
     //Set up the "raymarch" quad so we can raster over the whole tile.
     this->ex->glBindVertexArray(this->raymarchGeom);
@@ -247,8 +271,36 @@ void icCanvasManager::GL::Renderer::draw_stroke(icCanvasManager::RefPtr<icCanvas
 
     //Set up our shader program.
     this->ex->glUseProgram(this->dProgram);
+    splineDataLoc = this->ex->glGetUniformLocation(this->dProgram, "splineData");
+    splineDerivativeDataLoc = this->ex->glGetUniformLocation(this->dProgram, "splineDerivativeData");
+    tintOpacityLoc = this->ex->glGetUniformLocation(this->dProgram, "tintOpacity");
+    brushSizeLoc = this->ex->glGetUniformLocation(this->dProgram, "brushSize");
 
-    this->ex->glDeleteTextures(1, &strokeInfoTex);
+    if (splineDataLoc != -1) {
+        this->ex->glUniform1i(splineDataLoc, 0);
+        this->ex->glActiveTexture(GL_TEXTURE0 + 0);
+        this->ex->glBindTexture(strokeInfoTex[0]);
+    }
+
+    if (splineDerivativeDataLoc != -1) {
+        this->ex->glUniform1i(splineDerivativeDataLoc, 1);
+        this->ex->glActiveTexture(GL_TEXTURE0 + 1);
+        this->ex->glBindTexture(strokeInfoTex[1]);
+    }
+
+    if (tintOpacityLoc != -1) {
+        auto premulR = ((float)br->_tint_color_red / icCanvasManager::BrushStroke::COLOR_MAX) * ((float)br->_tint_alpha / icCanvasManager::BrushStroke::COLOR_MAX);
+        auto premulG = ((float)br->_tint_color_green / icCanvasManager::BrushStroke::COLOR_MAX) * ((float)br->_tint_alpha / icCanvasManager::BrushStroke::COLOR_MAX);
+        auto premulB = ((float)br->_tint_color_blue / icCanvasManager::BrushStroke::COLOR_MAX) * ((float)br->_tint_alpha / icCanvasManager::BrushStroke::COLOR_MAX);
+
+        this->ex->glUniform4f(tintOpacityLoc, premulR, premulG, premulB, ((float)br->_tint_alpha / icCanvasManager::BrushStroke::COLOR_MAX))
+    }
+
+    if (brushSizeLoc != -1) {
+        this->ex->glUniform1i(brushSizeLoc, br->_base_thickness);
+    }
+
+    this->ex->glDeleteTextures(2, &strokeInfoTex);
 };
 
 /* After rendering has finished, it may be copied to a Cairo image
