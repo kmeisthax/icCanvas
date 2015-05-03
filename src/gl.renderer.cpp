@@ -161,6 +161,23 @@ icCanvasManager::GL::Renderer::~Renderer() {
 static const float __clearColor[4] = {0.0f, 0.0f, 0.0f, 0.0f};
 
 void icCanvasManager::GL::Renderer::enter_new_surface(const int32_t x, const int32_t y, const int32_t zoom) {
+    this->x = x;
+    this->y = y;
+    this->zoom = std::min(zoom, 31);
+
+    this->tw = icCanvasManager::TileCache::TILE_SIZE;
+    this->th = icCanvasManager::TileCache::TILE_SIZE;
+
+    int64_t size = UINT32_MAX >> this->zoom;
+    this->xmin = x - (size >> 1);
+    this->ymin = y - (size >> 1);
+
+    this->xscale = (float)this->tw / (float)size;
+    this->yscale = (float)this->th / (float)size;
+
+    this->xmax = x + (size >> 1);
+    this->ymax = y + (size >> 1);
+
     this->ex->glBindFramebuffer(GL_DRAW_FRAMEBUFFER, this->renderTarget);
 
     //Clear the active framebuffer.
@@ -173,15 +190,22 @@ void icCanvasManager::GL::Renderer::enter_new_surface(const int32_t x, const int
     surfaceParamsLoc = this->ex->glGetUniformLocation(this->dProgram, "surfaceParams");
     tScaleParamsLoc = this->ex->glGetUniformLocation(this->dProgram, "tScaleParams");
     tMinMaxParamsLoc = this->ex->glGetUniformLocation(this->dProgram, "tMinMaxParams");
-    splineDataLoc = this->ex->glGetUniformLocation(this->dProgram, "splineData");
-    splineDerivativeDataLoc = this->ex->glGetUniformLocation(this->dProgram, "splineDerivativeData");
-    tintOpacityLoc = this->ex->glGetUniformLocation(this->dProgram, "tintOpacity");
-    brushSizeLoc = this->ex->glGetUniformLocation(this->dProgram, "brushSize");
 
     if (tileParamsLoc != -1) {
+        this->ex->glUniform3i(tileParamsLoc, this->x, this->y, this->zoom);
     }
 
-    this->enter_image_surface(x, y, zoom, imgsurf);
+    if (surfaceParamsLoc != -1) {
+        this->ex->glUniform2i(surfaceParamsLoc, this->tw, this->th);
+    }
+
+    if (tScaleParamsLoc != -1) {
+        this->ex->glUniform2f(tScaleParamsLoc, this->xscale, this->yscale);
+    }
+
+    if (tMinMaxParamsLoc != -1) {
+        this->ex->glUniform4i(tMinMaxParamsLoc, this->xmin, this->xmax, this->ymin, this->ymax);
+    }
 };
 
 /* Given a brushstroke, draw it onto the surface at the specified
