@@ -85,5 +85,9 @@ void icCanvasManager::GL::Extensions::collect_extensions(icCanvasManager::RefPtr
     this->glUniformMatrix3x4fv = (decltype(this->glUniformMatrix3x4fv))m->get_proc_address("glUniformMatrix3x4fv");
     this->glUniformMatrix4x3fv = (decltype(this->glUniformMatrix4x3fv))m->get_proc_address("glUniformMatrix4x3fv");
     this->glUseProgram = (decltype(this->glUseProgram))m->get_proc_address("glUseProgram");
+    this->glClearBufferiv = (decltype(this->glClearBufferiv))m->get_proc_address("glClearBufferiv");
+    this->glClearBufferuiv = (decltype(this->glClearBufferuiv))m->get_proc_address("glClearBufferuiv");
+    this->glClearBufferfv = (decltype(this->glClearBufferfv))m->get_proc_address("glClearBufferfv");
+    this->glClearBufferfi = (decltype(this->glClearBufferfi))m->get_proc_address("glClearBufferfi");
     //this-> = (decltype(this->))m->get_proc_address("");
 }
