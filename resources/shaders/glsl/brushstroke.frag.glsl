@@ -25,7 +25,7 @@ uniform isampler1D splineData;           //Order 3 polynomial array
 uniform isampler1D splineDerivativeData; //Order 2 polynomial array
 
 uniform vec4 tintOpacity;       //rgb: brushTint; a: brushOpacity. Premultiplied.
-uniform float brushSize;        //Size of brush in canvas units
+uniform int brushSize;        //Size of brush in canvas units
 
 layout(location = 0) out vec4 strokeColor;
 
