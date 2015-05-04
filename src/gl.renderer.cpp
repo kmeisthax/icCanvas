@@ -136,6 +136,10 @@ icCanvasManager::GL::Renderer::Renderer(icCanvasManager::RefPtr<icCanvasManager:
     this->ex->glEnableVertexAttribArray(positionLoc);
     this->ex->glVertexAttribPointer(positionLoc, 4, GL_FLOAT, GL_TRUE, 0, (void*)0);
 
+    this->ex->glBindVertexArray(0);
+    this->ex->glDisableVertexAttribArray(positionLoc);
+    this->ex->glBindBuffer(GL_ARRAY_BUFFER, 0);
+
     //Create framebuffer object
     this->ex->glGenFramebuffers(1, &this->renderTarget);
     this->ex->glBindFramebuffer(GL_DRAW_FRAMEBUFFER, this->renderTarget);
@@ -148,6 +152,9 @@ icCanvasManager::GL::Renderer::Renderer(icCanvasManager::RefPtr<icCanvasManager:
     this->ex->glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, this->renderColorTexture, 0);
 
     assert(this->ex->glCheckFramebufferStatus(GL_DRAW_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE);
+
+    this->ex->glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+    this->ex->glBindTexture(GL_TEXTURE_2D, 0);
 };
 
 icCanvasManager::GL::Renderer::~Renderer() {
@@ -302,6 +309,8 @@ void icCanvasManager::GL::Renderer::draw_stroke(icCanvasManager::RefPtr<icCanvas
     if (brushSizeLoc != -1) {
         this->ex->glUniform1i(brushSizeLoc, br->_base_thickness);
     }
+
+    this->ex->glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
     this->ex->glDeleteTextures(2, strokeInfoTex);
 };
