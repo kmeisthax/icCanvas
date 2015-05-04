@@ -246,7 +246,7 @@ void icCanvasManager::GL::Renderer::draw_stroke(icCanvasManager::RefPtr<icCanvas
 
     for (int i = 0; i < curveDeriv.count_points(); i++) { //Forall polynomials
         for (int j = 0; j < 3; j++) { //Forall control points
-            int base_component = i * 4 * 2 * 4 + j * 2 * 4;
+            int base_component = i * 3 * 2 * 4 + j * 2 * 4;
             auto &cpt = curveDeriv.get_point(i, j);
 
             strokeDerivTexMem[base_component] = cpt.x;
