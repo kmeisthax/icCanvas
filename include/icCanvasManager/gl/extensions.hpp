@@ -124,6 +124,9 @@ namespace icCanvasManager {
             void (*glUniformMatrix3x4fv)(GLint location, GLsizei count, GLboolean transpose, const GLfloat *value);
             void (*glUniformMatrix4x3fv)(GLint location, GLsizei count, GLboolean transpose, const GLfloat *value);
 
+            //Rendering
+            void (*glDrawArrays)(GLenum mode, GLint first, GLsizei count);
+
             //Framebuffer objects
             void (*glGenFramebuffers)(GLsizei n, GLuint* ids);
             void (*glDeleteFramebuffers)(GLsizei n, GLuint *framebuffers);
