@@ -181,10 +181,10 @@ void icCanvasManager::GL::Renderer::enter_new_surface(const int32_t x, const int
     this->ex->glBindFramebuffer(GL_DRAW_FRAMEBUFFER, this->renderTarget);
 
     //Clear the active framebuffer.
-    this->ex->glClearBufferfv(GL_COLOR, 0, &::__clearColor);
+    this->ex->glClearBufferfv(GL_COLOR, 0, ::__clearColor);
 
     //Set up additional uniforms used by the fragment shader.
-    GLint tileParamsLoc, surfaceParamsLoc, tScaleParamsLoc, tMinMaxParamsLoc, splineDataLoc, splineDerivativeDataLoc, tintOpacityLoc, brushSizeLoc;
+    GLint tileParamsLoc, surfaceParamsLoc, tScaleParamsLoc, tMinMaxParamsLoc;
 
     tileParamsLoc = this->ex->glGetUniformLocation(this->dProgram, "tileParams");
     surfaceParamsLoc = this->ex->glGetUniformLocation(this->dProgram, "surfaceParams");
@@ -214,7 +214,7 @@ void icCanvasManager::GL::Renderer::enter_new_surface(const int32_t x, const int
 void icCanvasManager::GL::Renderer::draw_stroke(icCanvasManager::RefPtr<icCanvasManager::BrushStroke> br) {
     GLuint strokeInfoTex[2];
 
-    this->ex->glGenTextures(2, &strokeInfoTex);
+    this->ex->glGenTextures(2, strokeInfoTex);
 
     //Pull the brushstroke information out into a texture.
     size_t strokeTexSize = br->_curve.count_points() * 4 * 2; //Number of texels
@@ -271,6 +271,9 @@ void icCanvasManager::GL::Renderer::draw_stroke(icCanvasManager::RefPtr<icCanvas
 
     //Set up our shader program.
     this->ex->glUseProgram(this->dProgram);
+
+    //Set up per-stroke uniforms.
+    GLint splineDataLoc, splineDerivativeDataLoc, tintOpacityLoc, brushSizeLoc;
     splineDataLoc = this->ex->glGetUniformLocation(this->dProgram, "splineData");
     splineDerivativeDataLoc = this->ex->glGetUniformLocation(this->dProgram, "splineDerivativeData");
     tintOpacityLoc = this->ex->glGetUniformLocation(this->dProgram, "tintOpacity");
@@ -279,13 +282,13 @@ void icCanvasManager::GL::Renderer::draw_stroke(icCanvasManager::RefPtr<icCanvas
     if (splineDataLoc != -1) {
         this->ex->glUniform1i(splineDataLoc, 0);
         this->ex->glActiveTexture(GL_TEXTURE0 + 0);
-        this->ex->glBindTexture(strokeInfoTex[0]);
+        this->ex->glBindTexture(GL_TEXTURE_1D, strokeInfoTex[0]);
     }
 
     if (splineDerivativeDataLoc != -1) {
         this->ex->glUniform1i(splineDerivativeDataLoc, 1);
         this->ex->glActiveTexture(GL_TEXTURE0 + 1);
-        this->ex->glBindTexture(strokeInfoTex[1]);
+        this->ex->glBindTexture(GL_TEXTURE_1D, strokeInfoTex[1]);
     }
 
     if (tintOpacityLoc != -1) {
@@ -293,14 +296,14 @@ void icCanvasManager::GL::Renderer::draw_stroke(icCanvasManager::RefPtr<icCanvas
         auto premulG = ((float)br->_tint_color_green / icCanvasManager::BrushStroke::COLOR_MAX) * ((float)br->_tint_alpha / icCanvasManager::BrushStroke::COLOR_MAX);
         auto premulB = ((float)br->_tint_color_blue / icCanvasManager::BrushStroke::COLOR_MAX) * ((float)br->_tint_alpha / icCanvasManager::BrushStroke::COLOR_MAX);
 
-        this->ex->glUniform4f(tintOpacityLoc, premulR, premulG, premulB, ((float)br->_tint_alpha / icCanvasManager::BrushStroke::COLOR_MAX))
+        this->ex->glUniform4f(tintOpacityLoc, premulR, premulG, premulB, ((float)br->_tint_alpha / icCanvasManager::BrushStroke::COLOR_MAX));
     }
 
     if (brushSizeLoc != -1) {
         this->ex->glUniform1i(brushSizeLoc, br->_base_thickness);
     }
 
-    this->ex->glDeleteTextures(2, &strokeInfoTex);
+    this->ex->glDeleteTextures(2, strokeInfoTex);
 };
 
 /* After rendering has finished, it may be copied to a Cairo image
