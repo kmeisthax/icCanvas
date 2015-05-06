@@ -312,6 +312,13 @@ void icCanvasManager::GL::Renderer::draw_stroke(icCanvasManager::RefPtr<icCanvas
 
     this->ex->glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
+    //Cleanup some GL state.
+    this->ex->glBindVertexArray(0);
+    this->ex->glActiveTexture(GL_TEXTURE0);
+    this->ex->glUseProgram(0);
+    this->ex->glBindTexture(GL_TEXTURE_1D, 0);
+    this->ex->glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+
     this->ex->glDeleteTextures(2, strokeInfoTex);
 };
 
