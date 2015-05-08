@@ -5,10 +5,6 @@
 
 #include <PlatformGL.h>
 
-#ifndef GL_RGBA32F
-#define GL_RGBA32F GL_RGBA32F_ARB
-#endif
-
 namespace icCanvasManager {
     namespace GL {
         /* Class for storing extension functions that we want to use.
