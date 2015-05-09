@@ -15,6 +15,10 @@ namespace icCanvasManager {
      */
     class TileCache : public RefCnt {
     public:
+        static const int TILE_SIZE = 256;
+
+        typedef float TileData[TILE_SIZE][TILE_SIZE][4];
+
         struct TileTree;
 
         struct Tile {
@@ -104,8 +108,6 @@ namespace icCanvasManager {
          */
         int getTreeIndex(int x, int y, int size);
     public:
-        static const int TILE_SIZE = 256;
-
         TileCache();
         virtual ~TileCache();
 

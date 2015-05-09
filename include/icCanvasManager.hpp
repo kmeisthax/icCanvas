@@ -21,10 +21,12 @@
 #include "icCanvasManager/canvastool.hpp"
 #include "icCanvasManager/brushtool.hpp"
 #include "icCanvasManager/zoomtool.hpp"
+#include "icCanvasManager/displaysuite.hpp"
 
 //OpenGL rendering implementations
 #include "icCanvasManager/gl/contextmanager.hpp"
 #include "icCanvasManager/gl/extensions.hpp"
 #include "icCanvasManager/gl/renderer.hpp"
+#include "icCanvasManager/gl/displaysuite.hpp"
 
 #endif
