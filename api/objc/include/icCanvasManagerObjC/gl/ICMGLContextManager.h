@@ -8,5 +8,6 @@
 - (intptr_t)makeCurrent:(intptr_t)ctxt withDrawable:(intptr_t)draw;
 - (intptr_t)getCurrent;
 - (void (*)())getProcAddress:(char*)procName;
+- (intptr_t)createNullDrawable;
 
 @end

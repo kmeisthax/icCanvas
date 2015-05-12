@@ -51,6 +51,7 @@ class icCanvasGtk.GLXContextManager {
                 hk.make_current = this.make_current;
                 hk.get_current = this.get_current;
                 hk.get_proc_address = this.get_proc_address;
+                hk.create_null_drawable = this.create_null_drawable;
                 
                 this._cm = icCanvasManager.GL.ContextManager.construct_custom(hk);
             }

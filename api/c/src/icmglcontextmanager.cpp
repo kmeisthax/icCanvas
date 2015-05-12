@@ -32,6 +32,10 @@ namespace icCanvasManager {
                 if (this->hk.get_proc_address_target_destroy_notify) {
                     this->hk.get_proc_address_target_destroy_notify(this->hk.get_proc_address_context);
                 }
+
+                if (this->hk.create_null_drawable_target_destroy_notify) {
+                    this->hk.create_null_drawable_target_destroy_notify(this->hk.create_null_drawable_context);
+                }
             };
 
             CONTEXT create_main_context(int major, int minor) {
@@ -56,6 +60,10 @@ namespace icCanvasManager {
 
             void (*get_proc_address(char* proc_name)) () {
                 return this->hk.get_proc_address(proc_name, this->hk.get_proc_address_context);
+            };
+
+            DRAWABLE create_null_drawable () {
+                return this->hk.create_null_drawable(proc_name, this->hk.create_null_drawable_context);
             };
         };
     };

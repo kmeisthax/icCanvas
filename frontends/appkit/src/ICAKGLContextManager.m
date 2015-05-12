@@ -102,4 +102,8 @@
     return symbol ? NSAddressOfSymbol (symbol) : NULL;
 };
 
+- (intptr_t)getNullDrawable {
+    return (intptr_t)nil;
+};
+
 @end

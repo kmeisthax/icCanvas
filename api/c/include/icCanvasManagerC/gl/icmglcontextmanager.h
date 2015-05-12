@@ -22,6 +22,7 @@ extern "C" {
     typedef intptr_t (*icm_gl_make_current_func)(intptr_t ctxt, intptr_t drawable, void* user_data);
     typedef intptr_t (*icm_gl_get_current_func)(void* user_data);
     typedef icm_gl_proc (*icm_gl_get_proc_address_func)(char* proc_name, void* user_data);
+    typedef intptr_t (*icm_gl_create_null_drawable_func)();
 
     typedef struct {
         icm_gl_create_main_context_func create_main_context;
@@ -42,6 +43,9 @@ extern "C" {
         icm_gl_get_proc_address_func get_proc_address;
         void* get_proc_address_context;
         void (*get_proc_address_target_destroy_notify)(void*);
+        icm_gl_create_null_drawable_func create_null_drawable;
+        void* create_null_drawable_context;
+        void (*create_null_drawable_target_destroy_notify)(void*);
     } icm_gl_contextmanager_hooks;
 
     icm_gl_contextmanager icm_gl_contextmanager_construct_custom(icm_gl_contextmanager_hooks *hookslist);

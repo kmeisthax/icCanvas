@@ -32,6 +32,10 @@ namespace icCanvasManager {
             virtual void(*get_proc_address(char* procName)) () override {
                 return [this->_objc_delegate getProcAddress:procName];
             };
+
+            virtual DRAWABLE create_null_drawable() override {
+                return [this->_objc_delegate createNullDrawable];
+            };
         };
     }
 }

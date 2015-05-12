@@ -81,6 +81,24 @@ namespace icCanvasManager {
              * This is required for practically everything in modern OpenGL.
              */
             virtual void(*get_proc_address(char* procName)) () = 0;
+
+            /* Create a null drawable.
+             *
+             * A null drawable is intended to be used to emulate a GL implementation
+             * that would allow calling make_current without an active drawable.
+             * Application code using the null drawable should not use GL commands
+             * which affect the state of the default framebuffer. Furthermore, code
+             * using the null drawable must not use GL commands which read state from
+             * the default framebuffer, as it is considered undefined behavior.
+             *
+             * Outside the MASSIVE documentation cop-out that "undefined behavior" is,
+             * create_null_drawable is free to hand any value which make_current can
+             * accept. It may return different drawables each time, it may return NULL
+             * if the implementation allows make_current with no drawable, or it may
+             * give you the same drawable each time. Hence, don't rely on having a
+             * default framebuffer - just create an FBO and bind it immediately.
+             */
+            virtual DRAWABLE create_null_drawable() = 0;
         };
     }
 }
