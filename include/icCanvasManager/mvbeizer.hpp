@@ -11,6 +11,10 @@ namespace icCanvasManager {
         class Renderer;
     }
 
+    namespace Cairo {
+        class Renderer;
+    }
+
     /* Spline polynomial interpolation between any lerpable type.
      * 
      *  Order 0: Constant polynomials.
@@ -116,7 +120,7 @@ namespace icCanvasManager {
         };
 
         friend class Renderer;
-        friend class CairoRenderer;
+        friend class Cairo::Renderer;
         friend class GL::Renderer;
     };
 };

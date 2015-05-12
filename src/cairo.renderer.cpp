@@ -2,21 +2,21 @@
 #include <cmath>
 #include <iostream>
 
-icCanvasManager::CairoRenderer::CairoRenderer():
+icCanvasManager::Cairo::Renderer::Renderer():
     xrctxt(NULL), xrsurf(NULL) {
 }
 
-icCanvasManager::CairoRenderer::~CairoRenderer() {
+icCanvasManager::Cairo::Renderer::~Renderer() {
     if (this->xrsurf) cairo_surface_destroy(this->xrsurf);
     if (this->xrctxt) cairo_destroy(this->xrctxt);
 };
 
-void icCanvasManager::CairoRenderer::enter_new_surface(const int32_t x, const int32_t y, const int32_t zoom) {
+void icCanvasManager::Cairo::Renderer::enter_new_surface(const int32_t x, const int32_t y, const int32_t zoom) {
     cairo_surface_t* imgsurf = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, icCanvasManager::TileCache::TILE_SIZE, icCanvasManager::TileCache::TILE_SIZE);
     this->enter_image_surface(x, y, zoom, imgsurf);
 };
 
-void icCanvasManager::CairoRenderer::enter_surface(const int32_t x, const int32_t y, const int32_t zoom, cairo_surface_t* xrsurf, const int height, const int width) {
+void icCanvasManager::Cairo::Renderer::enter_surface(const int32_t x, const int32_t y, const int32_t zoom, cairo_surface_t* xrsurf, const int height, const int width) {
     cairo_surface_reference(xrsurf);
 
     this->x = x;
@@ -43,7 +43,7 @@ void icCanvasManager::CairoRenderer::enter_surface(const int32_t x, const int32_
     this->ymax = y + (size >> 1);
 }
 
-void icCanvasManager::CairoRenderer::enter_image_surface(const int32_t x, const int32_t y, const int32_t zoom, cairo_surface_t* xrsurf) {
+void icCanvasManager::Cairo::Renderer::enter_image_surface(const int32_t x, const int32_t y, const int32_t zoom, cairo_surface_t* xrsurf) {
     cairo_surface_reference(xrsurf);
 
     this->x = x;
@@ -75,7 +75,7 @@ void icCanvasManager::CairoRenderer::enter_image_surface(const int32_t x, const 
     cairo_paint(this->xrctxt);
 };
 
-void icCanvasManager::CairoRenderer::enter_context(const int32_t x, const int32_t y, const int32_t zoom, cairo_t* xrctxt, const int height, const int width) {
+void icCanvasManager::Cairo::Renderer::enter_context(const int32_t x, const int32_t y, const int32_t zoom, cairo_t* xrctxt, const int height, const int width) {
     cairo_reference(xrctxt);
 
     this->x = x;
@@ -102,11 +102,11 @@ void icCanvasManager::CairoRenderer::enter_context(const int32_t x, const int32_
     this->ymax = y + (size >> 1);
 }
 
-cairo_surface_t* icCanvasManager::CairoRenderer::retrieve_image_surface() {
+cairo_surface_t* icCanvasManager::Cairo::Renderer::retrieve_image_surface() {
     return this->xrsurf;
 };
 
-void icCanvasManager::CairoRenderer::transfer_to_image_surface(cairo_surface_t* surf) {
+void icCanvasManager::Cairo::Renderer::transfer_to_image_surface(cairo_surface_t* surf) {
     cairo_t* tmpctxt = cairo_create(surf);
 
     cairo_rectangle(tmpctxt, 0, 0, icCanvasManager::TileCache::TILE_SIZE, icCanvasManager::TileCache::TILE_SIZE);
@@ -116,7 +116,7 @@ void icCanvasManager::CairoRenderer::transfer_to_image_surface(cairo_surface_t* 
     cairo_destroy(tmpctxt);
 };
 
-class icCanvasManager::CairoRenderer::_DifferentialCurveFunctor {
+class icCanvasManager::Cairo::Renderer::_DifferentialCurveFunctor {
         icCanvasManager::BrushStroke::__Spline::derivative_type& d;
     public:
         _DifferentialCurveFunctor(icCanvasManager::BrushStroke::__Spline::derivative_type& d) : d(d) {};
@@ -177,7 +177,7 @@ static float gauss_abscissae[20] = {
      0.9931285991850949
 };
 
-float icCanvasManager::CairoRenderer::curve_arc_length(int polynomID, icCanvasManager::BrushStroke::__Spline::derivative_type &dt) {
+float icCanvasManager::Cairo::Renderer::curve_arc_length(int polynomID, icCanvasManager::BrushStroke::__Spline::derivative_type &dt) {
     float sum = 0.0f;
 
     for (int i = 0; i < 20; i++) {
@@ -189,7 +189,7 @@ float icCanvasManager::CairoRenderer::curve_arc_length(int polynomID, icCanvasMa
     return (1.0/2.0) * sum;
 };
 
-void icCanvasManager::CairoRenderer::draw_stroke(icCanvasManager::RefPtr<icCanvasManager::BrushStroke> br) {
+void icCanvasManager::Cairo::Renderer::draw_stroke(icCanvasManager::RefPtr<icCanvasManager::BrushStroke> br) {
     auto bbox = br->bounding_box();
     int32_t wx, wy, wx2, wy2, wx3, wy3, wx4, wy4;
 
@@ -207,7 +207,7 @@ void icCanvasManager::CairoRenderer::draw_stroke(icCanvasManager::RefPtr<icCanva
 
     auto num_segments = br->count_segments();
     auto derivative = br->_curve.derivative();
-    icCanvasManager::CairoRenderer::_DifferentialCurveFunctor diff(derivative);
+    icCanvasManager::Cairo::Renderer::_DifferentialCurveFunctor diff(derivative);
 
     for (int i = 0; i < num_segments; i++) {
         auto length = this->curve_arc_length(i, derivative);
@@ -295,7 +295,7 @@ void icCanvasManager::CairoRenderer::draw_stroke(icCanvasManager::RefPtr<icCanva
     }
 };
 
-void icCanvasManager::CairoRenderer::apply_brush(icCanvasManager::RefPtr<icCanvasManager::BrushStroke> br, const icCanvasManager::BrushStroke::__ControlPoint &cp) {
+void icCanvasManager::Cairo::Renderer::apply_brush(icCanvasManager::RefPtr<icCanvasManager::BrushStroke> br, const icCanvasManager::BrushStroke::__ControlPoint &cp) {
     //Hardcoded brush size and color
     uint32_t brush_size = br->brush_thickness();
     int brush_alpha = br->brush_opacity();

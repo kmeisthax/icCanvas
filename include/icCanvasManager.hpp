@@ -9,7 +9,6 @@
 #include "icCanvasManager/brushstroke.hpp"
 
 #include "icCanvasManager/renderer.hpp"
-#include "icCanvasManager/cairorenderer.hpp"
 
 #include "icCanvasManager/drawing.hpp"
 #include "icCanvasManager/splinefitter.hpp"
@@ -22,6 +21,9 @@
 #include "icCanvasManager/brushtool.hpp"
 #include "icCanvasManager/zoomtool.hpp"
 #include "icCanvasManager/displaysuite.hpp"
+
+//Cairo rendering implementations
+#include "icCanvasManager/cairo/renderer.hpp"
 
 //OpenGL rendering implementations
 #include "icCanvasManager/gl/contextmanager.hpp"

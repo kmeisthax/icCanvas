@@ -16,6 +16,10 @@ namespace icCanvasManager {
         class Renderer;
     }
 
+    namespace Cairo {
+        class Renderer;
+    }
+
     class BrushStroke : public RefCnt {
         struct __ControlPoint {
             int x, y;
@@ -137,7 +141,7 @@ namespace icCanvasManager {
         cairo_rectangle_t bounding_box();
 
         friend class Renderer;
-        friend class CairoRenderer;
+        friend class Cairo::Renderer;
         friend class SplineFitter;
         friend class GL::Renderer;
     };
