@@ -2,4 +2,4 @@
 
 cd build/osx-debug
 
-make VERBOSE=1
+make
