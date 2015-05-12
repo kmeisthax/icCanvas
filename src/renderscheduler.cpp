@@ -1,7 +1,7 @@
 #include <icCanvasManager.hpp>
 
 icCanvasManager::RenderScheduler::RenderScheduler(icCanvasManager::Application* app) {
-    this->_renderer = new icCanvasManager::CairoRenderer();
+    this->_renderer = new icCanvasManager::Cairo::Renderer();
     this->_app = app;
 };
 
