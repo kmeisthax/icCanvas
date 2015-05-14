@@ -108,18 +108,28 @@ namespace icCanvasManager {
          * If it is set, then both TILEs can be used and freed independently.
          *
          * If this function returns 0, direct transfers between it and the
-         * other DisplaySuite are not supported.
+         * other DisplaySuite are not supported. The DisplaySuite MUST NOT
+         * return 0 for direct transfer operations that it previously indicated
+         * were supported in can_direct_transfer.
          */
         virtual TILE direct_transfer(DisplaySuite* other, TILE tile, bool copy_bit) = 0;
 
         /* Transfer a TILE between this DisplaySuite's preferred tile
          * representation to the generic tile data representation defined by
          * TileCache.
+         *
+         * Generic tile data is owned by the caller of the function and is
+         * allocated using the new[] operator (hence should be deleted with the
+         * delete[] operator).
          */
         virtual TileCache::TileData* export_tile(TILE tile) = 0;
 
         /* Transfer a TILE between the generic tile data representation defined
          * by TileCache to this DisplaySuite's preferred tile representation.
+         *
+         * Generic tile data is owned by the caller of the function and is
+         * allocated using the new[] operator (hence should be deleted with the
+         * delete[] operator).
          */
         virtual TILE import_tile(TileCache::TileData *tile_dat) = 0;
     };
