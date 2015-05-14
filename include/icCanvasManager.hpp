@@ -24,6 +24,7 @@
 
 //Cairo rendering implementations
 #include "icCanvasManager/cairo/renderer.hpp"
+#include "icCanvasManager/cairo/displaysuite.hpp"
 
 //OpenGL rendering implementations
 #include "icCanvasManager/gl/contextmanager.hpp"
