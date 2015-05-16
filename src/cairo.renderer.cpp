@@ -16,33 +16,6 @@ void icCanvasManager::Cairo::Renderer::enter_new_surface(const int32_t x, const 
     this->enter_image_surface(x, y, zoom, imgsurf);
 };
 
-void icCanvasManager::Cairo::Renderer::enter_surface(const int32_t x, const int32_t y, const int32_t zoom, cairo_surface_t* xrsurf, const int height, const int width) {
-    cairo_surface_reference(xrsurf);
-
-    this->x = x;
-    this->y = y;
-    this->zoom = std::min(zoom, 31);
-
-    if (this->xrsurf) cairo_surface_destroy(this->xrsurf);
-    this->xrsurf = xrsurf;
-
-    if (this->xrctxt) cairo_destroy(this->xrctxt);
-    this->xrctxt = cairo_create(this->xrsurf);
-
-    this->tw = width;
-    this->th = height;
-
-    int64_t size = UINT32_MAX >> this->zoom;
-    this->xmin = x - (size >> 1);
-    this->ymin = y - (size >> 1);
-
-    this->xscale = (float)this->tw / (float)size;
-    this->yscale = (float)this->th / (float)size;
-
-    this->xmax = x + (size >> 1);
-    this->ymax = y + (size >> 1);
-}
-
 void icCanvasManager::Cairo::Renderer::enter_image_surface(const int32_t x, const int32_t y, const int32_t zoom, cairo_surface_t* xrsurf) {
     cairo_surface_reference(xrsurf);
 
@@ -75,45 +48,16 @@ void icCanvasManager::Cairo::Renderer::enter_image_surface(const int32_t x, cons
     cairo_paint(this->xrctxt);
 };
 
-void icCanvasManager::Cairo::Renderer::enter_context(const int32_t x, const int32_t y, const int32_t zoom, cairo_t* xrctxt, const int height, const int width) {
-    cairo_reference(xrctxt);
+icCanvasManager::DisplaySuiteTILE icCanvasManager::Cairo::Renderer::copy_to_tile() {
+    cairo_surface_t* outsurf = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, icCanvasManager::TileCache::TILE_SIZE, icCanvasManager::TileCache::TILE_SIZE);
 
-    this->x = x;
-    this->y = y;
-    this->zoom = std::min(zoom, 31);
+    auto* outctxt = cairo_create(outsurf);
+    cairo_set_operator(outctxt, CAIRO_OPERATOR_SOURCE);
+    cairo_set_source_surface(outctxt, outsurf, 0, 0);
+    cairo_paint(outctxt);
+    cairo_destroy(outctxt);
 
-    if (this->xrsurf) cairo_surface_destroy(this->xrsurf);
-    this->xrsurf = NULL;
-
-    if (this->xrctxt) cairo_destroy(this->xrctxt);
-    this->xrctxt = xrctxt;
-
-    this->tw = width;
-    this->th = height;
-
-    int64_t size = UINT32_MAX >> this->zoom;
-    this->xmin = x - (size >> 1);
-    this->ymin = y - (size >> 1);
-
-    this->xscale = (float)this->tw / (float)size;
-    this->yscale = (float)this->th / (float)size;
-
-    this->xmax = x + (size >> 1);
-    this->ymax = y + (size >> 1);
-}
-
-cairo_surface_t* icCanvasManager::Cairo::Renderer::retrieve_image_surface() {
-    return this->xrsurf;
-};
-
-void icCanvasManager::Cairo::Renderer::transfer_to_image_surface(cairo_surface_t* surf) {
-    cairo_t* tmpctxt = cairo_create(surf);
-
-    cairo_rectangle(tmpctxt, 0, 0, icCanvasManager::TileCache::TILE_SIZE, icCanvasManager::TileCache::TILE_SIZE);
-    cairo_set_operator(tmpctxt, CAIRO_OPERATOR_SOURCE);
-    cairo_fill(tmpctxt);
-
-    cairo_destroy(tmpctxt);
+    return (icCanvasManager::DisplaySuiteTILE)outsurf;
 };
 
 class icCanvasManager::Cairo::Renderer::_DifferentialCurveFunctor {

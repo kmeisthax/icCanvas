@@ -24,8 +24,8 @@ namespace icCanvasManager {
 
         /* Create a new tile surface of the renderer's own choosing.
          * 
-         * At this stage the renderer is not required to place the tile within
-         * a Cairo image surface.
+         * This call also implicitly clears the rendering surface, so that
+         * previously drawn strokes do not appear below the new strokes.
          */
         virtual void enter_new_surface(const int32_t x, const int32_t y, const int32_t zoom) = 0;
         
@@ -34,17 +34,11 @@ namespace icCanvasManager {
          */
         virtual void draw_stroke(RefPtr<BrushStroke> br) = 0;
 
-        /* After rendering has finished, it may be copied to a Cairo image
-         * surface of the client's choosing. This may happen in two ways:
+        /* After rendering has finished, it may be copied to a TILE, the opaque
+         * type of the preferred representation of the Renderer's DisplaySuite.
          *
-         *    The client may provide a compatible cairo_surface_t by
-         *    implementing the retrieve_image_surface method and returning
-         *    a non-NULL pointer.
-         *
-         *    The client may copy the current surface into a Cairo surface
          */
-        virtual cairo_surface_t* retrieve_image_surface();
-        virtual void transfer_to_image_surface(cairo_surface_t* surf) = 0;
+        virtual DisplaySuiteTILE copy_to_tile() = 0;
     };
 }
 

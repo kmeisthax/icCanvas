@@ -322,19 +322,14 @@ void icCanvasManager::GL::Renderer::draw_stroke(icCanvasManager::RefPtr<icCanvas
     this->ex->glDeleteTextures(2, strokeInfoTex);
 };
 
-/* After rendering has finished, it may be copied to a Cairo image
- * surface of the client's choosing. This may happen in two ways:
- *
- *    The client may provide a compatible cairo_surface_t by
- *    implementing the retrieve_image_surface method and returning
- *    a non-NULL pointer.
- *
- *    The client may copy the current surface into a Cairo surface
- */
-cairo_surface_t* icCanvasManager::GL::Renderer::retrieve_image_surface() {
+icCanvasManager::DisplaySuiteTILE icCanvasManager::GL::Renderer::copy_to_tile() {
+    GLuint newTex;
+    this->ex->glGenTextures(1, &newTex);
 
-};
+    this->ex->glBindTexture(GL_TEXTURE_2D, newTex);
+    this->ex->glCopyTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, 0, 0, icCanvasManager::TileCache::TILE_SIZE, icCanvasManager::TileCache::TILE_SIZE, 0);
 
-void icCanvasManager::GL::Renderer::transfer_to_image_surface(cairo_surface_t* surf) {
+    this->ex->glBindTexture(GL_TEXTURE_2D, 0);
 
+    return (DisplaySuiteTILE)newTex;
 };
