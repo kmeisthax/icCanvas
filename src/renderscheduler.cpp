@@ -14,9 +14,7 @@ void icCanvasManager::RenderScheduler::set_renderer(icCanvasManager::RefPtr<icCa
 };
 
 icCanvasManager::RenderScheduler::~RenderScheduler() {
-    for (auto i = this->_uncollected.begin(); i != this->_uncollected.end(); i++) {
-        if (i->tile) cairo_surface_destroy(i->tile);
-    }
+    //TODO: Free any uncollected tiles
 };
 
 void icCanvasManager::RenderScheduler::request_tile(icCanvasManager::RefPtr<icCanvasManager::Drawing> d, int x, int y, int size, int time) {
@@ -129,15 +127,9 @@ void icCanvasManager::RenderScheduler::background_tick() {
             this->_renderer->draw_stroke(req.d->stroke_at_time(i));
         }
 
-        cairo_surface_t* imgsurf = this->_renderer->retrieve_image_surface();
-        if (imgsurf == NULL) {
-            cairo_surface_t* imgsurf = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, icCanvasManager::TileCache::TILE_SIZE, icCanvasManager::TileCache::TILE_SIZE);
-            this->_renderer->transfer_to_image_surface(imgsurf);
-        }
+        icCanvasManager::DisplaySuiteTILE tile = this->_renderer->copy_to_tile();
 
-        cairo_surface_reference(imgsurf);
-
-        icCanvasManager::RenderScheduler::__Response r = {req.d, req.x, req.y, req.size, req.time, imgsurf};
+        icCanvasManager::RenderScheduler::__Response r = {req.d, req.x, req.y, req.size, req.time, tile};
         this->_unrendered.pop_back();
         this->_uncollected.push_back(r);
 
@@ -154,7 +146,6 @@ int icCanvasManager::RenderScheduler::collect_request(icCanvasManager::RefPtr<ic
     while (i != this->_uncollected.end()) {
         if (i->d == d) {
             d->get_tilecache()->store(i->x, i->y, i->size, i->time, i->tile);
-            cairo_surface_destroy(i->tile);
             i = this->_uncollected.erase(i);
 
             if (out_tile_rect) {

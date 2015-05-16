@@ -25,7 +25,7 @@ namespace icCanvasManager {
         struct __Response {
             Drawing* d;
             int x, y, size, time;
-            cairo_surface_t* tile;
+            DisplaySuiteTILE tile;
         };
 
         std::vector<__Request> _unrendered;
