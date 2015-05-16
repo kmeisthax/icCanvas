@@ -25,7 +25,7 @@ icCanvasManager::Renderer* icCanvasManager::GL::DisplaySuite::create_renderer() 
     return renderer;
 };
 
-void icCanvasManager::GL::DisplaySuite::free_tile(icCanvasManager::DisplaySuite::TILE tile) {
+void icCanvasManager::GL::DisplaySuite::free_tile(icCanvasManager::DisplaySuiteTILE tile) {
     if (this->renderer_context == 0) {
         this->renderer_context = this->cman->create_main_context(3,0);
         this->ex->collect_extensions(this->cman);
@@ -40,16 +40,16 @@ bool icCanvasManager::GL::DisplaySuite::can_direct_transfer(icCanvasManager::Dis
     return false;
 };
 
-icCanvasManager::DisplaySuite::TILE icCanvasManager::GL::DisplaySuite::direct_transfer(icCanvasManager::DisplaySuite* other, icCanvasManager::DisplaySuite::TILE tile, bool copy_bit) {
+icCanvasManager::DisplaySuiteTILE icCanvasManager::GL::DisplaySuite::direct_transfer(icCanvasManager::DisplaySuite* other, icCanvasManager::DisplaySuiteTILE tile, bool copy_bit) {
     return 0;
 };
 
-icCanvasManager::TileCache::TileData* icCanvasManager::GL::DisplaySuite::export_tile(icCanvasManager::DisplaySuite::TILE tile) {
+icCanvasManager::TileCache::TileData* icCanvasManager::GL::DisplaySuite::export_tile(icCanvasManager::DisplaySuiteTILE tile) {
     //TODO: Implement tile export.
     return NULL;
 };
 
-icCanvasManager::DisplaySuite::TILE icCanvasManager::GL::DisplaySuite::import_tile(icCanvasManager::TileCache::TileData *tile_dat) {
+icCanvasManager::DisplaySuiteTILE icCanvasManager::GL::DisplaySuite::import_tile(icCanvasManager::TileCache::TileData *tile_dat) {
     //TODO: Implement tile import
     return 0;
 };

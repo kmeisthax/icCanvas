@@ -12,7 +12,7 @@ icCanvasManager::Renderer* icCanvasManager::Cairo::DisplaySuite::create_renderer
     return new icCanvasManager::Cairo::Renderer();
 };
 
-void icCanvasManager::Cairo::DisplaySuite::free_tile(icCanvasManager::DisplaySuite::TILE tile) {
+void icCanvasManager::Cairo::DisplaySuite::free_tile(icCanvasManager::DisplaySuiteTILE tile) {
     cairo_surface_destroy((cairo_surface_t*)tile);
 };
 
@@ -21,16 +21,16 @@ bool icCanvasManager::Cairo::DisplaySuite::can_direct_transfer(icCanvasManager::
     return false;
 };
 
-icCanvasManager::DisplaySuite::TILE icCanvasManager::Cairo::DisplaySuite::direct_transfer(icCanvasManager::DisplaySuite* other, icCanvasManager::DisplaySuite::TILE tile, bool copy_bit) {
+icCanvasManager::DisplaySuiteTILE icCanvasManager::Cairo::DisplaySuite::direct_transfer(icCanvasManager::DisplaySuite* other, icCanvasManager::DisplaySuiteTILE tile, bool copy_bit) {
     return 0;
 };
 
 //TODO: Support generic transfers
-icCanvasManager::TileCache::TileData* icCanvasManager::Cairo::DisplaySuite::export_tile(icCanvasManager::DisplaySuite::TILE tile) {
+icCanvasManager::TileCache::TileData* icCanvasManager::Cairo::DisplaySuite::export_tile(icCanvasManager::DisplaySuiteTILE tile) {
     return NULL;
 };
 
 //TODO: Support generic transfers
-icCanvasManager::DisplaySuite::TILE icCanvasManager::Cairo::DisplaySuite::import_tile(icCanvasManager::TileCache::TileData *tile_dat) {
+icCanvasManager::DisplaySuiteTILE icCanvasManager::Cairo::DisplaySuite::import_tile(icCanvasManager::TileCache::TileData *tile_dat) {
     return 0;
 };

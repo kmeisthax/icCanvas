@@ -18,11 +18,11 @@ namespace icCanvasManager {
             /* DisplaySuite impl */
             virtual void report_concurrency_level(ConcurrencyLevel *out_renderer_lvl, ConcurrencyLevel *out_presenter_lvl) override;
             virtual icCanvasManager::Renderer* create_renderer() override;
-            virtual void free_tile(TILE tile) override;
+            virtual void free_tile(DisplaySuiteTILE tile) override;
             virtual bool can_direct_transfer(icCanvasManager::DisplaySuite *other) override;
-            virtual TILE direct_transfer(icCanvasManager::DisplaySuite* other, TILE tile, bool copy_bit) override;
-            virtual TileCache::TileData* export_tile(TILE tile) override;
-            virtual TILE import_tile(TileCache::TileData *tile_dat) override;
+            virtual DisplaySuiteTILE direct_transfer(icCanvasManager::DisplaySuite* other, DisplaySuiteTILE tile, bool copy_bit) override;
+            virtual TileCache::TileData* export_tile(DisplaySuiteTILE tile) override;
+            virtual DisplaySuiteTILE import_tile(TileCache::TileData *tile_dat) override;
         };
     }
 }
