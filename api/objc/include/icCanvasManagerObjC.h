@@ -1,6 +1,7 @@
 #import "icCanvasManagerObjC/ICMBrushStroke.h"
 #import "icCanvasManagerObjC/ICMDrawing.h"
 #import "icCanvasManagerObjC/ICMRenderer.h"
+#import "icCanvasManagerObjC/ICMDisplaySuite.h"
 #import "icCanvasManagerObjC/ICMRenderScheduler.h"
 #import "icCanvasManagerObjC/ICMSplineFitter.h"
 #import "icCanvasManagerObjC/ICMCanvasView.h"
@@ -14,4 +15,5 @@
 #import "icCanvasManagerObjC/ICMZoomTool.h"
 
 #import "icCanvasManagerObjC/gl/ICMGLContextManager.h"
+#import "icCanvasManagerObjC/gl/ICMGLDisplaySuite.h"
 #import "icCanvasManagerObjC/gl/ICMGLRenderer.h"
