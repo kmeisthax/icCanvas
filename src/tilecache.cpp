@@ -1,6 +1,6 @@
 #include <icCanvasManager.hpp>
 
-icCanvasManager::TileCache::TileCache() {
+icCanvasManager::TileCache::TileCache() : _currentSuite(NULL) {
     icCanvasManager::TileCache::TileTree root = {0, 0, 0, -1, -1, -1, -1, -1};
     this->_quadtreeIndex.push_back(root);
 };
@@ -141,7 +141,35 @@ int icCanvasManager::TileCache::getTreeIndex(int x, int y, int size) {
     return current_treenode_idx;
 };
 
-int icCanvasManager::TileCache::store(int x, int y, int size, int timeindex, cairo_surface_t* store) {
+icCanvasManager::DisplaySuite* icCanvasManager::TileCache::display_suite() {
+    return this->_currentSuite;
+};
+
+void icCanvasManager::TileCache::set_display_suite(icCanvasManager::DisplaySuite* s) {
+    if (s != this->_currentSuite) {
+        if (s == NULL) {
+            //TODO: Delete all existing tiles
+        }
+
+        for (auto&& tile : this->_storage) {
+            if (tile.current_tile != 0) {
+                //Tile transfer?
+                if (this->_currentSuite->can_direct_transfer(s)) {
+                    tile.current_tile = this->_currentSuite->direct_transfer(s, tile.current_tile, false);
+                } else {
+                    auto generic_tile = this->_currentSuite->export_tile(tile.current_tile);
+                    this->_currentSuite->import_tile(generic_tile);
+
+                    delete[] generic_tile;
+                }
+            }
+        }
+    }
+
+    this->_currentSuite = s;
+};
+
+int icCanvasManager::TileCache::store(int x, int y, int size, int timeindex, icCanvasManager::DisplaySuiteTILE store) {
     int qtIndexId = this->getTreeIndex(x, y, size);
     auto& treeRef = this->_quadtreeIndex.at(qtIndexId);
     int the_tid = treeRef.tindex, future_tid = -1, new_tid = -1;
@@ -169,9 +197,11 @@ int icCanvasManager::TileCache::store(int x, int y, int size, int timeindex, cai
 
     if (tref->time == timeindex) {
         //Reuse existing Tile
-        if (tref->image != NULL) cairo_surface_destroy(tref->image);
-        tref->image = store;
-        cairo_surface_reference(store);
+        if (tref->current_tile != 0) {
+            this->_currentSuite->free_tile(tref->current_tile);
+        }
+
+        tref->current_tile = store;
 
         return the_tid;
     }
@@ -188,7 +218,6 @@ int icCanvasManager::TileCache::store(int x, int y, int size, int timeindex, cai
     this->_storage.emplace_back();
     new_tref = &this->_storage.back();
     *new_tref = {store, x, y, size, timeindex, future_tid, the_tid};
-    cairo_surface_reference(store);
 
     return new_tid;
 };

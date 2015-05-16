@@ -22,8 +22,8 @@ namespace icCanvasManager {
         struct TileTree;
 
         struct Tile {
-            //Pointer to rendered tile. (May be NULL)
-            cairo_surface_t* image;
+            //Pointer to rendered tile(s). (May be NULL)
+            DisplaySuiteTILE current_tile;
 
             //Authoritative information about this tile.
             int x, y, size, time;
@@ -101,6 +101,8 @@ namespace icCanvasManager {
         std::vector<Tile> _storage;
         std::vector<TileTree> _quadtreeIndex;
 
+        RefPtr<DisplaySuite> _currentSuite;
+
         /* Given a coordinate and size, find what index into the quadtree index
          * corresponds to the particular location.
          *
@@ -111,19 +113,34 @@ namespace icCanvasManager {
         TileCache();
         virtual ~TileCache();
 
+        DisplaySuite* display_suite();
+
+        /* Select a DisplaySuite to store tiles for.
+         *
+         * If a DisplaySuite has already been selected, selecting a different
+         * non-NULL suite will cause all existing tiles to be transferred into
+         * the preferred representation of the new DisplaySuite.
+         *
+         * Selecting a NULL suite will cause all tile data to be deleted, but
+         * the existing indexes into the cache will remain.
+         *
+         * The TileCache's other methods cannot be used without a working
+         * DisplaySuite.
+         */
+        void set_display_suite(DisplaySuite* s);
+
         /* Store a tile into the tile cache.
          *
-         * The given Cairo surface must be an image surface of size TILE_SIZE
-         * and no other size. It will be retained by the TileCache.
+         * The given DisplaySuite tile will be owned by the TileCache and
+         * should not be drawn upon by any Renderer(s).
          *
-         * Do not draw onto stored surfaces.
-         *
-         * If a surface of the same position, size, and timeindex already
-         * exists, it will be supplanted by the incoming index.
+         * If a tile of the same position, size, and timeindex already exists
+         * in this cache, the incoming tile will replace it and the existing
+         * tile will be freed.
          *
          * The ID of the resulting tilecache tile is stored.
          */
-        int store(int x, int y, int size, int timeindex, cairo_surface_t* store);
+        int store(int x, int y, int size, int timeindex, DisplaySuiteTILE store);
 
         /* Retrieve a range of tiles from the tilecache.
          *
