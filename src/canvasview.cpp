@@ -57,9 +57,32 @@ void icCanvasManager::CanvasView::draw_tiles(cairo_t* ctxt, cairo_rectangle_t* r
 
     auto begin = tilelist.begin(), end = tilelist.end();
 
+    RefPtr<DisplaySuite> currentDS = tilecache->display_suite(), cairoDS = dynamic_cast<icCanvasManager::Cairo::DisplaySuite*>((icCanvasManager::DisplaySuite*)currentDS);
+    bool must_copy = false, must_copy_direct = false;
+
+    if (!cairoDS) {
+        cairoDS = new icCanvasManager::Cairo::DisplaySuite();
+        must_copy = true;
+        must_copy_direct = cairoDS->can_direct_transfer(currentDS);
+    }
+
     //Phase 2: Copy/scale tiles onto view
     for (; begin != end; begin++) {
         auto &tile = tilecache->tile_at(*begin);
+        cairo_surface_t* image;
+
+        if (must_copy) {
+            if (must_copy_direct) {
+                image = (cairo_surface_t*)cairoDS->direct_transfer(currentDS, tile.current_tile, true);
+            } else {
+                auto generic_data = currentDS->export_tile(tile.current_tile);
+                image = (cairo_surface_t*)cairoDS->import_tile(generic_data);
+
+                delete[] generic_data;
+            }
+        } else {
+            image = (cairo_surface_t*)tile.current_tile;
+        }
 
         cairo_save(ctxt);
 
@@ -83,10 +106,14 @@ void icCanvasManager::CanvasView::draw_tiles(cairo_t* ctxt, cairo_rectangle_t* r
         cairo_fill_preserve(ctxt);
 
         cairo_set_operator(ctxt, CAIRO_OPERATOR_OVER);
-        cairo_set_source_surface(ctxt, tile.image, 0, 0);
+        cairo_set_source_surface(ctxt, image, 0, 0);
         cairo_fill(ctxt);
 
         cairo_restore(ctxt);
+
+        if (must_copy) {
+            cairoDS->free_tile((DisplaySuiteTILE)image);
+        }
     }
 };
 
