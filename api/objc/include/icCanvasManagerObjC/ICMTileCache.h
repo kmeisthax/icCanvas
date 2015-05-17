@@ -1,5 +1,7 @@
 #include <Cocoa/Cocoa.h>
 
+@class ICMDisplaySuite;
+
 @interface ICMTileCache : NSObject
 
 - (id)init;

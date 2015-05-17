@@ -2,7 +2,7 @@
 
 @interface ICMDrawing : NSObject
 
-- (id)init;
+- (id)initWithTileCache:(ICMTileCache*)c;
 - (id)initFromWrappedObject:(void*)optr;
 
 - (ICMBrushStroke*)strokeAtTime:(int) time;

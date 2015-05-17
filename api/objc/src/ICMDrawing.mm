@@ -5,11 +5,12 @@
     icCanvasManager::RefPtr<icCanvasManager::Drawing> _wrapped;
 }
 
-- (id)init {
+- (id)initWithTileCache:(ICMTileCache*)c {
     self = [super init];
     
     if (self != nil) {
-        self->_wrapped = new icCanvasManager::Drawing();
+        auto* cache = (icCanvasManager::TileCache*)[c getWrappedObject];
+        self->_wrapped = new icCanvasManager::Drawing(cache);
     }
     
     return self;
