@@ -18,7 +18,7 @@ namespace icCanvasManager {
     public:
         typedef std::vector<RefPtr<BrushStroke>>::iterator stroke_iterator;
         
-        Drawing();
+        Drawing(TileCache* cache);
         virtual ~Drawing();
         
         stroke_iterator begin();

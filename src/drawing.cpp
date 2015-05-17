@@ -1,8 +1,6 @@
 #include <icCanvasManager.hpp>
 
-icCanvasManager::Drawing::Drawing() {
-    this->_cache = new icCanvasManager::TileCache();
-};
+icCanvasManager::Drawing::Drawing(icCanvasManager::TileCache* cache) : _cache(cache) {};
 icCanvasManager::Drawing::~Drawing() {};
 
 icCanvasManager::Drawing::stroke_iterator icCanvasManager::Drawing::begin() {
