@@ -329,5 +329,18 @@ namespace icCanvasManager {
             public static unowned icCanvasManager.GL.Renderer? downcast(icCanvasManager.Renderer up_obj);
             public unowned icCanvasManager.Renderer upcast();
         }
+        
+        [CCode (cname = "icm_gl_displaysuite",
+                cprefix = "icm_gl_displaysuite_",
+                ref_function = "icm_gl_displaysuite_reference",
+                unref_function = "icm_gl_displaysuite_dereference")]
+        [Compact]
+        public class DisplaySuite {
+            [CCode (cname = "icm_gl_displaysuite_construct")]
+            public DisplaySuite(ContextManager cm, DRAWABLE drawable);
+            
+            public static unowned icCanvasManager.GL.DisplaySuite? downcast(icCanvasManager.DisplaySuite up_obj);
+            public unowned icCanvasManager.DisplaySuite upcast();
+        }
     }
 }
