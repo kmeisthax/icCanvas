@@ -4,7 +4,7 @@
 
 extern "C" {
     icm_tilecache icm_tilecache_construct() {
-        icCanvasManager::Tilecache* d = new icCanvasManager::Tilecache();
+        icCanvasManager::TileCache* d = new icCanvasManager::TileCache();
         d->ref();
 
         return (icm_tilecache*)d;
