@@ -18,3 +18,6 @@
 #import "icCanvasManagerObjC/gl/ICMGLContextManager.h"
 #import "icCanvasManagerObjC/gl/ICMGLDisplaySuite.h"
 #import "icCanvasManagerObjC/gl/ICMGLRenderer.h"
+
+#import "icCanvasManagerObjC/cairo/ICMCairoDisplaySuite.h"
+#import "icCanvasManagerObjC/cairo/ICMCairoRenderer.h"
