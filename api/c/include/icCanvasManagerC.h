@@ -16,4 +16,7 @@
 #include "icCanvasManagerC/gl/icmglcontextmanager.h"
 #include "icCanvasManagerC/gl/icmglrenderer.h"
 
+#include "icCanvasManagerC/cairo/icmgldisplaysuite.h"
+#include "icCanvasManagerC/cairo/icmglrenderer.h"
+
 #endif
