@@ -220,6 +220,14 @@ namespace icCanvasManager {
     public class Renderer {
     }
     
+    [CCode (cname = "icm_displaysuite",
+            cprefix = "icm_displaysuite_",
+            ref_function = "icm_displaysuite_reference",
+            unref_function = "icm_displaysuite_dereference")]
+    [Compact]
+    public class DisplaySuite {
+    }
+    
     [CCode (cname = "icm_renderscheduler",
             cprefix = "icm_renderscheduler_",
             ref_function = "icm_renderscheduler_reference",
