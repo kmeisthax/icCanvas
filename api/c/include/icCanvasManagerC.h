@@ -3,6 +3,7 @@
 
 #include "icCanvasManagerC/icmbrushstroke.h"
 #include "icCanvasManagerC/icmdisplaysuite.h"
+#include "icCanvasManagerC/icmtilecache.h"
 #include "icCanvasManagerC/icmdrawing.h"
 #include "icCanvasManagerC/icmapplication.h"
 #include "icCanvasManagerC/icmrenderer.h"

@@ -228,6 +228,18 @@ namespace icCanvasManager {
     public class DisplaySuite {
     }
     
+    [CCode (cname = "icm_tilecache",
+            cprefix = "icm_tilecache_",
+            ref_function = "icm_tilecache_reference",
+            unref_function = "icm_tilecache_dereference")]
+    [Compact]
+    public class TileCache {
+        public DisplaySuite display_suite {
+            [CCode (cname = "icm_tilecache_display_suite")] get;
+            [CCode (cname = "icm_tilecache_set_display_suite")] set;
+        }
+    }
+    
     [CCode (cname = "icm_renderscheduler",
             cprefix = "icm_renderscheduler_",
             ref_function = "icm_renderscheduler_reference",
