@@ -3,8 +3,9 @@
 #include <icCanvasManagerC.h>
 
 extern "C" {
-    icm_gl_displaysuite icm_gl_displaysuite_construct() {
-        icCanvasManager::GL::DisplaySuite* d = new icCanvasManager::GL::DisplaySuite();
+    icm_gl_displaysuite icm_gl_displaysuite_construct(icm_gl_contextmanager cm, intptr_t null_drawable) {
+        auto ctxtmgr = (icCanvasManager::GL::ContextManager*)cm;
+        icCanvasManager::GL::DisplaySuite* d = new icCanvasManager::GL::DisplaySuite(ctxtmgr, null_drawable);
         d->ref();
 
         return (icm_gl_displaysuite*)d;

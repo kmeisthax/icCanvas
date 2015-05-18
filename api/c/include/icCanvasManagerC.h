@@ -14,6 +14,7 @@
 #include "icCanvasManagerC/icmzoomtool.h"
 
 #include "icCanvasManagerC/gl/icmglcontextmanager.h"
+#include "icCanvasManagerC/gl/icmgldisplaysuite.h"
 #include "icCanvasManagerC/gl/icmglrenderer.h"
 
 #include "icCanvasManagerC/cairo/icmgldisplaysuite.h"
