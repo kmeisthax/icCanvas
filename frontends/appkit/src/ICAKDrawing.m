@@ -2,6 +2,8 @@
 
 @implementation ICAKDrawing {
     ICMDrawing* internal_drawing;
+    ICMTileCache* tile_cache;
+
     NSTimer* background_timer;
     
     ICAKDockingController* _dock_ctrl;
@@ -12,7 +14,8 @@
     self = [super init];
     
     if (self != nil) {
-        self->internal_drawing = [[ICMDrawing alloc] init];
+        self->tile_cache = [[ICMTileCache alloc] init];
+        self->internal_drawing = [[ICMDrawing alloc] initWithTileCache:self->tile_cache];
         
         NSInvocation* appInvoke = [NSInvocation invocationWithMethodSignature:[self methodSignatureForSelector:@selector(backgroundTick)]];
         [appInvoke setSelector:@selector(backgroundTick)];
