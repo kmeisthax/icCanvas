@@ -9,7 +9,7 @@ extern "C" {
 
     typedef void* icm_drawing;
 
-    icm_drawing icm_drawing_construct();
+    icm_drawing icm_drawing_construct(icm_tilecache cache);
     icm_drawing icm_drawing_reference(icm_drawing wrap);
     int icm_drawing_dereference(icm_drawing wrap);
 

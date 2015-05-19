@@ -3,8 +3,9 @@
 #include <icCanvasManagerC.h>
 
 extern "C" {
-    icm_drawing icm_drawing_construct() {
-        icCanvasManager::Drawing* d = new icCanvasManager::Drawing();
+    icm_drawing icm_drawing_construct(icm_tilecache cache) {
+        auto cache2 = (icCanvasManager::TileCache*)cache;
+        icCanvasManager::Drawing* d = new icCanvasManager::Drawing(cache2);
         d->ref();
 
         return (icm_drawing*)d;
