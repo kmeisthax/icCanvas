@@ -343,4 +343,32 @@ namespace icCanvasManager {
             public unowned icCanvasManager.DisplaySuite upcast();
         }
     }
+    
+    namespace Cairo {
+        [CCode (cname = "icm_cairo_renderer",
+                cprefix = "icm_cairo_renderer_",
+                ref_function = "icm_cairo_renderer_reference",
+                unref_function = "icm_cairo_renderer_dereference")]
+        [Compact]
+        public class Renderer {
+            [CCode (cname = "icm_cairo_renderer_construct")]
+            public Renderer();
+            
+            public static unowned icCanvasManager.Cairo.Renderer? downcast(icCanvasManager.Renderer up_obj);
+            public unowned icCanvasManager.Renderer upcast();
+        }
+        
+        [CCode (cname = "icm_cairo_displaysuite",
+                cprefix = "icm_cairo_displaysuite_",
+                ref_function = "icm_cairo_displaysuite_reference",
+                unref_function = "icm_cairo_displaysuite_dereference")]
+        [Compact]
+        public class DisplaySuite {
+            [CCode (cname = "icm_cairo_displaysuite_construct")]
+            public DisplaySuite();
+            
+            public static unowned icCanvasManager.Cairo.DisplaySuite? downcast(icCanvasManager.DisplaySuite up_obj);
+            public unowned icCanvasManager.DisplaySuite upcast();
+        }
+    }
 }
