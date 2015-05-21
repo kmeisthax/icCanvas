@@ -9,7 +9,7 @@
     self = [super init];
     
     if (self != nil) {
-        auto* cache = (icCanvasManager::TileCache*)[c getWrappedObject];
+        auto cache = (icCanvasManager::TileCache*)[c getWrappedObject];
         self->_wrapped = new icCanvasManager::Drawing(cache);
     }
     

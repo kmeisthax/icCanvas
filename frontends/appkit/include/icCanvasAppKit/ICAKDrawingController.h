@@ -3,7 +3,7 @@
 
 @interface ICAKDrawingController : NSWindowController <ICMBrushToolDelegate, ICMZoomToolDelegate>
 
-- (id)init;
+- (id)initWithDocument:(ICAKDrawing *)document;
 - (void)setDocument:(NSDocument *)document;
 - (ICAKDock*)dock;
 

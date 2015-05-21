@@ -55,8 +55,7 @@
 }
 
 - (void)makeWindowControllers {
-    ICAKDrawingController* dc = [[ICAKDrawingController alloc] init];
-    [dc setDocument:self];
+    ICAKDrawingController* dc = [[ICAKDrawingController alloc] initWithDocument:self];
     [self addWindowController:dc];
 
     ICAKDockableView* dCP = [self->_tpal_ctrl createDockableColorPanel];
@@ -69,6 +68,10 @@
 
 - (ICMDrawing*)drawing {
     return self->internal_drawing;
+}
+
+- (ICMTileCache*)tileCache {
+    return self->tile_cache;
 }
 
 - (void)setDockingController:(ICAKDockingController*)dock_ctrl {

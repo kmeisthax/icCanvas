@@ -16,7 +16,7 @@
     NSColor* currentColor;
 }
 
-- (id)init {
+- (id)initWithDocument:(ICAKDrawing *)document {
     //Create test window
     NSWindow *window;
     NSRect r = {{100,100}, {400, 400}};
@@ -29,7 +29,7 @@
         [window setCollectionBehavior:(window.collectionBehavior|NSWindowCollectionBehaviorFullScreenPrimary)];
         window.titlebarAppearsTransparent = YES;
         
-        self->drawing = [[ICMDrawing alloc] init];
+        self.document = document;
         
         self->cv = [[ICAKCanvasView alloc] initWithDrawing: self->drawing];
         self->scv = [[NSScrollView alloc] initWithFrame: [[self.window contentView] frame]];

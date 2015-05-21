@@ -14,7 +14,11 @@
     ICAKDockingController* _dock_ctrl;
     ICAKToolPaletteController* _tpal_ctrl;
 
+    ICMCairoRenderer* _cairo_render;
+    ICMCairoDisplaySuite* _cairo_displaysuite;
+
     ICMGLRenderer* _gl_render;
+    ICMGLDisplaySuite* _gl_displaysuite;
     ICAKGLContextManager* _gl_ctxts;
 
     NSView* _osView;
@@ -34,7 +38,15 @@
         self->_osView = [[NSView alloc] init];
         self->_wnd.contentView = self->_osView;
 
+        //Initialize Cairo API
+        self->_cairo_displaysuite = [[ICMCairoDisplaySuite alloc] init];
+        self->_cairo_render = [[ICMCairoRenderer alloc] init];
+
+        self->coreApp.renderScheduler.renderer = self->_cairo_render;
+
+        //Initialize GL API
         self->_gl_ctxts = [[ICAKGLContextManager alloc] init];
+        self->_gl_displaysuite = [[ICMGLDisplaySuite alloc] initWithContextManager:self->_gl_ctxts andNullDrawable:(intptr_t)(__bridge void*)self->_osView];
 
         intptr_t ctxt = [self->_gl_ctxts createMainContextWithVersionMajor:3 andMinor:2];
         self->_gl_render = [[ICMGLRenderer alloc] initWithContextManager:self->_gl_ctxts andContext:ctxt andDrawable:(intptr_t)(__bridge void*)self->_osView];
@@ -81,6 +93,7 @@
     
     if ([doc isKindOfClass:ICAKDrawing.class]) {
         ICAKDrawing* draw = (ICAKDrawing*)doc;
+        draw.tileCache.displaySuite = self->_cairo_displaysuite;
         draw.dockingController = self->_dock_ctrl;
         draw.toolPaletteController = self->_tpal_ctrl;
     }
