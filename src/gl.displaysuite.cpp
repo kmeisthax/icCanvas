@@ -45,8 +45,18 @@ icCanvasManager::DisplaySuiteTILE icCanvasManager::GL::DisplaySuite::direct_tran
 };
 
 icCanvasManager::TileCache::TileData* icCanvasManager::GL::DisplaySuite::export_tile(icCanvasManager::DisplaySuiteTILE tile) {
-    //TODO: Implement tile export.
-    return NULL;
+    //TODO: Optimize.
+    //This current version forces a synchronous download.
+    //Async downloads may require API changes (Promises?)
+    //but would probably improve performance.
+
+    icCanvasManager::TileCache::TileData* data = new icCanvasManager::TileCache::TileData[icCanvasManager::TileCache::TILE_SIZE];
+
+    this->ex->glBindTexture(GL_TEXTURE_2D, (GLuint)tile);
+    this->ex->glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_FLOAT, data);
+    this->ex->glBindTexture(GL_TEXTURE_2D, 0);
+
+    return data;
 };
 
 icCanvasManager::DisplaySuiteTILE icCanvasManager::GL::DisplaySuite::import_tile(icCanvasManager::TileCache::TileData *tile_dat) {
