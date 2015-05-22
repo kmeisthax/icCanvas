@@ -51,9 +51,9 @@ void icCanvasManager::Cairo::Renderer::enter_image_surface(const int32_t x, cons
 icCanvasManager::DisplaySuiteTILE icCanvasManager::Cairo::Renderer::copy_to_tile() {
     cairo_surface_t* outsurf = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, icCanvasManager::TileCache::TILE_SIZE, icCanvasManager::TileCache::TILE_SIZE);
 
-    auto* outctxt = cairo_create(outsurf);
-    cairo_set_operator(outctxt, CAIRO_OPERATOR_SOURCE);
-    cairo_set_source_surface(outctxt, outsurf, 0, 0);
+    auto outctxt = cairo_create(outsurf);
+    //cairo_set_operator(outctxt, CAIRO_OPERATOR_SOURCE);
+    cairo_set_source_surface(outctxt, this->xrsurf, 0, 0);
     cairo_paint(outctxt);
     cairo_destroy(outctxt);
 
