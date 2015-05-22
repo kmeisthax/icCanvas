@@ -93,5 +93,6 @@ void icCanvasManager::GL::Extensions::collect_extensions(icCanvasManager::RefPtr
     this->glDrawArrays = (decltype(this->glDrawArrays))m->get_proc_address("glDrawArrays");
     this->glCopyTexImage2D = (decltype(this->glCopyTexImage2D))m->get_proc_address("glCopyTexImage2D");
     this->glCopyTexImage1D = (decltype(this->glCopyTexImage1D))m->get_proc_address("glCopyTexImage1D");
+    this->glGetTexImage = (decltype(this->glGetTexImage))m->get_proc_address("glGetTexImage");
     //this-> = (decltype(this->))m->get_proc_address("");
 }
