@@ -45,6 +45,11 @@ icCanvasManager::DisplaySuiteTILE icCanvasManager::GL::DisplaySuite::direct_tran
 };
 
 icCanvasManager::TileCache::TileData* icCanvasManager::GL::DisplaySuite::export_tile(icCanvasManager::DisplaySuiteTILE tile) {
+    if (this->renderer_context == 0) {
+        this->renderer_context = this->cman->create_main_context(3,0);
+        this->ex->collect_extensions(this->cman);
+    }
+
     //TODO: Optimize.
     //This current version forces a synchronous download.
     //Async downloads may require API changes (Promises?)
