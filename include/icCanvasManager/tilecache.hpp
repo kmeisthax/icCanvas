@@ -17,6 +17,10 @@ namespace icCanvasManager {
     public:
         static const int TILE_SIZE = 256;
 
+        /* TileData is generically stored as an array of TILE_SIZExTILE_SIZE
+         * floats, with each pixel stored in RGBA order, all floats within
+         * the range [0.0, 1.0], and all pixels have premultiplied alpha.
+         */
         typedef float TileData[TILE_SIZE][TILE_SIZE][4];
 
         struct TileTree;
