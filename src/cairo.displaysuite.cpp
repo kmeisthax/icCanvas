@@ -39,7 +39,7 @@ icCanvasManager::DisplaySuiteTILE icCanvasManager::Cairo::DisplaySuite::import_t
     unsigned char* data = (unsigned char*)malloc(cairo_stride * icCanvasManager::TileCache::TILE_SIZE);
 
     for (int i = 0; i < icCanvasManager::TileCache::TILE_SIZE; i++) {
-        for (int j = 0; j < icCanvasManager::TileCache::TILE_SIZE; i++) {
+        for (int j = 0; j < icCanvasManager::TileCache::TILE_SIZE; j++) {
             data[i * icCanvasManager::TileCache::TILE_SIZE * 4 + j * 4 + 0] = (uint8_t)(*tile_dat[i][j][3] * UINT8_MAX);
             data[i * icCanvasManager::TileCache::TILE_SIZE * 4 + j * 4 + 1] = (uint8_t)(*tile_dat[i][j][0] * UINT8_MAX);
             data[i * icCanvasManager::TileCache::TILE_SIZE * 4 + j * 4 + 2] = (uint8_t)(*tile_dat[i][j][1] * UINT8_MAX);
