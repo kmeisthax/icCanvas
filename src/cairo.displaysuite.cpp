@@ -30,7 +30,26 @@ icCanvasManager::TileCache::TileData* icCanvasManager::Cairo::DisplaySuite::expo
     return NULL;
 };
 
-//TODO: Support generic transfers
+static void freed_imported_tile(void* data) {
+    free(data);
+};
+
 icCanvasManager::DisplaySuiteTILE icCanvasManager::Cairo::DisplaySuite::import_tile(icCanvasManager::TileCache::TileData *tile_dat) {
-    return 0;
+    auto cairo_stride = cairo_format_stride_for_width(CAIRO_FORMAT_ARGB32, icCanvasManager::TileCache::TILE_SIZE);
+    unsigned char* data = (unsigned char*)malloc(cairo_stride * icCanvasManager::TileCache::TILE_SIZE);
+
+    for (int i = 0; i < icCanvasManager::TileCache::TILE_SIZE; i++) {
+        for (int j = 0; j < icCanvasManager::TileCache::TILE_SIZE; i++) {
+            data[i * icCanvasManager::TileCache::TILE_SIZE * 4 + j * 4 + 0] = (uint8_t)(*tile_dat[i][j][3] * UINT8_MAX);
+            data[i * icCanvasManager::TileCache::TILE_SIZE * 4 + j * 4 + 1] = (uint8_t)(*tile_dat[i][j][0] * UINT8_MAX);
+            data[i * icCanvasManager::TileCache::TILE_SIZE * 4 + j * 4 + 2] = (uint8_t)(*tile_dat[i][j][1] * UINT8_MAX);
+            data[i * icCanvasManager::TileCache::TILE_SIZE * 4 + j * 4 + 3] = (uint8_t)(*tile_dat[i][j][2] * UINT8_MAX);
+        }
+    }
+
+    auto* imsurf = cairo_image_surface_create_for_data(data, CAIRO_FORMAT_ARGB32, icCanvasManager::TileCache::TILE_SIZE, icCanvasManager::TileCache::TILE_SIZE, cairo_stride);
+
+    cairo_surface_set_user_data(imsurf, (cairo_user_data_key_t*)malloc(sizeof(cairo_user_data_key_t)), data, &::freed_imported_tile);
+
+    return (icCanvasManager::DisplaySuiteTILE)imsurf;
 };
