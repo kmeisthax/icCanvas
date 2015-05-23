@@ -133,28 +133,29 @@ icCanvasManager::GL::Renderer::Renderer(icCanvasManager::RefPtr<icCanvasManager:
     this->ex->glBindVertexArray(this->raymarchGeom);
 
     GLint positionLoc = this->ex->glGetAttribLocation(this->dProgram, "vPos");
-    this->ex->glEnableVertexAttribArray(positionLoc);
     this->ex->glVertexAttribPointer(positionLoc, 4, GL_FLOAT, GL_TRUE, 0, (void*)0);
 
     this->ex->glBindVertexArray(0);
-    this->ex->glDisableVertexAttribArray(positionLoc);
     this->ex->glBindBuffer(GL_ARRAY_BUFFER, 0);
 
     //Create framebuffer object
     this->ex->glGenFramebuffers(1, &this->renderTarget);
-    this->ex->glBindFramebuffer(GL_DRAW_FRAMEBUFFER, this->renderTarget);
+    this->ex->glBindFramebuffer(GL_FRAMEBUFFER, this->renderTarget);
 
     this->ex->glGenTextures(1, &this->renderColorTexture);
     this->ex->glBindTexture(GL_TEXTURE_2D, this->renderColorTexture);
 
     this->ex->glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, icCanvasManager::TileCache::TILE_SIZE, icCanvasManager::TileCache::TILE_SIZE, 0, GL_RGBA, GL_FLOAT, NULL);
 
-    this->ex->glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, this->renderColorTexture, 0);
+    this->ex->glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, this->renderColorTexture, 0);
 
-    assert(this->ex->glCheckFramebufferStatus(GL_DRAW_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE);
+    assert(this->ex->glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE);
 
-    this->ex->glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+    this->ex->glBindFramebuffer(GL_FRAMEBUFFER, 0);
     this->ex->glBindTexture(GL_TEXTURE_2D, 0);
+
+    auto error = this->ex->glGetError();
+    assert(error == GL_NO_ERROR);
 };
 
 icCanvasManager::GL::Renderer::~Renderer() {
@@ -165,7 +166,7 @@ icCanvasManager::GL::Renderer::~Renderer() {
  * At this stage the renderer is not required to place the tile within
  * a Cairo image surface.
  */
-static const float __clearColor[4] = {0.0f, 0.0f, 0.0f, 0.0f};
+static const float __clearColor[4] = {0.0f, 0.0f, 0.0f, 1.0f};
 
 void icCanvasManager::GL::Renderer::enter_new_surface(const int32_t x, const int32_t y, const int32_t zoom) {
     this->x = x;
@@ -193,6 +194,8 @@ void icCanvasManager::GL::Renderer::enter_new_surface(const int32_t x, const int
     //Set up additional uniforms used by the fragment shader.
     GLint tileParamsLoc, surfaceParamsLoc, tScaleParamsLoc, tMinMaxParamsLoc;
 
+    this->ex->glUseProgram(this->dProgram);
+
     tileParamsLoc = this->ex->glGetUniformLocation(this->dProgram, "tileParams");
     surfaceParamsLoc = this->ex->glGetUniformLocation(this->dProgram, "surfaceParams");
     tScaleParamsLoc = this->ex->glGetUniformLocation(this->dProgram, "tScaleParams");
@@ -213,6 +216,9 @@ void icCanvasManager::GL::Renderer::enter_new_surface(const int32_t x, const int
     if (tMinMaxParamsLoc != -1) {
         this->ex->glUniform4i(tMinMaxParamsLoc, this->xmin, this->xmax, this->ymin, this->ymax);
     }
+
+    auto error = this->ex->glGetError();
+    assert(error == GL_NO_ERROR);
 };
 
 /* Given a brushstroke, draw it onto the surface at the specified
@@ -320,16 +326,26 @@ void icCanvasManager::GL::Renderer::draw_stroke(icCanvasManager::RefPtr<icCanvas
     this->ex->glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 
     this->ex->glDeleteTextures(2, strokeInfoTex);
+
+    auto error = this->ex->glGetError();
+    assert(error == GL_NO_ERROR);
 };
 
 icCanvasManager::DisplaySuiteTILE icCanvasManager::GL::Renderer::copy_to_tile() {
     GLuint newTex;
     this->ex->glGenTextures(1, &newTex);
 
+    this->ex->glBindFramebuffer(GL_READ_FRAMEBUFFER, this->renderTarget);
     this->ex->glBindTexture(GL_TEXTURE_2D, newTex);
+
+    this->ex->glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, icCanvasManager::TileCache::TILE_SIZE, icCanvasManager::TileCache::TILE_SIZE, 0, GL_RGBA, GL_FLOAT, NULL);
     this->ex->glCopyTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, 0, 0, icCanvasManager::TileCache::TILE_SIZE, icCanvasManager::TileCache::TILE_SIZE, 0);
 
+    auto error = this->ex->glGetError();
+    assert(error == GL_NO_ERROR);
+
     this->ex->glBindTexture(GL_TEXTURE_2D, 0);
+    this->ex->glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
 
     return (DisplaySuiteTILE)newTex;
 };
