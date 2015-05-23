@@ -133,6 +133,7 @@ icCanvasManager::GL::Renderer::Renderer(icCanvasManager::RefPtr<icCanvasManager:
     this->ex->glBindVertexArray(this->raymarchGeom);
 
     GLint positionLoc = this->ex->glGetAttribLocation(this->dProgram, "vPos");
+    this->ex->glEnableVertexAttribArray(positionLoc);
     this->ex->glVertexAttribPointer(positionLoc, 4, GL_FLOAT, GL_TRUE, 0, (void*)0);
 
     this->ex->glBindVertexArray(0);
@@ -187,6 +188,10 @@ void icCanvasManager::GL::Renderer::enter_new_surface(const int32_t x, const int
     this->ymax = y + (size >> 1);
 
     this->ex->glBindFramebuffer(GL_DRAW_FRAMEBUFFER, this->renderTarget);
+
+    //TODO: Do I need to call this before each rendering op
+    //or is the viewport stored per-framebuffer?
+    this->ex->glViewport(0, 0, icCanvasManager::TileCache::TILE_SIZE, icCanvasManager::TileCache::TILE_SIZE);
 
     //Clear the active framebuffer.
     this->ex->glClearBufferfv(GL_COLOR, 0, ::__clearColor);
