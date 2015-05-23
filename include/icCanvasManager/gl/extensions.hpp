@@ -30,6 +30,7 @@ namespace icCanvasManager {
             void collect_extensions(RefPtr<ContextManager> m);
 
             /* Extension pointers. */
+            GLenum (*glGetError)();
 
             //Texture objects
             void (*glGenTextures)(GLsizei n, GLuint* textures);
