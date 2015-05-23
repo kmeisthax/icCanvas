@@ -21,7 +21,7 @@ namespace icCanvasManager {
          * floats, with each pixel stored in RGBA order, all floats within
          * the range [0.0, 1.0], and all pixels have premultiplied alpha.
          */
-        typedef float TileData[TILE_SIZE][TILE_SIZE][4];
+        typedef float (*TileData)[TILE_SIZE][4]; //BOLLOCKS
 
         struct TileTree;
 

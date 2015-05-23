@@ -113,7 +113,7 @@ namespace icCanvasManager {
          * allocated using the new[] operator (hence should be deleted with the
          * delete[] operator).
          */
-        virtual TileCache::TileData* export_tile(DisplaySuiteTILE tile) = 0;
+        virtual icCanvasManager::TileCache::TileData export_tile(DisplaySuiteTILE tile) = 0;
 
         /* Transfer a TILE between the generic tile data representation defined
          * by TileCache to this DisplaySuite's preferred tile representation.
@@ -122,7 +122,7 @@ namespace icCanvasManager {
          * allocated using the new[] operator (hence should be deleted with the
          * delete[] operator).
          */
-        virtual DisplaySuiteTILE import_tile(TileCache::TileData *tile_dat) = 0;
+        virtual DisplaySuiteTILE import_tile(TileCache::TileData tile_dat) = 0;
     };
 }
 

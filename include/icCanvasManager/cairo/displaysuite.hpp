@@ -21,8 +21,8 @@ namespace icCanvasManager {
             virtual void free_tile(DisplaySuiteTILE tile) override;
             virtual bool can_direct_transfer(icCanvasManager::DisplaySuite *other) override;
             virtual DisplaySuiteTILE direct_transfer(icCanvasManager::DisplaySuite* other, DisplaySuiteTILE tile, bool copy_bit) override;
-            virtual TileCache::TileData* export_tile(DisplaySuiteTILE tile) override;
-            virtual DisplaySuiteTILE import_tile(TileCache::TileData *tile_dat) override;
+            virtual icCanvasManager::TileCache::TileData export_tile(DisplaySuiteTILE tile) override;
+            virtual DisplaySuiteTILE import_tile(TileCache::TileData tile_dat) override;
         };
     }
 }
