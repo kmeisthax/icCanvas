@@ -166,7 +166,7 @@ icCanvasManager::GL::Renderer::~Renderer() {
  * At this stage the renderer is not required to place the tile within
  * a Cairo image surface.
  */
-static const float __clearColor[4] = {0.0f, 0.0f, 0.0f, 1.0f};
+static const float __clearColor[4] = {0.0f, 0.0f, 0.0f, 0.0f};
 
 void icCanvasManager::GL::Renderer::enter_new_surface(const int32_t x, const int32_t y, const int32_t zoom) {
     this->x = x;
