@@ -145,6 +145,9 @@ namespace icCanvasManager {
             void (*glClearBufferfv)(GLenum buffer, GLint drawBuffer, const GLfloat * value);
             void (*glClearBufferfi)(GLenum buffer, GLint drawBuffer, GLfloat depth, GLint stencil);
 
+            //Assorted fixed-function transforms
+            void (*glViewport)(GLint x, GLint y, GLsizei width, GLsizei height);
+
             //Back/front buffer configuration
             void (*glDrawBuffer)(GLenum mode);
         };
