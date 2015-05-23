@@ -44,10 +44,14 @@ icCanvasManager::DisplaySuiteTILE icCanvasManager::Cairo::DisplaySuite::import_t
 
     for (int i = 0; i < icCanvasManager::TileCache::TILE_SIZE; i++) {
         for (int j = 0; j < icCanvasManager::TileCache::TILE_SIZE; j++) {
-            data[i * cairo_stride + j * 4 + 0] = (uint8_t)(tile_dat[i][j][3] * UINT8_MAX);
-            data[i * cairo_stride + j * 4 + 1] = (uint8_t)(tile_dat[i][j][0] * UINT8_MAX);
-            data[i * cairo_stride + j * 4 + 2] = (uint8_t)(tile_dat[i][j][1] * UINT8_MAX);
-            data[i * cairo_stride + j * 4 + 3] = (uint8_t)(tile_dat[i][j][2] * UINT8_MAX);
+            //of course I have to flip the bits
+            uint32_t flippedBitz = 0;
+            flippedBitz |= (uint8_t)(tile_dat[i][j][3] * UINT8_MAX) << 24;
+            flippedBitz |= (uint8_t)(tile_dat[i][j][0] * UINT8_MAX) << 16;
+            flippedBitz |= (uint8_t)(tile_dat[i][j][1] * UINT8_MAX) << 8;
+            flippedBitz |= (uint8_t)(tile_dat[i][j][2] * UINT8_MAX);
+
+            *((uint32_t*)&data[i * cairo_stride + j * 4 + 0]) = flippedBitz;
         }
     }
 
