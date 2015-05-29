@@ -162,6 +162,70 @@ icCanvasManager::GL::Renderer::Renderer(icCanvasManager::RefPtr<icCanvasManager:
 icCanvasManager::GL::Renderer::~Renderer() {
 };
 
+//Numerical factors required for Gauss-Legendre integration.
+//The choice of 20 is motivated by the source examples for
+//http://pomax.github.io/bezierinfo/ which consistently use 20 terms
+static float gauss_weights[20] = {
+    0.1527533871307258,
+    0.1527533871307258,
+    0.1491729864726037,
+    0.1491729864726037,
+    0.1420961093183820,
+    0.1420961093183820,
+    0.1316886384491766,
+    0.1316886384491766,
+    0.1181945319615184,
+    0.1181945319615184,
+    0.1019301198172404,
+    0.1019301198172404,
+    0.0832767415767048,
+    0.0832767415767048,
+    0.0626720483341091,
+    0.0626720483341091,
+    0.0406014298003869,
+    0.0406014298003869,
+    0.0176140071391521,
+    0.0176140071391521
+};
+
+static float gauss_abscissae[20] = {
+    -0.0765265211334973,
+     0.0765265211334973,
+    -0.2277858511416451,
+     0.2277858511416451,
+    -0.3737060887154195,
+     0.3737060887154195,
+    -0.5108670019508271,
+     0.5108670019508271,
+    -0.6360536807265150,
+     0.6360536807265150,
+    -0.7463319064601508,
+     0.7463319064601508,
+    -0.8391169718222188,
+     0.8391169718222188,
+    -0.9122344282513259,
+     0.9122344282513259,
+    -0.9639719272779138,
+     0.9639719272779138,
+    -0.9931285991850949,
+     0.9931285991850949
+};
+
+//TODO: Could this be calculated on-GPU somehow?
+float icCanvasManager::GL::Renderer::curve_arc_length(int polynomID, icCanvasManager::BrushStroke::__Spline::derivative_type &dt) {
+    float sum = 0.0f;
+
+    for (int i = 0; i < 20; i++) {
+        float ct = (1.0/2.0) * gauss_abscissae[i] + (1.0/2.0);
+        auto dtct = dt.evaluate_for_point(polynomID + ct);
+        sum += gauss_weights[i] + sqrt((float)dtct.x * (float)dtct.x + (float)dtct.y * (float)dtct.y);
+    }
+
+    std::cout << "GL: Length " << (1.0/2.0) * sum << std::endl;
+
+    return (1.0/2.0) * sum;
+};
+
 /* Create a new tile surface of the renderer's own choosing.
  *
  * At this stage the renderer is not required to place the tile within
@@ -186,6 +250,8 @@ void icCanvasManager::GL::Renderer::enter_new_surface(const int32_t x, const int
 
     this->xmax = x + (size >> 1);
     this->ymax = y + (size >> 1);
+
+    std::cout << "GL: Entering surface at " << x << "x" << y <<  " size " << zoom << " scaleFactor " << this->xscale << std::endl;
 
     this->ex->glBindFramebuffer(GL_DRAW_FRAMEBUFFER, this->renderTarget);
 
@@ -230,9 +296,9 @@ void icCanvasManager::GL::Renderer::enter_new_surface(const int32_t x, const int
  * position and zoom level.
  */
 void icCanvasManager::GL::Renderer::draw_stroke(icCanvasManager::RefPtr<icCanvasManager::BrushStroke> br) {
-    GLuint strokeInfoTex[2];
+    GLuint strokeInfoTex[3];
 
-    this->ex->glGenTextures(2, strokeInfoTex);
+    this->ex->glGenTextures(3, strokeInfoTex);
 
     //Pull the brushstroke information out into a texture.
     size_t strokeTexSize = br->_curve.count_points() * 4 * 2; //Number of texels
@@ -255,7 +321,7 @@ void icCanvasManager::GL::Renderer::draw_stroke(icCanvasManager::RefPtr<icCanvas
     }
 
     this->ex->glBindTexture(GL_TEXTURE_1D, strokeInfoTex[0]);
-    this->ex->glTexImage1D(GL_TEXTURE_1D, 0, GL_RGBA32I, strokeTexSize, 0, GL_RGBA_INTEGER, GL_INT, strokeTexMem);
+    this->ex->glTexImage1D(GL_TEXTURE_1D, 0, GL_RGBA32I, strokeTexSize, 0, GL_RGBA_INTEGER, GL_INT, (GLvoid*)strokeTexMem);
 
     //Pull the derivative stroke information into a texture.
     auto curveDeriv = br->_curve.derivative();
@@ -279,7 +345,19 @@ void icCanvasManager::GL::Renderer::draw_stroke(icCanvasManager::RefPtr<icCanvas
     }
 
     this->ex->glBindTexture(GL_TEXTURE_1D, strokeInfoTex[1]);
-    this->ex->glTexImage1D(GL_TEXTURE_1D, 0, GL_RGBA32I, strokeDerivTexSize, 0, GL_RGBA_INTEGER, GL_INT, strokeDerivTexMem);
+    this->ex->glTexImage1D(GL_TEXTURE_1D, 0, GL_RGBA32I, strokeDerivTexSize, 0, GL_RGBA_INTEGER, GL_INT, (GLvoid*)strokeDerivTexMem);
+
+    //TODO: Actually free texture memory. This is an obvious leak.
+
+    size_t polynomTexSize = curveDeriv.count_points();
+    float *polynomTexMem = (float*)malloc(polynomTexSize * 4 * sizeof(float)); //Actual texture memory
+
+    for (int i = 0; i < curveDeriv.count_points(); i++) {
+        polynomTexMem[i * 4] = this->curve_arc_length(i, curveDeriv);
+    }
+
+    this->ex->glBindTexture(GL_TEXTURE_1D, strokeInfoTex[2]);
+    this->ex->glTexImage1D(GL_TEXTURE_1D, 0, GL_RGBA32F, polynomTexSize, 0, GL_RGBA, GL_FLOAT, (GLvoid*)polynomTexMem);
 
     //Set up the "raymarch" quad so we can raster over the whole tile.
     this->ex->glBindVertexArray(this->raymarchGeom);
@@ -291,9 +369,10 @@ void icCanvasManager::GL::Renderer::draw_stroke(icCanvasManager::RefPtr<icCanvas
     this->ex->glUseProgram(this->dProgram);
 
     //Set up per-stroke uniforms.
-    GLint splineDataLoc, splineDerivativeDataLoc, tintOpacityLoc, brushSizeLoc;
+    GLint splineDataLoc, splineDerivativeDataLoc, polynomDataLoc, tintOpacityLoc, brushSizeLoc;
     splineDataLoc = this->ex->glGetUniformLocation(this->dProgram, "splineData");
     splineDerivativeDataLoc = this->ex->glGetUniformLocation(this->dProgram, "splineDerivativeData");
+    polynomDataLoc = this->ex->glGetUniformLocation(this->dProgram, "polynomData");
     tintOpacityLoc = this->ex->glGetUniformLocation(this->dProgram, "tintOpacity");
     brushSizeLoc = this->ex->glGetUniformLocation(this->dProgram, "brushSize");
 
@@ -301,20 +380,36 @@ void icCanvasManager::GL::Renderer::draw_stroke(icCanvasManager::RefPtr<icCanvas
         this->ex->glUniform1i(splineDataLoc, 0);
         this->ex->glActiveTexture(GL_TEXTURE0 + 0);
         this->ex->glBindTexture(GL_TEXTURE_1D, strokeInfoTex[0]);
+        this->ex->glTexParameteri(GL_TEXTURE_1D,GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        this->ex->glTexParameteri(GL_TEXTURE_1D,GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        this->ex->glTexParameteri(GL_TEXTURE_1D,GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     }
 
     if (splineDerivativeDataLoc != -1) {
         this->ex->glUniform1i(splineDerivativeDataLoc, 1);
         this->ex->glActiveTexture(GL_TEXTURE0 + 1);
         this->ex->glBindTexture(GL_TEXTURE_1D, strokeInfoTex[1]);
+        this->ex->glTexParameteri(GL_TEXTURE_1D,GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        this->ex->glTexParameteri(GL_TEXTURE_1D,GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        this->ex->glTexParameteri(GL_TEXTURE_1D,GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    }
+
+    if (polynomDataLoc != -1) {
+        this->ex->glUniform1i(polynomDataLoc, 2);
+        this->ex->glActiveTexture(GL_TEXTURE0 + 2);
+        this->ex->glBindTexture(GL_TEXTURE_1D, strokeInfoTex[2]);
+        this->ex->glTexParameteri(GL_TEXTURE_1D,GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        this->ex->glTexParameteri(GL_TEXTURE_1D,GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        this->ex->glTexParameteri(GL_TEXTURE_1D,GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     }
 
     if (tintOpacityLoc != -1) {
         auto premulR = ((float)br->_tint_color_red / icCanvasManager::BrushStroke::COLOR_MAX) * ((float)br->_tint_alpha / icCanvasManager::BrushStroke::COLOR_MAX);
         auto premulG = ((float)br->_tint_color_green / icCanvasManager::BrushStroke::COLOR_MAX) * ((float)br->_tint_alpha / icCanvasManager::BrushStroke::COLOR_MAX);
         auto premulB = ((float)br->_tint_color_blue / icCanvasManager::BrushStroke::COLOR_MAX) * ((float)br->_tint_alpha / icCanvasManager::BrushStroke::COLOR_MAX);
+        auto premulA = ((float)br->_tint_alpha / icCanvasManager::BrushStroke::COLOR_MAX);
 
-        this->ex->glUniform4f(tintOpacityLoc, premulR, premulG, premulB, ((float)br->_tint_alpha / icCanvasManager::BrushStroke::COLOR_MAX));
+        this->ex->glUniform4f(tintOpacityLoc, premulR, premulG, premulB, premulA);
     }
 
     if (brushSizeLoc != -1) {
@@ -330,7 +425,7 @@ void icCanvasManager::GL::Renderer::draw_stroke(icCanvasManager::RefPtr<icCanvas
     this->ex->glBindTexture(GL_TEXTURE_1D, 0);
     this->ex->glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 
-    this->ex->glDeleteTextures(2, strokeInfoTex);
+    this->ex->glDeleteTextures(3, strokeInfoTex);
 
     auto error = this->ex->glGetError();
     assert(error == GL_NO_ERROR);

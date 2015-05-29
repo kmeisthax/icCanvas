@@ -19,6 +19,8 @@ namespace icCanvasManager {
 
             RefPtr<Extensions> ex;
             RefPtr<ContextManager> m;
+
+            float curve_arc_length(int polynomID, icCanvasManager::BrushStroke::__Spline::derivative_type &dt);
         protected:
         public:
             Renderer(RefPtr<ContextManager> m, ContextManager::CONTEXT target, ContextManager::DRAWABLE window);
