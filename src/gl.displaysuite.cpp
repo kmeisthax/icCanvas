@@ -1,7 +1,6 @@
 #include <icCanvasManager.hpp>
 
 #include <PlatformGL.h>
-#include <iostream>
 
 icCanvasManager::GL::DisplaySuite::DisplaySuite(icCanvasManager::GL::ContextManager *cman, icCanvasManager::GL::ContextManager::DRAWABLE null_drawable) : cman(cman), null_drawable(null_drawable), renderer_context(0) {
     this->ex = new icCanvasManager::GL::Extensions();
@@ -46,8 +45,6 @@ icCanvasManager::DisplaySuiteTILE icCanvasManager::GL::DisplaySuite::direct_tran
 };
 
 icCanvasManager::TileCache::TileData icCanvasManager::GL::DisplaySuite::export_tile(icCanvasManager::DisplaySuiteTILE tile) {
-    std::cout << "GL: Exporting tile...";
-
     if (this->renderer_context == 0) {
         this->renderer_context = this->cman->create_main_context(3,0);
         this->ex->collect_extensions(this->cman);
@@ -63,8 +60,6 @@ icCanvasManager::TileCache::TileData icCanvasManager::GL::DisplaySuite::export_t
     this->ex->glBindTexture(GL_TEXTURE_2D, (GLuint)tile);
     this->ex->glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_FLOAT, data);
     this->ex->glBindTexture(GL_TEXTURE_2D, 0);
-
-    std::cout << " done." << std::endl;
 
     return data;
 };

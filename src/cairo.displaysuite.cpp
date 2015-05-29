@@ -1,7 +1,5 @@
 #include <icCanvasManager.hpp>
 
-#include <iostream>
-
 icCanvasManager::Cairo::DisplaySuite::DisplaySuite() {};
 icCanvasManager::Cairo::DisplaySuite::~DisplaySuite() {};
 
@@ -37,8 +35,6 @@ static void freed_imported_tile(void* data) {
 };
 
 icCanvasManager::DisplaySuiteTILE icCanvasManager::Cairo::DisplaySuite::import_tile(icCanvasManager::TileCache::TileData tile_dat) {
-    std::cout << "CAIRO: Importing tile...";
-
     auto cairo_stride = cairo_format_stride_for_width(CAIRO_FORMAT_ARGB32, icCanvasManager::TileCache::TILE_SIZE);
     unsigned char* data = (unsigned char*)malloc(cairo_stride * icCanvasManager::TileCache::TILE_SIZE);
 
@@ -58,8 +54,6 @@ icCanvasManager::DisplaySuiteTILE icCanvasManager::Cairo::DisplaySuite::import_t
     auto* imsurf = cairo_image_surface_create_for_data(data, CAIRO_FORMAT_ARGB32, icCanvasManager::TileCache::TILE_SIZE, icCanvasManager::TileCache::TILE_SIZE, cairo_stride);
 
     cairo_surface_set_user_data(imsurf, (cairo_user_data_key_t*)malloc(sizeof(cairo_user_data_key_t)), data, &::freed_imported_tile);
-
-    std::cout << " done." << std::endl;
 
     return (icCanvasManager::DisplaySuiteTILE)imsurf;
 };
