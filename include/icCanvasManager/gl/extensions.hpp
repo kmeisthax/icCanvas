@@ -41,6 +41,10 @@ namespace icCanvasManager {
             void (*glGetTexImage)(GLenum target, GLint level, GLenum format, GLenum type, GLvoid * pixels);
             void (*glActiveTexture)(GLenum texture);
 
+            //Texture sampling parameters
+            void (*glTexParameterf)(GLenum target, GLenum pname, GLfloat param);
+            void (*glTexParameteri)(GLenum target, GLenum pname, GLint param);
+
             //Framebuffer-texture copies
             void (*glCopyTexImage1D)(GLenum target, GLint level, GLenum internalformat, GLint x, GLint y, GLsizei width, GLint border);
             void (*glCopyTexImage2D)(GLenum target, GLint level, GLenum internalformat, GLint x, GLint y, GLsizei width, GLsizei height, GLint border);

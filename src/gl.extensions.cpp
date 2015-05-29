@@ -96,5 +96,7 @@ void icCanvasManager::GL::Extensions::collect_extensions(icCanvasManager::RefPtr
     this->glGetTexImage = (decltype(this->glGetTexImage))m->get_proc_address("glGetTexImage");
     this->glGetError = (decltype(this->glGetError))m->get_proc_address("glGetError");
     this->glViewport = (decltype(this->glViewport))m->get_proc_address("glViewport");
+    this->glTexParameterf = (decltype(this->glTexParameterf))m->get_proc_address("glTexParameterf");
+    this->glTexParameteri = (decltype(this->glTexParameteri))m->get_proc_address("glTexParameteri");
     //this-> = (decltype(this->))m->get_proc_address("");
 }
