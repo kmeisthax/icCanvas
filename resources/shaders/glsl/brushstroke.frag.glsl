@@ -34,6 +34,12 @@ uniform isampler1D splineDerivativeData; //Order 2 polynomial array
  */
 uniform sampler1D polynomData;
 
+/* Lookup data listing the t-values to consider rasterizing, specifically
+ * selected such that the mentioned values evaluate to points of roughly the
+ * same distance. This is known as the linearized curve.
+ */
+uniform sampler1D lutData;
+
 uniform vec4 tintOpacity;       //rgb: brushTint; a: brushOpacity. Premultiplied.
 uniform int brushSize;        //Size of brush in canvas units
 
@@ -103,6 +109,8 @@ ivec4 evaluate_polynomial(isampler1D polynomial, int order, int component, float
         segment = int(t);
     }
     
+    float local_t = t - segment;
+    
     int baseTexel = segment * order * pointComponentCount + component;
     ivec4 intermediates[4]; //MAX POLYNOMIAL ORDER: 4
     for (int i = 0; i <= order; i++) {
@@ -111,7 +119,7 @@ ivec4 evaluate_polynomial(isampler1D polynomial, int order, int component, float
     
     for (int i = order; i > 0; i--) {
         for (int j = 0; j < i; j++) {
-            intermediates[j] = lerp(intermediates[j], segment, intermediates[j+1], segment + 1, t);
+            intermediates[j] = lerp(intermediates[j], segment, intermediates[j+1], segment + 1, local_t);
         }
     }
     
@@ -138,7 +146,7 @@ ivec2 coord_to_tilespace(ivec2 canvasPt) {
 }
 
 ivec2 frag_to_tilespace() {
-    return ivec2(gl_FragCoord.xy);// * surfaceParams.xy);
+    return ivec2(gl_FragCoord.xy);
 }
 
 //Evaluate brush at current point and add to color.
@@ -148,7 +156,7 @@ void apply_brush(ivec4 point0, ivec4 point1, inout vec4 color) {
     float scaledBrushSize = brushSize * tScaleParams.x;
     float brushDistance = ilen(tFrag - tBrush);
     
-    vec4 fractionalTint = tintOpacity;// / scaledBrushSize;
+    vec4 fractionalTint = tintOpacity / scaledBrushSize;
     
     if (brushDistance < scaledBrushSize) { // < scaledBrushSize) {
         float a = fractionalTint.a + color.a * (fractionalTint.a);
@@ -158,78 +166,18 @@ void apply_brush(ivec4 point0, ivec4 point1, inout vec4 color) {
 }
 
 void main() {
-    int num_segments = textureSize(splineData, 0) / 4 / pointComponentCount;
     vec4 color = vec4(0.0, 0.0, 0.0, 0.0);
     
-    for (int i = 0; i < num_segments; i++) {
-        float length = curve_arc_length(i);
-        float quality = 1.0 / tScaleParams.x;
+    int num_tVals = textureSize(lutData, 0);
+    for (int i = 0; i < num_tVals; i++) {
+        float tValue = texelFetch(lutData, i, 0).r;
+        int polynomID = int(floor(tValue));
+        float localTValue = tValue - polynomID;
         
-        ivec4 testPt0 = evaluate_polynomial(splineDerivativeData, 2, 0, i, -1);
-        float testLen = sqrt(float(testPt0.x) * float(testPt0.x) + float(testPt0.y) * float(testPt0.y));
+        ivec4 pt0 = evaluate_polynomial(splineData, 3, 0, tValue, -1);
+        ivec4 pt1 = evaluate_polynomial(splineData, 3, 1, tValue, -1);
         
-        if (testLen == 0) {
-            apply_brush(evaluate_polynomial(splineData, 3, 0, i, -1),
-                        evaluate_polynomial(splineData, 3, 1, i, -1), color);
-            continue;
-        }
-        
-        if (quality > length) {
-            color.r = 1.0;
-        }
-        
-        for (float j = 0; j < length; j += quality) {
-            int iterates = 1; //originally 5
-            vec4 t_values = vec4(i, i, i, i);
-            
-            for (int k = 0; k < iterates; k++) {
-                float step = j / iterates;
-                
-                if (t_values.x >= (i + 1)) {
-                    t_values.x = i + 2;
-                    break;
-                }
-                
-                vec4 k_values;
-                k_values.x = step * diff(t_values.x);
-                
-                t_values.y = t_values.x + (k_values.x / 2.0);
-                if (t_values.y >= (i + 1)) {
-                    t_values.x = i + 2;
-                    break;
-                }
-                
-                k_values.y = step * diff(t_values.y);
-                
-                t_values.z = t_values.x + (k_values.y / 2.0);
-                if (t_values.z >= (i + 1)) {
-                    t_values.x = i + 2;
-                    break;
-                }
-                
-                k_values.z = step * diff(t_values.z);
-                
-                t_values.w = t_values.x + k_values.z;
-                if (t_values.w >= (i + 1)) {
-                    t_values.x = i + 2;
-                    break;
-                }
-                
-                k_values.w = step * diff(t_values.w);
-                
-                t_values.x = t_values.x + (k_values.x + 2 * k_values.y + 2 * k_values.z + k_values.w) / 6.0;
-            }
-            
-            if (t_values.x >= (i + 1)) {
-                color.g = color.g + 0.1;
-                break;
-            } else {
-                color.b = color.b + 0.1;
-            }
-            
-            apply_brush(evaluate_polynomial(splineData, 3, 0, t_values.x, -1),
-                        evaluate_polynomial(splineData, 3, 1, t_values.x, -1), color);
-        }
+        apply_brush(pt0, pt1, color);
     }
     
     strokeColor = color;

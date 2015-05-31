@@ -21,6 +21,9 @@ namespace icCanvasManager {
             RefPtr<ContextManager> m;
 
             float curve_arc_length(int polynomID, icCanvasManager::BrushStroke::__Spline::derivative_type &dt);
+            void compute_linear_LUT(int polynomID, icCanvasManager::BrushStroke::__Spline &curve, icCanvasManager::BrushStroke::__Spline::derivative_type &dcurve, float* tableMem, size_t tableEntries, float pixelInterval);
+
+            class _DifferentialCurveFunctor;
         protected:
         public:
             Renderer(RefPtr<ContextManager> m, ContextManager::CONTEXT target, ContextManager::DRAWABLE window);

@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <cmath>
 
 #include <PlatformGL.h>
 
@@ -226,6 +227,96 @@ float icCanvasManager::GL::Renderer::curve_arc_length(int polynomID, icCanvasMan
     return (1.0/2.0) * sum;
 };
 
+class icCanvasManager::GL::Renderer::_DifferentialCurveFunctor {
+        icCanvasManager::BrushStroke::__Spline::derivative_type& d;
+    public:
+        _DifferentialCurveFunctor(icCanvasManager::BrushStroke::__Spline::derivative_type& d) : d(d) {};
+        float operator() (float t) {
+            auto dpt = this->d.evaluate_for_point(t);
+            auto deriv_len = sqrt((float)dpt.x * (float)dpt.x + (float)dpt.y * (float)dpt.y);
+
+            return 1 / deriv_len;
+        }
+};
+
+/* Computes a look-up table mapping regular distances along the
+ * curve to their respective t values, providing an approximation to
+ * a linear-parameterized representation of the curve.
+ *
+ * TODO: This is VERY EXPENSIVE! Can we move it to the GPU?
+ * It might require GL4 functionality eventually, because FBO
+ * validation is painfully expensive.
+ */
+void icCanvasManager::GL::Renderer::compute_linear_LUT(int polynomID, icCanvasManager::BrushStroke::__Spline &curve, icCanvasManager::BrushStroke::__Spline::derivative_type &dcurve, float* tableMem, size_t tableEntries, float pixelInterval) {
+    auto length = this->curve_arc_length(polynomID, dcurve);
+
+    auto testpt = dcurve.evaluate_for_point(polynomID);
+    auto testlen = sqrt((float)testpt.x * (float)testpt.x + (float)testpt.y * (float)testpt.y);
+    if (testlen == 0) {
+        //Special case: If the derivative for this curve is zero,
+        //fill the LUT linearily.
+        for (int i = 0; i < tableEntries; i++) {
+            tableMem[tableEntries] = polynomID + i / (tableEntries);
+        }
+
+        return;
+    }
+
+    icCanvasManager::GL::Renderer::_DifferentialCurveFunctor diff(dcurve);
+
+    int i = 0;
+    for (float j = 0; i < tableEntries && j < length; i += 1, j += pixelInterval) {
+        int iterates = 5; //adjust to taste
+        float this_t = polynomID;
+
+        for (int k = 0; k < iterates; k++) {
+            float step = j / iterates;
+
+            if (this_t >= (polynomID + 1)) {
+                this_t = polynomID + 2;
+                break;
+            }
+            auto k1 = step * diff(this_t);
+
+            auto t2 = this_t + (k1 / 2.0);
+            if (t2 >= (polynomID + 1)) {
+                this_t = polynomID + 2;
+                break;
+            }
+            auto k2 = step * diff(t2);
+
+            auto t3 = this_t + (k2 / 2.0);
+            if (t3 >= (polynomID + 1)) {
+                this_t = polynomID + 2;
+                break;
+            }
+            auto k3 = step * diff(t3);
+
+            auto t4 = this_t + k3;
+            if (t4 >= (polynomID + 1)) {
+                this_t = polynomID + 2;
+                break;
+            }
+            auto k4 = step * diff(t4);
+
+            this_t += (k1 + 2 * k2 + 2 * k3 + k4) / 6.0;
+        }
+
+        if (this_t >= (polynomID + 1)) {
+            break;
+        }
+
+        tableMem[i] = this_t;
+    }
+
+    //This linearization algorithm has edge cases which spit out
+    //results off the edge of the curve, so if we bailed out early,
+    //clamp the rest of the values to the end of the curve.
+    for (; i < tableEntries; i++) {
+        tableMem[i] = polynomID + 1;
+    }
+};
+
 /* Create a new tile surface of the renderer's own choosing.
  *
  * At this stage the renderer is not required to place the tile within
@@ -296,9 +387,9 @@ void icCanvasManager::GL::Renderer::enter_new_surface(const int32_t x, const int
  * position and zoom level.
  */
 void icCanvasManager::GL::Renderer::draw_stroke(icCanvasManager::RefPtr<icCanvasManager::BrushStroke> br) {
-    GLuint strokeInfoTex[3];
+    GLuint strokeInfoTex[4];
 
-    this->ex->glGenTextures(3, strokeInfoTex);
+    this->ex->glGenTextures(4, strokeInfoTex);
 
     //Pull the brushstroke information out into a texture.
     size_t strokeTexSize = br->_curve.count_points() * 4 * 2; //Number of texels
@@ -352,12 +443,37 @@ void icCanvasManager::GL::Renderer::draw_stroke(icCanvasManager::RefPtr<icCanvas
     size_t polynomTexSize = curveDeriv.count_points();
     float *polynomTexMem = (float*)malloc(polynomTexSize * 4 * sizeof(float)); //Actual texture memory
 
+    //We also need to calculate memory size for the LUT in this pass
+    float pixelInterval = 5.0 / this->xscale;
+    float totalLength = 0;
+    size_t lutSize = 0;
+
     for (int i = 0; i < curveDeriv.count_points(); i++) {
         polynomTexMem[i * 4] = this->curve_arc_length(i, curveDeriv);
+        totalLength += polynomTexMem[i * 4];
+        lutSize += (int)std::ceil(polynomTexMem[i * 4] / pixelInterval);
     }
 
     this->ex->glBindTexture(GL_TEXTURE_1D, strokeInfoTex[2]);
     this->ex->glTexImage1D(GL_TEXTURE_1D, 0, GL_RGBA32F, polynomTexSize, 0, GL_RGBA, GL_FLOAT, (GLvoid*)polynomTexMem);
+
+    //Compute a linearized beizer curve look-up table to avoid
+    //expensive in-shader linearization.
+
+    std::cout << "GL: Allocating " << lutSize << " floats!" << std::endl;
+
+    float* lutMemory = (float*)malloc(lutSize * sizeof(float));
+    float* curLutMemory = lutMemory;
+    for (int i = 0; i < curveDeriv.count_points(); i++) {
+        int currentLutSize = (int)std::ceil(polynomTexMem[i * 4] / pixelInterval);
+
+        this->compute_linear_LUT(i, br->_curve, curveDeriv, curLutMemory, currentLutSize, pixelInterval);
+
+        curLutMemory += currentLutSize;
+    }
+
+    this->ex->glBindTexture(GL_TEXTURE_1D, strokeInfoTex[3]);
+    this->ex->glTexImage1D(GL_TEXTURE_1D, 0, GL_R32F, lutSize, 0, GL_RED, GL_FLOAT, (GLvoid*)lutMemory);
 
     //Set up the "raymarch" quad so we can raster over the whole tile.
     this->ex->glBindVertexArray(this->raymarchGeom);
@@ -369,10 +485,11 @@ void icCanvasManager::GL::Renderer::draw_stroke(icCanvasManager::RefPtr<icCanvas
     this->ex->glUseProgram(this->dProgram);
 
     //Set up per-stroke uniforms.
-    GLint splineDataLoc, splineDerivativeDataLoc, polynomDataLoc, tintOpacityLoc, brushSizeLoc;
+    GLint splineDataLoc, splineDerivativeDataLoc, polynomDataLoc, tintOpacityLoc, brushSizeLoc, lutDataLoc;
     splineDataLoc = this->ex->glGetUniformLocation(this->dProgram, "splineData");
     splineDerivativeDataLoc = this->ex->glGetUniformLocation(this->dProgram, "splineDerivativeData");
     polynomDataLoc = this->ex->glGetUniformLocation(this->dProgram, "polynomData");
+    lutDataLoc = this->ex->glGetUniformLocation(this->dProgram, "lutData");
     tintOpacityLoc = this->ex->glGetUniformLocation(this->dProgram, "tintOpacity");
     brushSizeLoc = this->ex->glGetUniformLocation(this->dProgram, "brushSize");
 
@@ -403,6 +520,15 @@ void icCanvasManager::GL::Renderer::draw_stroke(icCanvasManager::RefPtr<icCanvas
         this->ex->glTexParameteri(GL_TEXTURE_1D,GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     }
 
+    if (lutDataLoc != -1) {
+        this->ex->glUniform1i(lutDataLoc, 3);
+        this->ex->glActiveTexture(GL_TEXTURE0 + 3);
+        this->ex->glBindTexture(GL_TEXTURE_1D, strokeInfoTex[3]);
+        this->ex->glTexParameteri(GL_TEXTURE_1D,GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        this->ex->glTexParameteri(GL_TEXTURE_1D,GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        this->ex->glTexParameteri(GL_TEXTURE_1D,GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    }
+
     if (tintOpacityLoc != -1) {
         auto premulR = ((float)br->_tint_color_red / icCanvasManager::BrushStroke::COLOR_MAX) * ((float)br->_tint_alpha / icCanvasManager::BrushStroke::COLOR_MAX);
         auto premulG = ((float)br->_tint_color_green / icCanvasManager::BrushStroke::COLOR_MAX) * ((float)br->_tint_alpha / icCanvasManager::BrushStroke::COLOR_MAX);
@@ -425,7 +551,7 @@ void icCanvasManager::GL::Renderer::draw_stroke(icCanvasManager::RefPtr<icCanvas
     this->ex->glBindTexture(GL_TEXTURE_1D, 0);
     this->ex->glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 
-    this->ex->glDeleteTextures(3, strokeInfoTex);
+    this->ex->glDeleteTextures(4, strokeInfoTex);
 
     auto error = this->ex->glGetError();
     assert(error == GL_NO_ERROR);
