@@ -542,9 +542,14 @@ void icCanvasManager::GL::Renderer::draw_stroke(icCanvasManager::RefPtr<icCanvas
         this->ex->glUniform1i(brushSizeLoc, br->_base_thickness);
     }
 
+    //Enable transparency
+    this->ex->glEnable(GL_BLEND);
+    this->ex->glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
     this->ex->glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
     //Cleanup some GL state.
+    this->ex->glDisable(GL_BLEND);
     this->ex->glBindVertexArray(0);
     this->ex->glActiveTexture(GL_TEXTURE0);
     this->ex->glUseProgram(0);
