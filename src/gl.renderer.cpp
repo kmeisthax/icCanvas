@@ -219,7 +219,7 @@ float icCanvasManager::GL::Renderer::curve_arc_length(int polynomID, icCanvasMan
     for (int i = 0; i < 20; i++) {
         float ct = (1.0/2.0) * gauss_abscissae[i] + (1.0/2.0);
         auto dtct = dt.evaluate_for_point(polynomID + ct);
-        sum += gauss_weights[i] + sqrt((float)dtct.x * (float)dtct.x + (float)dtct.y * (float)dtct.y);
+        sum += gauss_weights[i] * sqrt((float)dtct.x * (float)dtct.x + (float)dtct.y * (float)dtct.y);
     }
 
     std::cout << "GL: Length " << (1.0/2.0) * sum << std::endl;
