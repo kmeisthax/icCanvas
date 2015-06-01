@@ -175,6 +175,8 @@ void main() {
     for (int i = 0; i < num_tVals; i++) {
         float tValue = texelFetch(lutData, i, 0).r;
         
+        if (tValue < 0) continue;
+        
         ivec4 pt0 = evaluate_polynomial(splineData, 3, 0, tValue, -1);
         ivec4 pt1 = evaluate_polynomial(splineData, 3, 1, tValue, -1);
         

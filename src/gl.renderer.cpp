@@ -311,9 +311,9 @@ void icCanvasManager::GL::Renderer::compute_linear_LUT(int polynomID, icCanvasMa
 
     //This linearization algorithm has edge cases which spit out
     //results off the edge of the curve, so if we bailed out early,
-    //clamp the rest of the values to the end of the curve.
+    //skip the rest of the values.
     for (; i < tableEntries; i++) {
-        tableMem[i] = polynomID + 1;
+        tableMem[i] = -1.0;
     }
 };
 
