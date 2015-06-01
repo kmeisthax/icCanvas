@@ -99,7 +99,7 @@ const vec4 gaussAbscissae[5] = vec4[5]( //20 abscissae
 ivec4 lerp(ivec4 pt1, float pos1, ivec4 pt2, float pos2, float pos) {
     float pDelta = pos - pos1;
     float invPDelta = (1 / (pos2 - pos1));
-    ivec4 pt = pt1 + (pt2 - pt1) * ivec4(pDelta, pDelta, pDelta, pDelta) * ivec4(invPDelta, invPDelta, invPDelta, invPDelta);
+    ivec4 pt = ivec4(pt1 + (pt2 - pt1) * vec4(pDelta, pDelta, pDelta, pDelta) * vec4(invPDelta, invPDelta, invPDelta, invPDelta));
     return pt;
 }
 
@@ -119,7 +119,7 @@ ivec4 evaluate_polynomial(isampler1D polynomial, int order, int component, float
     
     for (int i = order; i > 0; i--) {
         for (int j = 0; j < i; j++) {
-            intermediates[j] = lerp(intermediates[j], segment, intermediates[j+1], segment + 1, local_t);
+            intermediates[j] = lerp(intermediates[j], segment, intermediates[j+1], segment + 1, t);
         }
     }
     
@@ -150,19 +150,22 @@ ivec2 frag_to_tilespace() {
 }
 
 //Evaluate brush at current point and add to color.
-void apply_brush(ivec4 point0, ivec4 point1, inout vec4 color) {
+vec4 apply_brush(ivec4 point0, ivec4 point1, in vec4 color) {
     ivec2 tFrag = frag_to_tilespace();
     ivec2 tBrush = coord_to_tilespace(point0.xy);
     float scaledBrushSize = brushSize * tScaleParams.x;
     float brushDistance = ilen(tFrag - tBrush);
     
     vec4 fractionalTint = tintOpacity / scaledBrushSize;
+    vec4 oldColor = color, newColor = color;
     
-    if (brushDistance < scaledBrushSize) { // < scaledBrushSize) {
-        float a = fractionalTint.a + color.a * (fractionalTint.a);
-        color.rgb = (fractionalTint.rgb + color.rgb * (1 - fractionalTint.a)) / a;
-        color.a = a;
+    if (brushDistance < scaledBrushSize) {
+        float a = fractionalTint.a + oldColor.a * (1 - fractionalTint.a);
+        newColor.rgb = (fractionalTint.rgb + oldColor.rgb * (1 - fractionalTint.a)) / a;
+        newColor.a = a;
     };
+    
+    return newColor;
 }
 
 void main() {
@@ -171,13 +174,11 @@ void main() {
     int num_tVals = textureSize(lutData, 0);
     for (int i = 0; i < num_tVals; i++) {
         float tValue = texelFetch(lutData, i, 0).r;
-        int polynomID = int(floor(tValue));
-        float localTValue = tValue - polynomID;
         
         ivec4 pt0 = evaluate_polynomial(splineData, 3, 0, tValue, -1);
         ivec4 pt1 = evaluate_polynomial(splineData, 3, 1, tValue, -1);
         
-        apply_brush(pt0, pt1, color);
+        color = apply_brush(pt0, pt1, color);
     }
     
     strokeColor = color;
