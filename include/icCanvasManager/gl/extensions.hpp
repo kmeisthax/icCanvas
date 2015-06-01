@@ -32,6 +32,9 @@ namespace icCanvasManager {
             /* Extension pointers. */
             GLenum (*glGetError)();
 
+            void (*glEnable)(GLenum cap);
+            void (*glDisable)(GLenum cap);
+
             //Texture objects
             void (*glGenTextures)(GLsizei n, GLuint* textures);
             void (*glBindTexture)(GLenum target, GLuint texture);
@@ -129,6 +132,10 @@ namespace icCanvasManager {
             void (*glUniformMatrix4x2fv)(GLint location, GLsizei count, GLboolean transpose, const GLfloat *value);
             void (*glUniformMatrix3x4fv)(GLint location, GLsizei count, GLboolean transpose, const GLfloat *value);
             void (*glUniformMatrix4x3fv)(GLint location, GLsizei count, GLboolean transpose, const GLfloat *value);
+
+            //Blending
+            void (*glBlendFunc)(GLenum sfactor, GLenum dfactor);
+            void (*glBlendFunci)(GLuint buf, GLenum sfactor, GLenum dfactor);
 
             //Rendering
             void (*glDrawArrays)(GLenum mode, GLint first, GLsizei count);

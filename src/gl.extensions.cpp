@@ -98,5 +98,9 @@ void icCanvasManager::GL::Extensions::collect_extensions(icCanvasManager::RefPtr
     this->glViewport = (decltype(this->glViewport))m->get_proc_address("glViewport");
     this->glTexParameterf = (decltype(this->glTexParameterf))m->get_proc_address("glTexParameterf");
     this->glTexParameteri = (decltype(this->glTexParameteri))m->get_proc_address("glTexParameteri");
+    this->glEnable = (decltype(this->glEnable))m->get_proc_address("glEnable");
+    this->glDisable = (decltype(this->glDisable))m->get_proc_address("glDisable");
+    this->glBlendFunc = (decltype(this->glBlendFunc))m->get_proc_address("glBlendFunc");
+    this->glBlendFunci = (decltype(this->glBlendFunci))m->get_proc_address("glBlendFunci");
     //this-> = (decltype(this->))m->get_proc_address("");
 }
