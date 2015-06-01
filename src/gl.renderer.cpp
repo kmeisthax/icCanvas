@@ -253,6 +253,7 @@ void icCanvasManager::GL::Renderer::compute_linear_LUT(int polynomID, icCanvasMa
     auto testpt = dcurve.evaluate_for_point(polynomID);
     auto testlen = sqrt((float)testpt.x * (float)testpt.x + (float)testpt.y * (float)testpt.y);
     if (testlen == 0) {
+        std::cout << "GL: Found 0-length curve!!" << std::endl;
         //Special case: If the derivative for this curve is zero,
         //fill the LUT linearily.
         for (int i = 0; i < tableEntries; i++) {
@@ -266,7 +267,7 @@ void icCanvasManager::GL::Renderer::compute_linear_LUT(int polynomID, icCanvasMa
 
     int i = 0;
     for (float j = 0; i < tableEntries && j < length; i += 1, j += pixelInterval) {
-        int iterates = 5; //adjust to taste
+        int iterates = 10; //adjust to taste
         float this_t = polynomID;
 
         for (int k = 0; k < iterates; k++) {
