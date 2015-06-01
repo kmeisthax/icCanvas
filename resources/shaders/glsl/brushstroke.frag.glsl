@@ -156,7 +156,7 @@ vec4 apply_brush(ivec4 point0, ivec4 point1, in vec4 color) {
     float scaledBrushSize = brushSize * tScaleParams.x;
     float brushDistance = ilen(tFrag - tBrush);
     
-    vec4 fractionalTint = tintOpacity / scaledBrushSize;
+    vec4 fractionalTint = tintOpacity / (scaledBrushSize / 5);
     vec4 oldColor = color, newColor = color;
     
     if (brushDistance < scaledBrushSize) {
