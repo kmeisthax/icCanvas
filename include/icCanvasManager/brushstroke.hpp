@@ -42,7 +42,7 @@ namespace icCanvasManager {
             ATTRIBUTE_YDELTA
         };
         
-        typedef TMVBeizer<__ControlPoint, 3> __Spline;
+        typedef TMVArc<int32_t, __ControlPoint> __Spline;
         __Spline _curve;
         __Spline::size_type pos;
 
@@ -53,10 +53,6 @@ namespace icCanvasManager {
         int _base_thickness;
         int _tint_color_red, _tint_color_green, _tint_color_blue;
         int _tint_alpha;
-
-        class __DerivFunctor;
-        class __SecondDerivFunctor;
-        class __ThirdDerivFunctor;
 
         std::vector<__ControlPoint> _fitpts;
     public:
@@ -86,16 +82,15 @@ namespace icCanvasManager {
 
         void pen_begin_velocity(int32_t delta_x, int32_t delta_y);
         
-        //Set the end and control points of the next spline section.
-        void pen_to(int32_t fromcp_x, int32_t fromcp_y, int32_t tocp_x,
-            int32_t tocp_y, int32_t to_x, int32_t to_y);
-        void pen_to_pressure(int32_t fromcp_pressure, int32_t tocp_pressure,
+        //Set the end and control points of the next arc section.
+        void pen_to(int32_t cp_x,
+            int32_t cp_y, int32_t to_x, int32_t to_y);
+        void pen_to_pressure(int32_t cp_pressure,
             int32_t to_pressure);
-        void pen_to_tilt(int32_t fromcp_tilt, int32_t fromcp_angle,
-            int32_t tocp_tilt, int32_t tocp_angle, int32_t to_tilt,
+        void pen_to_tilt(int32_t cp_tilt, int32_t cp_angle, int32_t to_tilt,
             int32_t to_angle);
-        void pen_to_velocity(int32_t fromcp_delta_x, int32_t fromcp_delta_y,
-            int32_t tocp_delta_x, int32_t tocp_delta_y, int32_t to_delta_x,
+        void pen_to_velocity(
+            int32_t cp_delta_x, int32_t cp_delta_y, int32_t to_delta_x,
             int32_t to_delta_y);
         
         /* Extend the curve with a new spline segment.
