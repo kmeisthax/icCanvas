@@ -37,6 +37,8 @@ namespace icCanvasManager {
      *  T& operation+ (T&);     //pairwise addition between like types
      *  T& operation- (T&);     //pairwise subtraction between like types
      *  T& operation* (float&); //scalar multiplication against floats
+     *
+     * TODO: Remove __CircleFloat, make operations internally fixed-point
      */
     template <typename __Position, typename __Attribute, typename __CircleFloat = double>
     class TMVArc {
@@ -49,12 +51,11 @@ namespace icCanvasManager {
     private:
         //Beizer storage
         struct __Arc {
-            __Position _x[3];
-            __Position _y[3];
-            __Attribute _attr[3];
+            __Interpolated _i[3];
 
             bool isCircular;
-            __CircleFloat xCtr, yCtr, cRad;
+            bool dataDirty;
+            __CircleFloat xCtr, yCtr, cRad, startTheta, endTheta;
         };
         std::vector<__Arc> _storage;
 
@@ -66,10 +67,10 @@ namespace icCanvasManager {
             __Arc &thePoly = this->_storage.at(segment);
 
             //Evaluate position
-            float slope1, slope2, xCtr, yCtr, cRad;
+            __CircleFloat slope1, slope2, xCtr, yCtr, cRad, aTheta, bTheta, cTheta;
 
-            slope1 = (thePoly._y[1] - thePoly._y[0]) / (thePoly._x[1] - thePoly._x[0]);
-            slope2 = (thePoly._y[2] - thePoly._y[1]) / (thePoly._x[2] - thePoly._x[1]);
+            slope1 = (thePoly._i[1]._y - thePoly._i[0]._y) / (thePoly._i[1]._x - thePoly._i[0]._x);
+            slope2 = (thePoly._i[2]._y - thePoly._i[1]._y) / (thePoly._i[2]._x - thePoly._i[1]._x);
 
             //Cases where there is no slope for each implied line segment, or
             //where the slope is zero (e.g. identical points) will be treated
@@ -80,40 +81,50 @@ namespace icCanvasManager {
                 //Valid circle path
                 thePoly.isCircular = true;
 
-                xCtr = (slope1 * slope2 * (thePoly._y[2] - thePoly._y[0]) + slope1 * (thePoly._x[1] + thePoly._x[2]) - slope2 * (thePoly._x[0] + thePoly._x[1])) / (2 * (slope1 - slope2));
-                yCtr = (thePoly._y[0] + thePoly._y[1]) / 2 - (xCtr - (thePoly._x[0] + thePoly._x[1]) / 2) / slope1;
-                cRad = pow((pow((thePoly._x[1] - xCtr), 2) +
-                            pow((thePoly._y[1] - yCtr), 2)), 0.5);
+                xCtr = (slope1 * slope2 * (thePoly._i[2]._y - thePoly._i[0]._y) + slope1 * (thePoly._i[1]._x + thePoly._i[2]._x) - slope2 * (thePoly._i[0]._x + thePoly._i[1]._x)) / (2 * (slope1 - slope2));
+                yCtr = (thePoly._i[0]._y + thePoly._i[1]._y) / 2 - (xCtr - (thePoly._i[0]._x + thePoly._i[1]._x) / 2) / slope1;
+                cRad = pow((pow((thePoly._i[1]._x - xCtr), 2) +
+                            pow((thePoly._i[1]._y - yCtr), 2)), 0.5);
+
+                aTheta = acos((thePoly._i[0]._y - yCtr) / cRad) + ((thePoly._i[0]._x - xCtr) < 0 ? Math.PI / 2 : 0);
+                bTheta = acos((thePoly._i[1]._y - yCtr) / cRad) + ((thePoly._i[1]._x - xCtr) < 0 ? Math.PI / 2 : 0);
+                cTheta = acos((thePoly._i[2]._y - yCtr) / cRad) + ((thePoly._i[2]._x - xCtr) < 0 ? Math.PI / 2 : 0);
+
+                //TODO: Sort a/b/c theta to form a proper start/end range.
+                //Rule: Angles always monotonically increase from startAngle to endAngle.
+                //Therefore, pick the lowest of atheta/ctheta to be the startAngle
+
+                if (aTheta <= bTheta && bTheta <= cTheta) { // Order ABC
+                    thePoly.startTheta = aTheta;
+                    thePoly.endTheta = cTheta;
+                } else if (aTheta >= bTheta && bTheta >= cTheta) { // Order CBA
+                    thePoly.endTheta = aTheta;
+                    thePoly.startTheta = cTheta;
+                } else if (aTheta <= cTheta && cTheta <= bTheta) { // Order ACB
+                    thePoly.startTheta = aTheta;
+                    thePoly.endTheta = bTheta;
+                } else if (aTheta >= cTheta && cTheta >= bTheta) { // Order BCA
+                    thePoly.endTheta = aTheta;
+                    thePoly.startTheta = bTheta;
+                } else if (bTheta <= aTheta && aTheta <= cTheta) { // Order BAC
+                    thePoly.startTheta = bTheta;
+                    thePoly.endTheta = cTheta;
+                } else if (bTheta >= aTheta && aTheta >= cTheta) { // Order CAB
+                    thePoly.endTheta = bTheta;
+                    thePoly.startTheta = cTheta;
+                } else { //This branch should NEVER be reached.
+                    assert(false);
+                }
             }
 
             thePoly.xCtr = xCtr;
             thePoly.yCtr = yCtr;
             thePoly.cRad = cRad;
+
+            thePoly.dataDirty = false;
         }
     public:
         typedef typename std::vector<__Arc>::size_type size_type;
-
-        /* Beizer derivatives are lower-order. */
-        typedef TMVBeizer<__Interpolated, 1> derivative_type;
-
-        /* Compute the derivative of the curve.
-         * TODO: Figure out derivative for the arc spline bit
-         */
-        derivative_type derivative() {
-            derivative_type out;
-
-            for (int i = 0; i < this->_storage.size(); i++) {
-                out.extend_spline();
-
-                for (int j = 0; j < 2; j++) { //2 = quadratic polynom.
-                    auto derivPt = out.get_point(i, j);
-                    derivPt = (this->get_point(i, j+1) - this->get_point(i, j)) * _order;
-                    out.set_point(i, j, derivPt);
-                }
-            }
-
-            return out;
-        };
 
         /* Interpolate the stored spline at point t.
          *
@@ -142,16 +153,15 @@ namespace icCanvasManager {
             if (segment == -1) segment = (int)t;
 
             __Arc thePoly = this->_storage.at(segment);
+            __Interpolated newPt;
 
-            //Evaluate attributes
-            for (int i = 2; i > 0; i--) { //2 = quadratic polynomial
-                for (int j = 0; j < i; j++) {
-                    thePoly._attr[j] = _lerp(thePoly._attr[j], segment, thePoly._attr[j+1], segment+1, t);
-                }
-            }
+            //TODO: Evaluate X/Y as a circle.
+            newPt._attr = _lerp(thePoly._i[j]._attr, segment, thePoly._i[j+1]._attr, segment+1, t);
 
-            return thePoly._pt[0];
+            return newPt;
         }
+
+        void
 
         auto count_points() -> decltype(this->_storage.size()) {
             return this->_storage.size();
@@ -159,6 +169,7 @@ namespace icCanvasManager {
 
         void extend_spline() {
             this->_storage.emplace_back();
+            this->_storage.at(this->_storage.size() - 1).dataDirty = true;
         };
 
         void contract_spline() {
@@ -166,9 +177,14 @@ namespace icCanvasManager {
         };
 
         __Interpolated& get_point(const int splinept, const int polypt) {
-            if (polypt <= 2) { //2 = quadratic polynom
+            if (polypt <= 2) { //All arcsplines have 3 points per spline segment
                 __Arc& spl = this->_storage.at(splinept);
-                return spl._pt[polypt];
+
+                //Since we are exporting direct memory references to the point,
+                //consider the existing circle data invalid.
+                spl.dataDirty = true;
+
+                return spl._i[polypt];
             } else {
                 throw std::out_of_range("icCanvasManager::TMVBeizer::get_point");
             }
@@ -177,15 +193,34 @@ namespace icCanvasManager {
         void set_point(const int splinept, const int polypt, const __Interpolated& pt) {
             if (polypt <= 2) { //2 = quadratic polynom
                 __Arc& spl = this->_storage.at(splinept);
-                spl._pt[polypt] = pt;
+                spl._i[polypt] = pt;
             }
 
             this->update_segment(splinept);
         };
 
+        /* Convert a single spline segment into center/radius form.
+         *
+         * WARNING: The signature of this function will change when the class
+         * is configured to use fixed point maths for arcs.
+         */
+        void segment_in_center_radius_form(const int splinept, __CircleFloat& x, __CircleFloat& y, __CircleFloat& radius, __CircleFloat& startAngle, __CircleFloat& endAngle) {
+            __Arc& spl = this->_storage.at(splinept);
+            if (spl.dataDirty) {
+                this->update_segment(splinept);
+            }
+
+            x = spl.xCtr;
+            y = spl.yCtr;
+            radius = spl.cRad;
+            startAngle = spl.startTheta;
+            endAngle = spl.endTheta;
+        }
+
         friend class Renderer;
         friend class Cairo::Renderer;
         friend class GL::Renderer;
+        friend class CPU::Renderer;
     };
 };
 
