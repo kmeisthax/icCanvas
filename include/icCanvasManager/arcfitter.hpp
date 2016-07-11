@@ -22,7 +22,6 @@ namespace icCanvasManager {
         RefPtr<BrushStroke> target_curve;
         int unfitted_id;
         int error_threshold;
-        int current_center_point;
 
         //Measure the fitting error of the current curve segment.
         struct __ErrorPoint {
