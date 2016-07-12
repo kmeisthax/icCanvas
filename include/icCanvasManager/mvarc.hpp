@@ -161,8 +161,6 @@ namespace icCanvasManager {
             return newPt;
         }
 
-        void
-
         auto count_points() -> decltype(this->_storage.size()) {
             return this->_storage.size();
         };
