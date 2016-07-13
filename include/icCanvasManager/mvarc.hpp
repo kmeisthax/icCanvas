@@ -86,9 +86,9 @@ namespace icCanvasManager {
                 cRad = pow((pow((thePoly._i[1]._x - xCtr), 2) +
                             pow((thePoly._i[1]._y - yCtr), 2)), 0.5);
 
-                aTheta = acos((thePoly._i[0]._y - yCtr) / cRad) + ((thePoly._i[0]._x - xCtr) < 0 ? Math.PI / 2 : 0);
-                bTheta = acos((thePoly._i[1]._y - yCtr) / cRad) + ((thePoly._i[1]._x - xCtr) < 0 ? Math.PI / 2 : 0);
-                cTheta = acos((thePoly._i[2]._y - yCtr) / cRad) + ((thePoly._i[2]._x - xCtr) < 0 ? Math.PI / 2 : 0);
+                aTheta = std::acos((thePoly._i[0]._y - yCtr) / cRad) + ((thePoly._i[0]._x - xCtr) < 0 ? std::asin(1.0) : 0);
+                bTheta = std::acos((thePoly._i[1]._y - yCtr) / cRad) + ((thePoly._i[1]._x - xCtr) < 0 ? std::asin(1.0) : 0);
+                cTheta = std::acos((thePoly._i[2]._y - yCtr) / cRad) + ((thePoly._i[2]._x - xCtr) < 0 ? std::asin(1.0) : 0);
 
                 //TODO: Sort a/b/c theta to form a proper start/end range.
                 //Rule: Angles always monotonically increase from startAngle to endAngle.
