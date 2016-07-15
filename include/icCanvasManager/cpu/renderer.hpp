@@ -13,7 +13,11 @@ namespace icCanvasManager {
          * a fallback for non-GPU deployment; can be multithreaded.
          */
         class Renderer : public virtual RefCnt, public virtual icCanvasManager::Renderer {
-        protected:
+        private:
+            void intersect_circle_arcs(int32_t c1Radius, int32_t c2x, int32_t c2y, int32_t c2Radius, float *out_iAngleFirst, float *out_iAngleSecond);
+            void quadratic_roots(double a, double b, double c, double *out_first, double *out_second);
+            bool modular_contained(float low, float high, float test);
+            void clip_arc_range(float arc1Start, float arc1End, float arc2Start, float arc2End, float *out_intStart, float *out_intEnd);
         public:
             Renderer();
             virtual ~Renderer();
