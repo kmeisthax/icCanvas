@@ -1,8 +1,8 @@
-#icCanvas
+# icCanvas
 
 Free Software digital painting system
 
-##Building
+## Building
 
 1. Install cmake
 2. Run the script of your choice to create the build system (xxx-configure)
@@ -11,23 +11,23 @@ Free Software digital painting system
 
 Build products will appear in the build/xxx directory for your platform.
 
-###Available platforms
+### Available platforms
 
 * linux-gtk (GTK frontend, for Linux and perhaps other UNIX-y platforms)
 * osx (AppKit frontend)
 
-##Requirements
+## Requirements
 
-* ###Core library
+* ### Core library
 
     The core library, icCanvasManager, can be built using a C++11 compiler and
     cmake.
 
-    * ####Objective-C port
+    * #### Objective-C port
 
         Requires Objective-C compiler that can parse C++11 headers.
 
-* ###GTK frontend
+* ### GTK frontend
     
     This frontend targets GTK, a well-supported UI toolkit on Linux distros.
     
@@ -36,7 +36,7 @@ Build products will appear in the build/xxx directory for your platform.
     
     Requires gtkmm and cairomm as build dependencies.
 
-* ###AppKit frontend
+* ### AppKit frontend
     
     This frontend targets the OSX system UI toolkit, AppKit. Makes one
     icCanvas.app with icCanvasManager.framework inside.
@@ -48,7 +48,7 @@ Build products will appear in the build/xxx directory for your platform.
     respective source repositories. Python is required (and provided by OSX)
     during the build process.
 
-##Architecture
+## Architecture
 
 To support ports to a wide variety of platforms and still have decent UX, we
 plan to use multiple front-ends on top of a relatvely platform-neutral inner
@@ -72,13 +72,13 @@ port; GObject API for a GTK port; etc)
     xxx-make.*      - Scripts for compiling using the resulting CMake project
     xxx-package.*   - Scripts for packaging build products for distribution
 
-##Features
+## Features
 
 1. Infinite-canvas, infinite-resolution rendering.
 2. Intuitive drawing workflow.
 3. Wide variety of platform support.
 
-###Infinite resolution canvas
+### Infinite resolution canvas
 The goal of icCanvas is to provide a painting-friendly drawing workflow while
 still maintaining some advantages of a vector format. As such, instead of
 storing vector shapes, we store individual action history and replay it as
@@ -92,7 +92,7 @@ to 1 mm will give us a drawing 65 meters big with more zoom than anyone needs,
 but this scale will be user-definable and only used to define what 100% zoom
 means.
 
-###Intuitive drawing workflow
+### Intuitive drawing workflow
 The primary means of drawing will be through brush strokes already familiar to
 users of raster editing programs. Vector shapes may be supported in the future
 but the primary use case is "raster-like" drawing.
